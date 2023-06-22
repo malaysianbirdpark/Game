@@ -2,7 +2,7 @@
 #include "JobQueue.h"
 #include "GlobalQueue.h"
 
-void JobQueue::Push(JobRef job, bool push_only) {
+void Engine::JobQueue::Push(std::shared_ptr<Job> job, bool push_only) {
     // 항상 이렇게 count를 증가 시킨 뒤에 PUSH를 해야 한다
     auto const prev_count {_jobCount.fetch_add(1)};
     _jobs.Push(job); // WRITE_LOCK
@@ -11,13 +11,13 @@ void JobQueue::Push(JobRef job, bool push_only) {
         if (LCurrentJobQueue == nullptr && !push_only) 
             Execute();
         else // 여유 잇는 다른 thread가 처리
-            GGlobalQueue->Push(shared_from_this());
+            GlobalQueue::GGlobalQueue->Push(shared_from_this());
     }
 }
 
-void JobQueue::Execute() {
+void Engine::JobQueue::Execute() {
     while (true) {
-        bvector<JobRef> jobs;
+        x_vector<std::shared_ptr<Job>> jobs;
         _jobs.PopAll(OUT jobs);
 
         auto const job_count {static_cast<int32_t>(jobs.size())};
@@ -32,8 +32,8 @@ void JobQueue::Execute() {
 
         auto const now {GetTickCount64()};
         if (now >= LEndTickCount) {
-            LCurrentJobQueue = nullptr;        
-            GGlobalQueue->Push(shared_from_this());
+            LCurrentJobQueue = nullptr;
+            GlobalQueue::GGlobalQueue->Push(shared_from_this());
             break;
         }
     }

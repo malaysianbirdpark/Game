@@ -1,15 +1,13 @@
 #include "pch.h"
 #include "ThreadMan.h"
-#include "GlobalQueue.h"
-#include "JobQueue.h"
-
-Engine::ThreadMan::ThreadMan() {
-    // Main Thread Initialization
-    InitTLS();
-}
 
 Engine::ThreadMan::~ThreadMan() {
     Join();
+}
+
+void Engine::ThreadMan::Init() {
+    GThreadMan = MakeUnique<ThreadMan>();
+    InitTLS();
 }
 
 void Engine::ThreadMan::Launch(std::function<void()> const& callback) {

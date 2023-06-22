@@ -45,10 +45,11 @@ namespace Engine::Graphics {
         std::unique_ptr<Commander>         p_commander;
         std::unique_ptr<Fence>             p_fence;
         std::unique_ptr<SwapChain>         p_swapChain;
-        //std::unique_ptr<RenderTargetView>  p_RTV;
+        std::unique_ptr<RenderTargetView>  p_RTV;
     };
 }
 
 #define DEVICE() gfx.GetDeviceImpl()->GetDevice()
 #define DXGI() gfx.GetDeviceImpl()->GetDxgi()
-
+#define SWAPCHAIN() gfx.GetSwapChainImpl()->GetSwapChain()
+#define SWAPCHAIN_IMPL() gfx.GetSwapChainImpl()

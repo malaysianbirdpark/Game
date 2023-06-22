@@ -6,8 +6,9 @@
 namespace Engine {
     class ThreadMan {
     public:
-        ThreadMan();
         ~ThreadMan();
+
+        static void Init();
 
         void Launch(std::function<void()> const& callback);
         void Join();
@@ -20,12 +21,14 @@ namespace Engine {
     private:
         std::mutex                    _lock;
         x_vector<std::thread>         _threads;
+    public:
+        inline static std::unique_ptr<ThreadMan> GThreadMan;
     };
 };
 
 inline static thread_local uint32_t LThreadID;
 inline static thread_local class JobQueue* LCurrentJobQueue;
 inline static thread_local Engine::x_stack<int32_t> LLockStack;
+inline static thread_local uint64_t LEndTickCount;
 
-//inline static thread_local uint64_t LEndTickCount;
 //inline static thread_local SendBufferChunkRef LSendBufferChunk;

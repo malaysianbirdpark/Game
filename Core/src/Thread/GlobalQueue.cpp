@@ -1,16 +1,17 @@
 #include "pch.h"
 #include "GlobalQueue.h"
 
-GlobalQueue::GlobalQueue() {
+Engine::GlobalQueue::~GlobalQueue() {
 }
 
-GlobalQueue::~GlobalQueue() {
+void Engine::GlobalQueue::Init() {
+    GGlobalQueue = MakeUnique<GlobalQueue>();
 }
 
-void GlobalQueue::Push(JobQueueRef const job_queue) {
+void Engine::GlobalQueue::Push(std::shared_ptr<JobQueue> const job_queue) {
     _jobQueues.Push(job_queue);
 }
 
-JobQueueRef GlobalQueue::Pop() {
+std::shared_ptr<JobQueue> Engine::GlobalQueue::Pop() {
     return _jobQueues.Pop();
 }

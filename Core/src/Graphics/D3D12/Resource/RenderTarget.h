@@ -1,4 +1,5 @@
 #pragma once
+#include "Resource.h"
 
 namespace Engine::Graphics {
     class GraphicsContext;
@@ -9,8 +10,10 @@ namespace Engine::Graphics {
     public:
         RenderTarget(GraphicsContext& gfx, UINT width, UINT height, DXGI_FORMAT format);
         ~RenderTarget() = default;
+
+        Microsoft::WRL::ComPtr<ID3D12Resource> GetResource() const { return p_resource->GetResource(); }
     private:
-        std::unique_ptr<Resource> p_resource;
+        std::unique_ptr<Resource> p_resource {};
     };
 }
 

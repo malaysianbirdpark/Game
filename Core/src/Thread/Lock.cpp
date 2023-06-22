@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "Lock.h"
 
-void Lock::WriteLock(char const* name) {
+void Engine::Lock::WriteLock(char const* name) {
 #ifdef DEBUG
-    GDeadLockProfiler->PushLock(name);
+    DeadLockProfiler::GDeadLockProfiler->PushLock(name);
 #endif
     
     // If the same thread has the ownership, the result is always success
@@ -40,9 +40,9 @@ void Lock::WriteLock(char const* name) {
     }
 }
 
-void Lock::WriteUnlock(char const* name) {
+void Engine::Lock::WriteUnlock(char const* name) {
 #ifdef DEBUG
-    GDeadLockProfiler->PopLock(name);
+    DeadLockProfiler::GDeadLockProfiler->PopLock(name);
 #endif
     
     // Write unlock is impossible before all the Read locks are unlocked
@@ -54,9 +54,9 @@ void Lock::WriteUnlock(char const* name) {
         _lockFlag.store(EMPTY_FLAG);
 }
 
-void Lock::ReadLock(char const* name) {
+void Engine::Lock::ReadLock(char const* name) {
 #ifdef DEBUG
-    GDeadLockProfiler->PushLock(name);
+    DeadLockProfiler::GDeadLockProfiler->PushLock(name);
 #endif
     
     // if the same thread has W lock, always success
@@ -83,9 +83,9 @@ void Lock::ReadLock(char const* name) {
     }
 }
 
-void Lock::ReadUnlock(char const* name) {
+void Engine::Lock::ReadUnlock(char const* name) {
 #ifdef DEBUG
-    GDeadLockProfiler->PopLock(name);
+    DeadLockProfiler::GDeadLockProfiler->PopLock(name);
 #endif
     
     // caution!! fetch_x's return value is previous value (before modification)

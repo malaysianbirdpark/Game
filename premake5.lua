@@ -1,7 +1,7 @@
-workspace "DX12-Workshop"  
+workspace "Game"  
     architecture "x64"
     configurations { "Debug", "Release" } 
-    startproject "Testbed"
+    startproject "Game"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
@@ -79,8 +79,8 @@ project "Core"
         runtime "Release"
         optimize "on" 
 
-project "Testbed"
-    location "Testbed"
+project "Game"
+    location "Game"
     kind "ConsoleApp"
     language "C++"   
     cppdialect "C++20" 

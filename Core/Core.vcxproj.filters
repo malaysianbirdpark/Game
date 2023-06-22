@@ -7,8 +7,23 @@
     <Filter Include="src\Core">
       <UniqueIdentifier>{A5D31CCF-91A0-77DA-BAB9-6582A6E5AC68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Graphics">
+      <UniqueIdentifier>{0D564864-F9B8-D708-A23E-10BF8E80A38B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Graphics\D3D12">
+      <UniqueIdentifier>{BA02F4E5-A6E6-B43B-0F47-AF8EFB499FBD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Graphics\D3D12\Resource">
+      <UniqueIdentifier>{11964860-7DA3-7646-068A-7231729642FD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Memory">
+      <UniqueIdentifier>{F56D3C20-E125-7E6D-4A2D-57C93604195E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Thread">
+      <UniqueIdentifier>{F464C930-E01C-0B7E-4924-E4D935FBA56E}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -21,29 +36,74 @@
     <ClInclude Include="src\Core\Log.h">
       <Filter>src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EntryPoint.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D12\CommandQueue.h">
+      <Filter>src\Graphics\D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D12\Commander.h">
+      <Filter>src\Graphics\D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D12\Fence.h">
+      <Filter>src\Graphics\D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D12\GraphicsDevice.h">
+      <Filter>src\Graphics\D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D12\Resource\RenderTarget.h">
+      <Filter>src\Graphics\D3D12\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D12\Resource\Resource.h">
+      <Filter>src\Graphics\D3D12\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D12\SwapChain.h">
+      <Filter>src\Graphics\D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\GraphicsContext.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Memory\MemoryAllocator.h">
+      <Filter>src\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Memory\MemoryLib.h">
+      <Filter>src\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Memory\MemoryPool.h">
+      <Filter>src\Memory</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Platform.h">
       <Filter>src\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine.h" />
-    <ClInclude Include="src\EntryPoint.h" />
-    <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\Graphics\GraphicsContext.h" />
-    <ClInclude Include="src\Graphics\D3D12\GraphicsDevice.h" />
-    <ClInclude Include="src\Graphics\D3D12\CommandQueue.h" />
-    <ClInclude Include="src\Graphics\D3D12\Fence.h" />
-    <ClInclude Include="src\Graphics\D3D12\SwapChain.h" />
-    <ClInclude Include="src\Graphics\D3D12\Commander.h" />
-    <ClInclude Include="src\Graphics\D3D12\Resource\Resource.h" />
-    <ClInclude Include="src\Graphics\D3D12\Resource\RenderTarget.h" />
-    <ClInclude Include="src\Memory\MemoryLib.h" />
-    <ClInclude Include="src\Memory\MemoryAllocator.h" />
-    <ClInclude Include="src\Memory\MemoryPool.h" />
-    <ClInclude Include="src\Thread\Lock.h" />
-    <ClInclude Include="src\Thread\ThreadMan.h" />
-    <ClInclude Include="src\Thread\DeadLockProfiler.h" />
-    <ClInclude Include="src\Thread\GlobalQueue.h" />
-    <ClInclude Include="src\Thread\Job.h" />
-    <ClInclude Include="src\Thread\JobQueue.h" />
+    <ClInclude Include="src\Thread\DeadLockProfiler.h">
+      <Filter>src\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Thread\GlobalQueue.h">
+      <Filter>src\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Thread\Job.h">
+      <Filter>src\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Thread\JobQueue.h">
+      <Filter>src\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Thread\Lock.h">
+      <Filter>src\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Thread\LockQueue.h">
+      <Filter>src\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Thread\ThreadMan.h">
+      <Filter>src\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.h" />
+    <ClInclude Include="src\Graphics\D3D12\Descriptor\RenderTargetView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -52,26 +112,59 @@
     <ClCompile Include="src\Core\Log.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Graphics\D3D12\CommandQueue.cpp">
+      <Filter>src\Graphics\D3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D12\Commander.cpp">
+      <Filter>src\Graphics\D3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D12\Fence.cpp">
+      <Filter>src\Graphics\D3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D12\GraphicsDevice.cpp">
+      <Filter>src\Graphics\D3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D12\Resource\RenderTarget.cpp">
+      <Filter>src\Graphics\D3D12\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D12\Resource\Resource.cpp">
+      <Filter>src\Graphics\D3D12\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D12\SwapChain.cpp">
+      <Filter>src\Graphics\D3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\GraphicsContext.cpp">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Memory\MemoryAllocator.cpp">
+      <Filter>src\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Memory\MemoryPool.cpp">
+      <Filter>src\Memory</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Platform.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="src\pch.cpp" />
-    <ClCompile Include="src\Graphics\GraphicsContext.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\GraphicsDevice.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\CommandQueue.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Fence.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\SwapChain.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Commander.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Resource\Resource.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Resource\RenderTarget.cpp" />
-    <ClCompile Include="src\Memory\MemoryAllocator.cpp" />
-    <ClCompile Include="src\Memory\MemoryPool.cpp" />
-    <ClCompile Include="src\Thread\Lock.cpp" />
-    <ClCompile Include="src\Thread\ThreadMan.cpp" />
-    <ClCompile Include="src\Thread\DeadLockProfiler.cpp" />
-    <ClCompile Include="src\Thread\GlobalQueue.cpp" />
-    <ClCompile Include="src\Thread\Job.cpp" />
-    <ClCompile Include="src\Thread\JobQueue.cpp" />
+    <ClCompile Include="src\Thread\DeadLockProfiler.cpp">
+      <Filter>src\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Thread\GlobalQueue.cpp">
+      <Filter>src\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Thread\JobQueue.cpp">
+      <Filter>src\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Thread\Lock.cpp">
+      <Filter>src\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Thread\ThreadMan.cpp">
+      <Filter>src\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Descriptor\RenderTargetView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

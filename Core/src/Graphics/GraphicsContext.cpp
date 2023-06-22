@@ -6,7 +6,9 @@
 #include "Graphics/D3D12/Commander.h"
 #include "Graphics/D3D12/Fence.h"
 #include "Graphics/D3D12/SwapChain.h"
-//#include "Graphics/DirectX12/Bindable/DescHeap/RenderTargetView.h"
+#include "Graphics/D3D12/Resource/Resource.h""
+#include "Graphics/D3D12/Resource/RenderTarget.h""
+#include "Graphics/D3D12/Descriptor/RenderTargetView.h"
 //#include "Graphics/D3D12/Bindable/Viewport.h"
 //#include "Graphics/D3D12/Bindable/ScissorRect.h"
 
@@ -18,7 +20,7 @@ Engine::Graphics::GraphicsContext::GraphicsContext(int width, int height, HWND n
     p_commander = MakeUnique<Commander>(*this, D3D12_COMMAND_LIST_TYPE_DIRECT);
     p_fence = MakeUnique<Fence>(*this);
     p_swapChain = MakeUnique<SwapChain>(*this);
-    //p_RTV = std::make_unique<RenderTargetView>(p_device, p_swapChain, 3);
+    p_RTV = std::make_unique<RenderTargetView>(*this, p_swapChain->GetNumOfBuffers());
     //p_vp = std::make_unique<Viewport>(width, height);
     //p_rect = std::make_unique<ScissorRect>(0, 0, width, height);
 }
@@ -48,33 +50,33 @@ void Engine::Graphics::GraphicsContext::Render() {
 }
 
 void Engine::Graphics::GraphicsContext::BeginFrame() {
-    p_commander->Reset();
+    //p_commander->Reset();
 
-    p_swapChain->BeginFrame(p_commander);
+    //p_swapChain->BeginFrame(p_commander);
 
     //p_vp->Bind(*this);
     //p_rect->Bind(*this);
 
-    ClearScreen();
+    //ClearScreen();
 }
 
 void Engine::Graphics::GraphicsContext::EndFrame() {
-    p_swapChain->EndFrame();
-    p_commander->Close();
+    //p_swapChain->EndFrame();
+    //p_commander->Close();
 
-    ExecuteCommand();
+    //ExecuteCommand();
 }
 
 void Engine::Graphics::GraphicsContext::ExecuteCommand() {
-    ID3D12CommandList* cmdList[] {p_cmdQueue->_cmdList.Get()};
-    p_cmdQueue->_cmdQueue->ExecuteCommandLists(_countof(cmdList), cmdList);
+    //ID3D12CommandList* cmdList[] {p_cmdQueue->_cmdList.Get()};
+    //p_cmdQueue->_cmdQueue->ExecuteCommandLists(_countof(cmdList), cmdList);
 
-    p_swapChain->Present();
+    //p_swapChain->Present();
 
-    p_fence->SetSignalNext(p_cmdQueue);
-    p_fence->Wait();
+    //p_fence->SetSignalNext(p_cmdQueue);
+    //p_fence->Wait();
 
-    p_swapChain->Swap();
+    //p_swapChain->Swap();
 }
 
 void Engine::Graphics::GraphicsContext::ClearScreen() {

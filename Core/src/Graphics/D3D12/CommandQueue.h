@@ -2,9 +2,6 @@
 
 namespace Engine::Graphics {
     class GraphicsContext;
-    class SwapChain;
-    class Fence;
-    class CommandAllocator;
 
     class CommandQueue {
     public:

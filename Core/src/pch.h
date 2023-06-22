@@ -23,7 +23,10 @@
 #include <unordered_set>
 
 #include "Core/Log.h"
+
 #include "Memory/MemoryLib.h"
+
+#include "Thread/Lock.h"
 #include "Thread/ThreadMan.h"
 #include "Thread/DeadLockProfiler.h"
 

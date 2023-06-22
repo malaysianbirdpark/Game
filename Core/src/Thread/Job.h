@@ -6,7 +6,7 @@ using CallBackType = std::function<void()>;
 
 class Job {
 public:
-    Job(CallBackType&& callback) : _callback{std::move(callback)} {}
+    Job(CallBackType&& callback) : _callback{callback} {}
 
     template<typename T, typename Ret, typename... Args>
     Job(std::shared_ptr<T> owner, Ret(T::*memFunc)(Args...), Args... args) {

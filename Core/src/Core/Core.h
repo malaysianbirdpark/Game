@@ -25,3 +25,9 @@
 	#define ASSERT(x, ...)
 	#define CORE_ASSERT(x, ...)
 #endif
+
+#define CRASH(cause) {                   \
+    uint32_t* crash {nullptr};           \
+    __analysis_assume(crash != nullptr); \
+    *crash = 0xDEADBEEF;                 \
+}

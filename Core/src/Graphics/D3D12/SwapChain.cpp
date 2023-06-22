@@ -2,14 +2,14 @@
 #include "SwapChain.h"
 
 #include "Graphics/GraphicsContext.h"
-#include "Graphics/D3D12/GraphicsDevice.h"
-#include "Graphics/D3D12/CommandQueue.h"
+#include "GraphicsDevice.h"
+#include "CommandQueue.h"
 #include "Resource/RenderTarget.h"
 #include "Resource/Resource.h"
 
 namespace Engine::Graphics {
     SwapChain::SwapChain(GraphicsContext& gfx) {
-        DXGI_SWAP_CHAIN_DESC sd;
+        DXGI_SWAP_CHAIN_DESC sd {};
         sd.BufferDesc.Width = static_cast<uint16_t>(gfx.GetWindowData().width); 
         sd.BufferDesc.Height = static_cast<uint16_t>(gfx.GetWindowData().height); 
         sd.BufferDesc.RefreshRate.Numerator = 60; 
@@ -34,13 +34,16 @@ namespace Engine::Graphics {
 
         _renderTarget.reserve(NUM_BACK_BUFFERS);
         for (auto i {0}; i != NUM_BACK_BUFFERS; ++i)
-            _renderTarget[i] = MakeUnique<RenderTarget>(
+            _renderTarget.push_back(std::move(MakeUnique<RenderTarget>(
                 gfx, 
                 gfx.GetWindowData().width,
                 gfx.GetWindowData().height,
                 DXGI_FORMAT_R8G8B8A8_UNORM
-            );
+            )));
             //_swapChain->GetBuffer(i, IID_PPV_ARGS(&_renderTarget[i]));
+    }
+
+    SwapChain::~SwapChain() {
     }
 
     void SwapChain::Present() {
@@ -50,6 +53,18 @@ namespace Engine::Graphics {
 
     void SwapChain::Swap() {
         _bufferIdx = (_bufferIdx + 1) % NUM_BACK_BUFFERS;
+    }
+
+    Microsoft::WRL::ComPtr<ID3D12Resource> SwapChain::GetBackBuffers() const {
+        return _renderTarget[0]->GetResource();
+    }
+
+    Microsoft::WRL::ComPtr<ID3D12Resource> SwapChain::GetBackBufferAt(size_t i) const {
+        return _renderTarget[i]->GetResource();
+    }
+
+    Microsoft::WRL::ComPtr<ID3D12Resource> SwapChain::GetCurrentBackBuffer() const {
+        return _renderTarget[_bufferIdx]->GetResource();
     }
 
     void SwapChain::BeginFrame(ID3D12GraphicsCommandList& cmd_list) {

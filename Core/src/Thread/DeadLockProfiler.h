@@ -3,7 +3,7 @@
 namespace Engine {
     class DeadLockProfiler {
     public:
-        void Init();
+        static void Init();
         
         void PushLock(char const* name);
         void PopLock(char const* name);

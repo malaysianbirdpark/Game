@@ -1,13 +1,20 @@
 #pragma once
 
+#include "LockQueue.h"
+
+namespace Engine {
 class GlobalQueue {
 public:
-    GlobalQueue();
     ~GlobalQueue();
 
-    void Push(JobQueueRef const job_queue);
-    JobQueueRef Pop();
+    static void Init();
+
+    void Push(std::shared_ptr<JobQueue> const job_queue);
+    std::shared_ptr<JobQueue> Pop();
 private:
-    LockQueue<JobQueueRef> _jobQueues;
+    LockQueue<std::shared_ptr<JobQueue>> _jobQueues;
+public:
+    inline static std::unique_ptr<GlobalQueue> GGlobalQueue {};
 };
+}
 

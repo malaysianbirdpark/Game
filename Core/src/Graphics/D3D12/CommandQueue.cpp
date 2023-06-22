@@ -2,7 +2,7 @@
 #include "CommandQueue.h"
 
 #include "Graphics/GraphicsContext.h"
-#include "Graphics/D3D12/GraphicsDevice.h"
+#include "GraphicsDevice.h"
 
 Engine::Graphics::CommandQueue::CommandQueue(GraphicsContext& gfx, D3D12_COMMAND_LIST_TYPE type)
     : _type{type}

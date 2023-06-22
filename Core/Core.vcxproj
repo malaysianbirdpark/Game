@@ -108,55 +108,58 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Memory\MemoryPool.h" />
-    <ClInclude Include="src\Memory\MemoryAllocator.h" />
-    <ClInclude Include="src\Graphics\D3D12\Resource\RenderTarget.h" />
-    <ClInclude Include="src\Graphics\D3D12\Resource\Resource.h" />
-    <ClInclude Include="src\Graphics\D3D12\Commander.h" />
+    <ClInclude Include="src\Graphics\D3D12\Descriptor\RenderTargetView.h" />
+    <ClInclude Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Core.h" />
     <ClInclude Include="src\Core\Log.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\EntryPoint.h" />
     <ClInclude Include="src\Graphics\D3D12\CommandQueue.h" />
+    <ClInclude Include="src\Graphics\D3D12\Commander.h" />
     <ClInclude Include="src\Graphics\D3D12\Fence.h" />
     <ClInclude Include="src\Graphics\D3D12\GraphicsDevice.h" />
+    <ClInclude Include="src\Graphics\D3D12\Resource\RenderTarget.h" />
+    <ClInclude Include="src\Graphics\D3D12\Resource\Resource.h" />
     <ClInclude Include="src\Graphics\D3D12\SwapChain.h" />
     <ClInclude Include="src\Graphics\GraphicsContext.h" />
+    <ClInclude Include="src\Memory\MemoryAllocator.h" />
     <ClInclude Include="src\Memory\MemoryLib.h" />
-    <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\Memory\MemoryPool.h" />
     <ClInclude Include="src\Platform\Platform.h" />
     <ClInclude Include="src\Thread\DeadLockProfiler.h" />
     <ClInclude Include="src\Thread\GlobalQueue.h" />
     <ClInclude Include="src\Thread\Job.h" />
     <ClInclude Include="src\Thread\JobQueue.h" />
     <ClInclude Include="src\Thread\Lock.h" />
+    <ClInclude Include="src\Thread\LockQueue.h" />
     <ClInclude Include="src\Thread\ThreadMan.h" />
+    <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Memory\MemoryPool.cpp" />
-    <ClCompile Include="src\Memory\MemoryAllocator.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Resource\RenderTarget.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Resource\Resource.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Commander.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Descriptor\RenderTargetView.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
     <ClCompile Include="src\Graphics\D3D12\CommandQueue.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Commander.cpp" />
     <ClCompile Include="src\Graphics\D3D12\Fence.cpp" />
     <ClCompile Include="src\Graphics\D3D12\GraphicsDevice.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Resource\RenderTarget.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Resource\Resource.cpp" />
     <ClCompile Include="src\Graphics\D3D12\SwapChain.cpp" />
     <ClCompile Include="src\Graphics\GraphicsContext.cpp" />
-    <ClCompile Include="src\pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="src\Memory\MemoryAllocator.cpp" />
+    <ClCompile Include="src\Memory\MemoryPool.cpp" />
     <ClCompile Include="src\Platform\Platform.cpp" />
     <ClCompile Include="src\Thread\DeadLockProfiler.cpp" />
     <ClCompile Include="src\Thread\GlobalQueue.cpp" />
-    <ClCompile Include="src\Thread\Job.cpp" />
     <ClCompile Include="src\Thread\JobQueue.cpp" />
     <ClCompile Include="src\Thread\Lock.cpp" />
     <ClCompile Include="src\Thread\ThreadMan.cpp" />
+    <ClCompile Include="src\pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

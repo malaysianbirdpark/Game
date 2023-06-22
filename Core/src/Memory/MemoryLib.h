@@ -4,9 +4,19 @@
 
 namespace Engine {
 // TODO: TEMP
+template <typename T>
+std::unique_ptr<T> MakeUnique(T&& t) {
+    return std::make_unique<T>(std::forward<T>(t));
+}
+
 template <typename T, typename... Args>
 std::unique_ptr<T> MakeUnique(Args&&... args) {
     return std::make_unique<T>(std::forward<Args>(args)...);
+}
+
+template <typename T>
+std::shared_ptr<T> MakeShared(T&& t) {
+    return std::make_shared<T>(std::forward<T>(t));
 }
 
 template <typename T, typename... Args>
