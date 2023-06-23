@@ -14,5 +14,5 @@ Engine::Graphics::RenderTarget::RenderTarget(GraphicsContext& gfx, UINT width, U
     desc.SampleDesc.Quality = 0;
     desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 
-    p_resource = MakeUnique<Resource>(gfx, desc, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    //p_resource = MakeUnique<Resource>(gfx, desc, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }

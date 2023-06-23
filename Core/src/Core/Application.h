@@ -29,6 +29,7 @@ namespace Engine::Core {
         inline static int height {};
     private:
         std::unique_ptr<Platform::Platform> p_platform;
+        std::unique_ptr<Graphics::GraphicsContext> p_gfx;
     };
 
     [[nodiscard]] Application* CreateApp();

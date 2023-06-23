@@ -6,11 +6,10 @@
 #include "Graphics/D3D12/Commander.h"
 #include "Graphics/D3D12/Fence.h"
 #include "Graphics/D3D12/SwapChain.h"
-#include "Graphics/D3D12/Resource/Resource.h""
-#include "Graphics/D3D12/Resource/RenderTarget.h""
 #include "Graphics/D3D12/Descriptor/RenderTargetView.h"
-//#include "Graphics/D3D12/Bindable/Viewport.h"
-//#include "Graphics/D3D12/Bindable/ScissorRect.h"
+#include "Graphics/D3D12/Bindable/Viewport.h"
+#include "Graphics/D3D12/Bindable/ScissorRect.h"
+#include "Graphics/D3D12/RootSignature.h"
 
 Engine::Graphics::GraphicsContext::GraphicsContext(int width, int height, HWND nativeWnd, bool windowed)
     : _windowData{width, height, nativeWnd, windowed}
@@ -20,9 +19,10 @@ Engine::Graphics::GraphicsContext::GraphicsContext(int width, int height, HWND n
     p_commander = MakeUnique<Commander>(*this, D3D12_COMMAND_LIST_TYPE_DIRECT);
     p_fence = MakeUnique<Fence>(*this);
     p_swapChain = MakeUnique<SwapChain>(*this);
-    p_RTV = std::make_unique<RenderTargetView>(*this, p_swapChain->GetNumOfBuffers());
-    //p_vp = std::make_unique<Viewport>(width, height);
-    //p_rect = std::make_unique<ScissorRect>(0, 0, width, height);
+    p_RTV = MakeUnique<RenderTargetView>(*this, p_swapChain->GetNumOfBuffers());
+    p_vp = MakeUnique<Viewport>(width, height);
+    p_rect = MakeUnique<ScissorRect>(0, 0, width, height);
+    p_rootSignature = MakeUnique<RootSignature>(*this);
 }
 
 Engine::Graphics::GraphicsContext::~GraphicsContext() {
@@ -36,6 +36,14 @@ std::unique_ptr<Engine::Graphics::CommandQueue>& Engine::Graphics::GraphicsConte
     return p_cmdQueue;
 }
 
+std::unique_ptr<Engine::Graphics::Commander>& Engine::Graphics::GraphicsContext::GetCommander() {
+    return p_commander;
+}
+
+std::unique_ptr<Engine::Graphics::RootSignature>& Engine::Graphics::GraphicsContext::GetRootSignature() {
+    return p_rootSignature;
+}
+
 std::unique_ptr<Engine::Graphics::SwapChain>& Engine::Graphics::GraphicsContext::GetSwapChainImpl() {
     return p_swapChain;
 }
@@ -45,41 +53,47 @@ Engine::Graphics::WindowData& Engine::Graphics::GraphicsContext::GetWindowData()
 }
 
 void Engine::Graphics::GraphicsContext::Render() {
-    BeginFrame();
-    EndFrame();
+    BeginRecord();
+    EndRecord();
 }
 
-void Engine::Graphics::GraphicsContext::BeginFrame() {
-    //p_commander->Reset();
+void Engine::Graphics::GraphicsContext::BeginRecord() {
+    // TODO: Multi-thread
+    p_commander->Reset();
 
-    //p_swapChain->BeginFrame(p_commander);
+    p_swapChain->BeginFrame(p_commander->GetCmdList());
 
-    //p_vp->Bind(*this);
-    //p_rect->Bind(*this);
+    p_vp->Bind(*this);
+    p_rect->Bind(*this);
 
-    //ClearScreen();
+    ClearScreen();
 }
 
-void Engine::Graphics::GraphicsContext::EndFrame() {
-    //p_swapChain->EndFrame();
-    //p_commander->Close();
+void Engine::Graphics::GraphicsContext::EndRecord() {
+    // TODO: Multi-thread
+    p_swapChain->EndFrame(p_commander->GetCmdList());
+    p_commander->Close();
 
-    //ExecuteCommand();
+    ExecuteCommand();
 }
 
 void Engine::Graphics::GraphicsContext::ExecuteCommand() {
-    //ID3D12CommandList* cmdList[] {p_cmdQueue->_cmdList.Get()};
-    //p_cmdQueue->_cmdQueue->ExecuteCommandLists(_countof(cmdList), cmdList);
+    // TODO: Multi-thread
+    ID3D12CommandList* cmd_list[] {&p_commander->GetCmdList()};
+    p_cmdQueue->GetQueue().ExecuteCommandLists(1u, cmd_list);
 
-    //p_swapChain->Present();
+    p_swapChain->Present();
 
-    //p_fence->SetSignalNext(p_cmdQueue);
-    //p_fence->Wait();
+    p_fence->SetSignalNext(*this);
+    p_fence->Wait();
 
-    //p_swapChain->Swap();
+    p_swapChain->Swap();
 }
 
 void Engine::Graphics::GraphicsContext::ClearScreen() {
-    //p_RTV->Clear(*this);
-    //p_RTV->Bind(*this);
+    // TODO: Job System
+    static float color[] {0.24f, 0.12f, 0.64f, 1.0f};
+    auto const back_buffer_view {p_RTV->GetHandle(0)};
+    p_commander->GetCmdList().ClearRenderTargetView(back_buffer_view, color, 0u, nullptr);
+    p_commander->GetCmdList().OMSetRenderTargets(1u, &back_buffer_view, FALSE, nullptr);
 }

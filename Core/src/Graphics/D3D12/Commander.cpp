@@ -7,18 +7,18 @@
 Engine::Graphics::Commander::Commander(GraphicsContext& gfx, D3D12_COMMAND_LIST_TYPE type)
     : _type{type}
 {
-    DEVICE().CreateCommandAllocator(
-        type,
+    ThrowIfFailed(DEVICE().CreateCommandAllocator(
+        _type,
         IID_PPV_ARGS(p_allocator.ReleaseAndGetAddressOf())
-    );
+    ));
 
-    DEVICE().CreateCommandList(
+    ThrowIfFailed(DEVICE().CreateCommandList(
         0u,
         _type,
         p_allocator.Get(),
         nullptr,
         IID_PPV_ARGS(p_list.ReleaseAndGetAddressOf())
-    );
+    ));
 
     p_list->Close();
 }

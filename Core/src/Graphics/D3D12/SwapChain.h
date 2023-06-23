@@ -2,7 +2,6 @@
 
 namespace Engine::Graphics {
     class GraphicsContext;
-    class RenderTarget;
 
     class SwapChain {
     public:
@@ -25,9 +24,8 @@ namespace Engine::Graphics {
     public:
         static constexpr uint16_t                          NUM_BACK_BUFFERS {3};
         Microsoft::WRL::ComPtr<IDXGISwapChain>             _swapChain;
-        x_vector<std::unique_ptr<RenderTarget>>            _renderTarget;
+        Microsoft::WRL::ComPtr<ID3D12Resource>             _backbuffer[NUM_BACK_BUFFERS];
         uint16_t                                           _bufferIdx {};
-        //Microsoft::WRL::ComPtr<ID3D12Resource>   _renderTarget[NUM_BACK_BUFFERS];
     };
 }
 

@@ -10,6 +10,8 @@ namespace Engine::Graphics {
 
         void Reset();
         void Close();
+
+        ID3D12GraphicsCommandList& GetCmdList() const { return *p_list.Get(); }
     private:
         D3D12_COMMAND_LIST_TYPE _type;
         Microsoft::WRL::ComPtr<ID3D12CommandAllocator> p_allocator;

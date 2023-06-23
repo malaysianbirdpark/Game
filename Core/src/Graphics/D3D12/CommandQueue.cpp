@@ -11,5 +11,5 @@ Engine::Graphics::CommandQueue::CommandQueue(GraphicsContext& gfx, D3D12_COMMAND
     qd.Type = _type;
     qd.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 
-    DEVICE().CreateCommandQueue(&qd, IID_PPV_ARGS(_cmdQueue.ReleaseAndGetAddressOf()));
+    ThrowIfFailed(DEVICE().CreateCommandQueue(&qd, IID_PPV_ARGS(_cmdQueue.ReleaseAndGetAddressOf())));
 }

@@ -2,11 +2,13 @@
 #include "Application.h"
 
 #include "Platform/Platform.h"
+#include "Graphics/GraphicsContext.h"
 
 Engine::Core::Application::Application() {
     width = 800;
     height = 450;
-    p_platform = std::make_unique<Platform::Platform>(width, height);
+    p_platform = MakeUnique<Platform::Platform>(width, height);
+    p_gfx = MakeUnique<Graphics::GraphicsContext>(width, height, p_platform->GetNativeWnd(), true);
 }
 
 Engine::Core::Application::~Application() {
@@ -30,4 +32,5 @@ void Engine::Core::Application::Update(float const dt) {
 }
 
 void Engine::Core::Application::Render() {
+    p_gfx->Render();
 }

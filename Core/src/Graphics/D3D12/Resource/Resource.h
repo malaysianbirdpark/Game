@@ -5,8 +5,8 @@ namespace Engine::Graphics {
 
     class Resource {
     public:
-        Resource(GraphicsContext& gfx, D3D12_RESOURCE_DESC const& desc, D3D12_RESOURCE_STATES = D3D12_RESOURCE_STATE_COMMON);
-        ~Resource() = default;
+        Resource(GraphicsContext& gfx, D3D12_HEAP_PROPERTIES const& heap_properties, D3D12_RESOURCE_DESC const& desc, D3D12_RESOURCE_STATES = D3D12_RESOURCE_STATE_COMMON);
+        virtual ~Resource() = default;
 
         Microsoft::WRL::ComPtr<ID3D12Resource> GetResource() const { return p_resource; }
         D3D12_RESOURCE_STATES  GetState() const { return _state; }

@@ -14,5 +14,7 @@ Engine::Graphics::DescriptorHeap::DescriptorHeap(GraphicsContext& gfx, D3D12_DES
     desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     desc.NodeMask = 0;
 
-    DEVICE().CreateDescriptorHeap(&desc, IID_PPV_ARGS(_descHeap.ReleaseAndGetAddressOf()));
+    _handle.resize(num_of_descriptors);
+
+    ThrowIfFailed(DEVICE().CreateDescriptorHeap(&desc, IID_PPV_ARGS(_descHeap.ReleaseAndGetAddressOf())));
 }

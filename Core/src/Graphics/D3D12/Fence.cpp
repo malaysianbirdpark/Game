@@ -14,13 +14,13 @@ Engine::Graphics::Fence::~Fence() {
     ::CloseHandle(_fenceHandle);
 }
 
-void Engine::Graphics::Fence::SetSignal(std::unique_ptr<CommandQueue> const& p_cmdQueue) {
-    p_cmdQueue->GetQueue().Signal(_fence.Get(), _fenceValue);
+void Engine::Graphics::Fence::SetSignal(GraphicsContext& gfx) {
+    CMD_QUEUE().Signal(_fence.Get(), _fenceValue);
 }
 
-void Engine::Graphics::Fence::SetSignalNext(std::unique_ptr<CommandQueue> const& p_cmdQueue) {
+void Engine::Graphics::Fence::SetSignalNext(GraphicsContext& gfx) {
     ++_fenceValue;
-    SetSignal(p_cmdQueue);
+    SetSignal(gfx);
 }
 
 void Engine::Graphics::Fence::Wait() {

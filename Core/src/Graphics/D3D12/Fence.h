@@ -2,15 +2,14 @@
 
 namespace Engine::Graphics {
     class GraphicsContext;
-    class CommandQueue;
 
     class Fence {
     public:
         Fence(GraphicsContext& gfx);
         ~Fence();
 
-        void SetSignal(std::unique_ptr<CommandQueue> const& p_cmdQueue);
-        void SetSignalNext(std::unique_ptr<CommandQueue> const& p_cmdQueue);
+        void SetSignal(GraphicsContext& gfx);
+        void SetSignalNext(GraphicsContext& gfx);
         void Wait();
     public:
         Microsoft::WRL::ComPtr<ID3D12Fence> _fence;

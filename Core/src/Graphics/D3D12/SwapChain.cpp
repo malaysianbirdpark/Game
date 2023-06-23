@@ -4,8 +4,6 @@
 #include "Graphics/GraphicsContext.h"
 #include "GraphicsDevice.h"
 #include "CommandQueue.h"
-#include "Resource/RenderTarget.h"
-#include "Resource/Resource.h"
 
 namespace Engine::Graphics {
     SwapChain::SwapChain(GraphicsContext& gfx) {
@@ -26,21 +24,14 @@ namespace Engine::Graphics {
         sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; 
         sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-        DXGI().CreateSwapChain(
+        ThrowIfFailed(DXGI().CreateSwapChain(
             &gfx.GetCommandQueueImpl()->GetQueue(),
             &sd,
             _swapChain.ReleaseAndGetAddressOf()
-        );
+        ));
 
-        _renderTarget.reserve(NUM_BACK_BUFFERS);
         for (auto i {0}; i != NUM_BACK_BUFFERS; ++i)
-            _renderTarget.push_back(std::move(MakeUnique<RenderTarget>(
-                gfx, 
-                gfx.GetWindowData().width,
-                gfx.GetWindowData().height,
-                DXGI_FORMAT_R8G8B8A8_UNORM
-            )));
-            //_swapChain->GetBuffer(i, IID_PPV_ARGS(&_renderTarget[i]));
+            _swapChain->GetBuffer(i, IID_PPV_ARGS(_backbuffer[i].ReleaseAndGetAddressOf()));
     }
 
     SwapChain::~SwapChain() {
@@ -48,7 +39,6 @@ namespace Engine::Graphics {
 
     void SwapChain::Present() {
         _swapChain->Present(0u, 0u);
-        Swap();
     }
 
     void SwapChain::Swap() {
@@ -56,22 +46,36 @@ namespace Engine::Graphics {
     }
 
     Microsoft::WRL::ComPtr<ID3D12Resource> SwapChain::GetBackBuffers() const {
-        return _renderTarget[0]->GetResource();
+        return _backbuffer[0];
     }
 
     Microsoft::WRL::ComPtr<ID3D12Resource> SwapChain::GetBackBufferAt(size_t i) const {
-        return _renderTarget[i]->GetResource();
+        return _backbuffer[i];
     }
 
     Microsoft::WRL::ComPtr<ID3D12Resource> SwapChain::GetCurrentBackBuffer() const {
-        return _renderTarget[_bufferIdx]->GetResource();
+        return _backbuffer[_bufferIdx];
     }
 
     void SwapChain::BeginFrame(ID3D12GraphicsCommandList& cmd_list) {
-        _renderTarget[_bufferIdx]->p_resource->Transition(cmd_list, D3D12_RESOURCE_STATE_RENDER_TARGET);
+        auto barrier {
+            CD3DX12_RESOURCE_BARRIER::Transition(
+                GetCurrentBackBuffer().Get(),
+                D3D12_RESOURCE_STATE_PRESENT,
+                D3D12_RESOURCE_STATE_RENDER_TARGET
+            )
+        };
+        cmd_list.ResourceBarrier(1u, &barrier);
     }
 
     void SwapChain::EndFrame(ID3D12GraphicsCommandList& cmd_list) {
-        _renderTarget[_bufferIdx]->p_resource->Transition(cmd_list, D3D12_RESOURCE_STATE_PRESENT);
+        auto barrier {
+            CD3DX12_RESOURCE_BARRIER::Transition(
+                GetCurrentBackBuffer().Get(),
+                D3D12_RESOURCE_STATE_RENDER_TARGET,
+                D3D12_RESOURCE_STATE_PRESENT
+            )
+        };
+        cmd_list.ResourceBarrier(1u, &barrier);
     }
 }

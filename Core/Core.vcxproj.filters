@@ -104,6 +104,19 @@
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.h" />
     <ClInclude Include="src\Graphics\D3D12\Descriptor\RenderTargetView.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\ScissorRect.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\Topology.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\Viewport.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\Bindable.h" />
+    <ClInclude Include="src\Graphics\D3D12\RootSignature.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\PipelineState.h" />
+    <ClInclude Include="src\Graphics\D3D12\TEMP\Triangle.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\VertexBuffer.h" />
+    <ClInclude Include="src\Graphics\D3D12\TEMP\Vertex.h" />
+    <ClInclude Include="src\Graphics\D3D12\Resource\CPUBuffer.h" />
+    <ClInclude Include="src\Graphics\D3D12\VertexShader.h" />
+    <ClInclude Include="src\Graphics\D3D12\PixelShader.h" />
+    <ClInclude Include="src\Graphics\D3D12\Resource\GPUBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -165,6 +178,18 @@
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.cpp" />
     <ClCompile Include="src\Graphics\D3D12\Descriptor\RenderTargetView.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Bindable\ScissorRect.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Bindable\Topology.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Bindable\Viewport.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\RootSignature.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Bindable\PipelineState.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\TEMP\Triangle.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Bindable\VertexBuffer.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\TEMP\Vertex.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Resource\CPUBuffer.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\VertexShader.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\PixelShader.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Resource\GPUBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
