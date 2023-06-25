@@ -23,9 +23,9 @@ private:
 
 template <typename T>
 void CPUBuffer::Upload(x_vector<T> const& data) {
-	void* ptr = nullptr;
-	CD3DX12_RANGE readRange(0, 0); // We do not intend to read from this resource on the CPU.
-	GetResource()->Map(0, &readRange, &ptr);
+    T* ptr {nullptr};
+	//CD3DX12_RANGE readRange(0, 0); // We do not intend to read from this resource on the CPU.
+	GetResource()->Map(0, nullptr, reinterpret_cast<void**>(&ptr));
     std::ranges::copy(data, ptr);
 	GetResource()->Unmap(0, nullptr);
 }

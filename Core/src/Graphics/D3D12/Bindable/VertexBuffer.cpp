@@ -24,8 +24,6 @@ void Engine::Graphics::VertexBuffer::Bind(GraphicsContext& gfx) noexcept {
     // TODO: primitive topology
     CMD_LIST().IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     CMD_LIST().IASetVertexBuffers(0u, 1u, &_view);
-    // TODO: DRAW
-    CMD_LIST().DrawInstanced(_count, 1u, 0u, 0u);
 }
 
 std::string Engine::Graphics::VertexBuffer::GetUID() const noexcept {

@@ -108,29 +108,33 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Graphics\D3D12\Resource\GPUBuffer.h" />
-    <ClInclude Include="src\Graphics\D3D12\PixelShader.h" />
-    <ClInclude Include="src\Graphics\D3D12\Resource\CPUBuffer.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\PipelineState.h" />
-    <ClInclude Include="src\Graphics\D3D12\RootSignature.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\Bindable.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\ScissorRect.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\Topology.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\Viewport.h" />
-    <ClInclude Include="src\Graphics\D3D12\Descriptor\RenderTargetView.h" />
-    <ClInclude Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Core.h" />
     <ClInclude Include="src\Core\Log.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\EntryPoint.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\Bindable.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\PipelineState.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\ScissorRect.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\Topology.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\VertexBuffer.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\Viewport.h" />
     <ClInclude Include="src\Graphics\D3D12\CommandQueue.h" />
     <ClInclude Include="src\Graphics\D3D12\Commander.h" />
+    <ClInclude Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.h" />
+    <ClInclude Include="src\Graphics\D3D12\Descriptor\RenderTargetView.h" />
     <ClInclude Include="src\Graphics\D3D12\Fence.h" />
     <ClInclude Include="src\Graphics\D3D12\GraphicsDevice.h" />
+    <ClInclude Include="src\Graphics\D3D12\PixelShader.h" />
+    <ClInclude Include="src\Graphics\D3D12\Resource\CPUBuffer.h" />
+    <ClInclude Include="src\Graphics\D3D12\Resource\GPUBuffer.h" />
     <ClInclude Include="src\Graphics\D3D12\Resource\RenderTarget.h" />
     <ClInclude Include="src\Graphics\D3D12\Resource\Resource.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\RootSignature.h" />
     <ClInclude Include="src\Graphics\D3D12\SwapChain.h" />
+    <ClInclude Include="src\Graphics\D3D12\Drawable\Triangle.h" />
+    <ClInclude Include="src\Graphics\D3D12\TEMP\Vertex.h" />
+    <ClInclude Include="src\Graphics\D3D12\VertexShader.h" />
     <ClInclude Include="src\Graphics\GraphicsContext.h" />
     <ClInclude Include="src\Memory\MemoryAllocator.h" />
     <ClInclude Include="src\Memory\MemoryLib.h" />
@@ -144,31 +148,31 @@
     <ClInclude Include="src\Thread\LockQueue.h" />
     <ClInclude Include="src\Thread\ThreadMan.h" />
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\Graphics\D3D12\TEMP\Triangle.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\VertexBuffer.h" />
-    <ClInclude Include="src\Graphics\D3D12\TEMP\Vertex.h" />
-    <ClInclude Include="src\Graphics\D3D12\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Graphics\D3D12\Resource\GPUBuffer.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\PixelShader.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Resource\CPUBuffer.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Bindable\PipelineState.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\RootSignature.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Bindable\ScissorRect.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Bindable\Topology.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Bindable\Viewport.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Descriptor\RenderTargetView.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Bindable\PipelineState.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Bindable\ScissorRect.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Bindable\Topology.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Bindable\VertexBuffer.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Bindable\Viewport.cpp" />
     <ClCompile Include="src\Graphics\D3D12\CommandQueue.cpp" />
     <ClCompile Include="src\Graphics\D3D12\Commander.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Descriptor\RenderTargetView.cpp" />
     <ClCompile Include="src\Graphics\D3D12\Fence.cpp" />
     <ClCompile Include="src\Graphics\D3D12\GraphicsDevice.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\PixelShader.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Resource\CPUBuffer.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Resource\GPUBuffer.cpp" />
     <ClCompile Include="src\Graphics\D3D12\Resource\RenderTarget.cpp" />
     <ClCompile Include="src\Graphics\D3D12\Resource\Resource.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Bindable\RootSignature.cpp" />
     <ClCompile Include="src\Graphics\D3D12\SwapChain.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Drawable\Triangle.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\TEMP\Vertex.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\VertexShader.cpp" />
     <ClCompile Include="src\Graphics\GraphicsContext.cpp" />
     <ClCompile Include="src\Memory\MemoryAllocator.cpp" />
     <ClCompile Include="src\Memory\MemoryPool.cpp" />
@@ -181,10 +185,20 @@
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\TEMP\Triangle.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Bindable\VertexBuffer.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\TEMP\Vertex.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\VertexShader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="src\Graphics\HLSL\basicPS.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>6.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/basicPS.cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL\basicVS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>6.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/basicVS.cso</ObjectFileOutput>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

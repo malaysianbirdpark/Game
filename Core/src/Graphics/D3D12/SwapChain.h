@@ -6,7 +6,7 @@ namespace Engine::Graphics {
     class SwapChain {
     public:
         SwapChain(GraphicsContext& gfx);
-        ~SwapChain();
+        ~SwapChain() = default;
 
         void Present();
         void Swap();
@@ -21,7 +21,7 @@ namespace Engine::Graphics {
 
         void BeginFrame(ID3D12GraphicsCommandList& cmd_list);
         void EndFrame(ID3D12GraphicsCommandList& cmd_list);
-    public:
+    private:
         static constexpr uint16_t                          NUM_BACK_BUFFERS {3};
         Microsoft::WRL::ComPtr<IDXGISwapChain>             _swapChain;
         Microsoft::WRL::ComPtr<ID3D12Resource>             _backbuffer[NUM_BACK_BUFFERS];

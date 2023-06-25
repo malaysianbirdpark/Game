@@ -3,6 +3,7 @@
 
 #include "Graphics/GraphicsContext.h"
 #include "Graphics/D3D12/GraphicsDevice.h"
+#include "Graphics/D3D12/Commander.h"
 
 Engine::Graphics::RootSignature::RootSignature(GraphicsContext& gfx) {
     D3D12_ROOT_SIGNATURE_DESC desc {
@@ -24,4 +25,12 @@ Engine::Graphics::RootSignature::RootSignature(GraphicsContext& gfx) {
         blob_signature->GetBufferSize(),
         IID_PPV_ARGS(_signature.ReleaseAndGetAddressOf())
     );
+}
+
+void Engine::Graphics::RootSignature::Bind(GraphicsContext& gfx) noexcept {
+    CMD_LIST().SetGraphicsRootSignature(_signature.Get());
+}
+
+std::string Engine::Graphics::RootSignature::GetUID() const noexcept {
+    return Bindable::GetUID();
 }

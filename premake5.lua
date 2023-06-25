@@ -47,7 +47,7 @@ project "Core"
     filter "files:**.hlsl"
         shaderentry "main"
         shadermodel "6.0"
-        shaderobjectfileoutput "%{wks.location}/Testbed/ShaderLib/%{file.basename}.cso"
+        shaderobjectfileoutput "%{wks.location}/Game/ShaderLib/%{file.basename}.cso"
 
     filter "files:**PS.hlsl"
         shadertype "Pixel"
