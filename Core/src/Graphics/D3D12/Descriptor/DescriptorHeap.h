@@ -6,6 +6,7 @@ class GraphicsContext;
 class DescriptorHeap {
 public:
     DescriptorHeap(GraphicsContext& gfx, D3D12_DESCRIPTOR_HEAP_TYPE type, UINT num_of_descriptors);
+    virtual ~DescriptorHeap() = default;
 
     D3D12_CPU_DESCRIPTOR_HANDLE GetHandle(size_t idx) const { return _handle[idx]; }
 protected:

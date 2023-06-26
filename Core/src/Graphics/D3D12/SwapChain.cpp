@@ -34,9 +34,6 @@ namespace Engine::Graphics {
             _swapChain->GetBuffer(i, IID_PPV_ARGS(_backbuffer[i].ReleaseAndGetAddressOf()));
     }
 
-    SwapChain::~SwapChain() {
-    }
-
     void SwapChain::Present() {
         _swapChain->Present(0u, 0u);
     }
@@ -58,7 +55,7 @@ namespace Engine::Graphics {
     }
 
     void SwapChain::BeginFrame(ID3D12GraphicsCommandList& cmd_list) {
-        auto barrier {
+        auto const barrier {
             CD3DX12_RESOURCE_BARRIER::Transition(
                 GetCurrentBackBuffer().Get(),
                 D3D12_RESOURCE_STATE_PRESENT,
@@ -69,7 +66,7 @@ namespace Engine::Graphics {
     }
 
     void SwapChain::EndFrame(ID3D12GraphicsCommandList& cmd_list) {
-        auto barrier {
+        auto const barrier {
             CD3DX12_RESOURCE_BARRIER::Transition(
                 GetCurrentBackBuffer().Get(),
                 D3D12_RESOURCE_STATE_RENDER_TARGET,

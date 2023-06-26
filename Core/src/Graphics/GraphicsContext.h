@@ -10,6 +10,11 @@ namespace Engine::Graphics {
     class RenderTargetView;
     class SwapChain;
     class RootSignature;
+    class VertexBuffer;
+    class VertexShader;
+    class PixelShader;
+    class PipelineState;
+    class Triangle;
 
     struct WindowData {
         int width;
@@ -52,7 +57,14 @@ namespace Engine::Graphics {
         std::unique_ptr<Fence>             p_fence;
         std::unique_ptr<SwapChain>         p_swapChain;
         std::unique_ptr<RenderTargetView>  p_RTV;
+
         std::unique_ptr<RootSignature>     p_rootSignature;
+
+        std::unique_ptr<VertexShader>      p_vertexShader;
+        std::unique_ptr<PixelShader>       p_pixelShader;
+        std::unique_ptr<PipelineState>     p_pipelineState;
+    private:
+        std::unique_ptr<Triangle>          p_triangle;
     };
 }
 

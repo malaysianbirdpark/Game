@@ -11,6 +11,8 @@ class VertexBuffer : public Bindable {
 public:
     VertexBuffer(GraphicsContext& gfx, x_vector<Vertex> const& vertices);
 
+    uint32_t GetCount() const { return _count; }
+
     void Bind(GraphicsContext& gfx) noexcept override;
     [[nodiscard]] std::string GetUID() const noexcept override;
 private:
