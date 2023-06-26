@@ -57,7 +57,7 @@
     <ClInclude Include="src\Graphics\D3D12\Bindable\Bindable.h">
       <Filter>src\Graphics\D3D12\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Bindable\PipelineState.h">
+    <ClInclude Include="src\Graphics\D3D12\Bindable\PipelineState\PipelineState.h">
       <Filter>src\Graphics\D3D12\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D12\Bindable\ScissorRect.h">
@@ -90,7 +90,7 @@
     <ClInclude Include="src\Graphics\D3D12\GraphicsDevice.h">
       <Filter>src\Graphics\D3D12</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\PixelShader.h">
+    <ClInclude Include="src\Graphics\D3D12\Bindable\PipelineState\PixelShader.h">
       <Filter>src\Graphics\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D12\Resource\CPUBuffer.h">
@@ -105,7 +105,7 @@
     <ClInclude Include="src\Graphics\D3D12\Resource\Resource.h">
       <Filter>src\Graphics\D3D12\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Bindable\RootSignature.h">
+    <ClInclude Include="src\Graphics\D3D12\Bindable\RootSignature\RootSignature.h">
       <Filter>src\Graphics\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D12\SwapChain.h">
@@ -117,7 +117,7 @@
     <ClInclude Include="src\Graphics\D3D12\TEMP\Vertex.h">
       <Filter>src\Graphics\D3D12\TEMP</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\VertexShader.h">
+    <ClInclude Include="src\Graphics\D3D12\Bindable\PipelineState\VertexShader.h">
       <Filter>src\Graphics\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\GraphicsContext.h">
@@ -159,6 +159,8 @@
     <ClInclude Include="src\pch.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Graphics\D3D12\Descriptor\ConstantBufferView.h" />
+    <ClInclude Include="src\Graphics\D3D12\Bindable\RootSignature\RSConstants.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -167,7 +169,7 @@
     <ClCompile Include="src\Core\Log.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Bindable\PipelineState.cpp">
+    <ClCompile Include="src\Graphics\D3D12\Bindable\PipelineState\PipelineState.cpp">
       <Filter>src\Graphics\D3D12\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D12\Bindable\ScissorRect.cpp">
@@ -200,7 +202,7 @@
     <ClCompile Include="src\Graphics\D3D12\GraphicsDevice.cpp">
       <Filter>src\Graphics\D3D12</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\PixelShader.cpp">
+    <ClCompile Include="src\Graphics\D3D12\Bindable\PipelineState\PixelShader.cpp">
       <Filter>src\Graphics\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D12\Resource\CPUBuffer.cpp">
@@ -215,7 +217,7 @@
     <ClCompile Include="src\Graphics\D3D12\Resource\Resource.cpp">
       <Filter>src\Graphics\D3D12\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Bindable\RootSignature.cpp">
+    <ClCompile Include="src\Graphics\D3D12\Bindable\RootSignature\RootSignature.cpp">
       <Filter>src\Graphics\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D12\SwapChain.cpp">
@@ -227,7 +229,7 @@
     <ClCompile Include="src\Graphics\D3D12\TEMP\Vertex.cpp">
       <Filter>src\Graphics\D3D12\TEMP</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\VertexShader.cpp">
+    <ClCompile Include="src\Graphics\D3D12\Bindable\PipelineState\VertexShader.cpp">
       <Filter>src\Graphics\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\GraphicsContext.cpp">
@@ -260,6 +262,8 @@
     <ClCompile Include="src\pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Graphics\D3D12\Descriptor\ConstantBufferView.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\Bindable\RootSignature\RSConstants.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Graphics\HLSL\basicPS.hlsl">

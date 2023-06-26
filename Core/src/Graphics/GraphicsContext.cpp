@@ -9,12 +9,13 @@
 #include "Graphics/D3D12/Descriptor/RenderTargetView.h"
 #include "Graphics/D3D12/Bindable/Viewport.h"
 #include "Graphics/D3D12/Bindable/ScissorRect.h"
-#include "Graphics/D3D12/Bindable/RootSignature.h"
+#include "Graphics/D3D12/Bindable/RootSignature/RootSignature.h"
+#include "Graphics/D3D12/Bindable/RootSignature/RSConstants.h"
 
 #include "Graphics/D3D12/Bindable/VertexBuffer.h"
-#include "Graphics/D3D12/VertexShader.h"
-#include "Graphics/D3D12/PixelShader.h"
-#include "Graphics/D3D12/Bindable/PipelineState.h"
+#include "Graphics/D3D12/Bindable/PipelineState/VertexShader.h"
+#include "Graphics/D3D12/Bindable/PipelineState/PixelShader.h"
+#include "Graphics/D3D12/Bindable/PipelineState/PipelineState.h"
 
 #include "Graphics/D3D12/Drawable/Triangle.h"
 
@@ -29,7 +30,9 @@ Engine::Graphics::GraphicsContext::GraphicsContext(int width, int height, HWND n
     p_RTV = MakeUnique<RenderTargetView>(*this, p_swapChain->GetNumOfBuffers());
     p_vp = MakeUnique<Viewport>(width, height);
     p_rect = MakeUnique<ScissorRect>(0, 0, width, height);
-    p_rootSignature = MakeUnique<RootSignature>(*this);
+
+    auto rotate {DirectX::XMMatrixRotationZ(45.0f)};
+    p_rootSignature = MakeUnique<RSConstants<DirectX::XMMATRIX>>(*this, rotate, 0u, 1u);
 
     p_vertexShader = MakeUnique<VertexShader>(L"./ShaderLib/basicVS.cso");
     p_pixelShader = MakeUnique<PixelShader>(L"./ShaderLib/basicPS.cso");
@@ -39,8 +42,6 @@ Engine::Graphics::GraphicsContext::GraphicsContext(int width, int height, HWND n
 }
 
 Engine::Graphics::GraphicsContext::~GraphicsContext() {
-    p_commander->Close();
-    p_commander->Reset();
 }
 
 std::unique_ptr<Engine::Graphics::GraphicsDevice>& Engine::Graphics::GraphicsContext::GetDeviceImpl() {
@@ -82,11 +83,12 @@ void Engine::Graphics::GraphicsContext::BeginRecord() {
 
     ClearScreen();
     
+    // 3. Bind the PipelineStateObject
+    p_pipelineState->Bind(*this);
+
     // 2. Bind the RootSignature
     p_rootSignature->Bind(*this);
 
-    // 3. Bind the PipelineStateObject
-    p_pipelineState->Bind(*this);
 
     // 4. Bind Vp, scissor, RenderTarget, Vertex, topology, root constants
     p_vp->Bind(*this);
@@ -123,7 +125,6 @@ void Engine::Graphics::GraphicsContext::ClearScreen() {
     // TODO: Job System
     static float color[] {0.24f, 0.12f, 0.64f, 1.0f};
     auto const back_buffer_view {p_RTV->GetHandle(p_swapChain->GetCurrentBufferIndex())};
-    p_commander->GetCmdList().OMSetRenderTargets(1u, &back_buffer_view, FALSE, nullptr);
     p_commander->GetCmdList().OMSetRenderTargets(1u, &back_buffer_view, FALSE, nullptr);
     p_commander->GetCmdList().ClearRenderTargetView(back_buffer_view, color, 0u, nullptr);
 }

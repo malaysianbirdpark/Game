@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Bindable.h"
+#include "../Bindable.h"
 
 namespace Engine::Graphics {
 class PipelineState : public Bindable {
