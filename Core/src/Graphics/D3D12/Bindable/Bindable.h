@@ -9,8 +9,8 @@ namespace Engine::Graphics {
         virtual ~Bindable() = default;
 
         // deleted
-        Bindable(Bindable const&) = delete;
-        Bindable& operator=(Bindable const&) = delete;
+        //Bindable(Bindable const&) = delete;
+        //Bindable& operator=(Bindable const&) = delete;
 
         virtual void Bind(GraphicsContext& gfx) noexcept = 0;
 

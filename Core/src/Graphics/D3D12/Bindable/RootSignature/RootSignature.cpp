@@ -1,26 +1,26 @@
 #include "pch.h"
 #include "RootSignature.h"
 
-#include "Graphics/GraphicsContext.h"
 #include "Graphics/D3D12/GraphicsDevice.h"
 #include "Graphics/D3D12/Commander.h"
 
-Engine::Graphics::RootSignature::RootSignature(GraphicsContext& gfx)
-    : _slot{0u}, _num{0u}
-{
-    D3D12_ROOT_SIGNATURE_DESC desc {
-        CD3DX12_ROOT_SIGNATURE_DESC(D3D12_DEFAULT)
-    };
-    desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+void Engine::Graphics::RootSignature::Cook(GraphicsContext& gfx) {
+    auto const desc {GenerateDesc()};
 
     Microsoft::WRL::ComPtr<ID3DBlob> blob_signature;
     Microsoft::WRL::ComPtr<ID3DBlob> blob_error;
-    D3D12SerializeRootSignature(
+    if (FAILED(D3D12SerializeRootSignature(
         &desc,
-        D3D_ROOT_SIGNATURE_VERSION_1,
+        D3D_ROOT_SIGNATURE_VERSION_1_0,
         blob_signature.ReleaseAndGetAddressOf(),
         blob_error.ReleaseAndGetAddressOf()
-    );
+    ))) 
+    {
+        if (blob_error) {
+            GRAPHICS_ERROR(static_cast<char const*>(blob_error->GetBufferPointer()));
+            CRASH();
+        }
+    }
     DEVICE().CreateRootSignature(
         0,
         blob_signature->GetBufferPointer(),
@@ -29,31 +29,22 @@ Engine::Graphics::RootSignature::RootSignature(GraphicsContext& gfx)
     );
 }
 
-Engine::Graphics::RootSignature::RootSignature(GraphicsContext& gfx, std::function<D3D12_ROOT_SIGNATURE_DESC()> const& get_desc, UINT slot, UINT num)
-    : _slot{slot}, _num{num}
-{
-    auto const desc {get_desc()};
-
-    Microsoft::WRL::ComPtr<ID3DBlob> blob_signature;
-    Microsoft::WRL::ComPtr<ID3DBlob> blob_error;
-    ThrowIfFailed(D3D12SerializeRootSignature(
-        &desc,
-        D3D_ROOT_SIGNATURE_VERSION_1,
-        blob_signature.ReleaseAndGetAddressOf(),
-        blob_error.ReleaseAndGetAddressOf()
-    ));
-    ThrowIfFailed(DEVICE().CreateRootSignature(
-        0,
-        blob_signature->GetBufferPointer(),
-        blob_signature->GetBufferSize(),
-        IID_PPV_ARGS(_signature.ReleaseAndGetAddressOf())
-    ));
-}
-
 void Engine::Graphics::RootSignature::Bind(GraphicsContext& gfx) noexcept {
     CMD_LIST().SetGraphicsRootSignature(_signature.Get());
+    for (auto& e : _elems)
+        e->Bind(gfx);
 }
 
 std::string Engine::Graphics::RootSignature::GetUID() const noexcept {
     return Bindable::GetUID();
+}
+
+CD3DX12_ROOT_SIGNATURE_DESC Engine::Graphics::RootSignature::GenerateDesc() {
+    return CD3DX12_ROOT_SIGNATURE_DESC(
+        _params.size(),
+        _params.data(),
+        0,
+        nullptr,
+        _flag
+    );
 }

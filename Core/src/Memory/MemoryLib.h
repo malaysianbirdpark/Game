@@ -4,21 +4,39 @@
 
 namespace Engine {
 // TODO: TEMP
+template <typename T, typename... Args>
+T* x_new(Args&&... args) {
+    T* mem {static_cast<T*>(BaseAllocator::Allocate(sizeof(T)))};
+    std::construct_at<T>(mem, std::forward<Args>(args)...);
+    return mem;
+}
+
+// TODO: TEMP
+template <typename T>
+void x_delete(T* obj) {
+    obj->~Type();
+    BaseAllocator::Release(obj);
+}
+
+// TODO: TEMP
 template <typename T>
 std::unique_ptr<T> MakeUnique(T&& t) {
     return std::make_unique<T>(std::forward<T>(t));
 }
 
+// TODO: TEMP
 template <typename T, typename... Args>
 std::unique_ptr<T> MakeUnique(Args&&... args) {
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
+// TODO: TEMP
 template <typename T>
 std::shared_ptr<T> MakeShared(T&& t) {
     return std::make_shared<T>(std::forward<T>(t));
 }
 
+// TODO: TEMP
 template <typename T, typename... Args>
 std::shared_ptr<T> MakeShared(Args&&... args) {
     return std::make_shared<T>(std::forward<Args>(args)...);

@@ -22,8 +22,6 @@ public:
     }
 
     void deallocate(T* ptr, size_t count) {
-
         BaseAllocator::Release(ptr); 
     }
 };
-

@@ -10,7 +10,6 @@
 #include "Graphics/D3D12/Bindable/Viewport.h"
 #include "Graphics/D3D12/Bindable/ScissorRect.h"
 #include "Graphics/D3D12/Bindable/RootSignature/RootSignature.h"
-#include "Graphics/D3D12/Bindable/RootSignature/RSConstants.h"
 
 #include "Graphics/D3D12/Bindable/VertexBuffer.h"
 #include "Graphics/D3D12/Bindable/PipelineState/VertexShader.h"
@@ -31,8 +30,10 @@ Engine::Graphics::GraphicsContext::GraphicsContext(int width, int height, HWND n
     p_vp = MakeUnique<Viewport>(width, height);
     p_rect = MakeUnique<ScissorRect>(0, 0, width, height);
 
-    auto rotate {DirectX::XMMatrixRotationZ(45.0f)};
-    p_rootSignature = MakeUnique<RSConstants<DirectX::XMMATRIX>>(*this, rotate, 0u, 1u);
+    auto const rotate {DirectX::XMMatrixRotationZ(10.0f)};
+    p_rootSignature = MakeUnique<RootSignature>();
+    p_rootSignature->AddConstant(rotate, D3D12_SHADER_VISIBILITY_VERTEX);
+    p_rootSignature->Cook(*this);
 
     p_vertexShader = MakeUnique<VertexShader>(L"./ShaderLib/basicVS.cso");
     p_pixelShader = MakeUnique<PixelShader>(L"./ShaderLib/basicPS.cso");
@@ -83,12 +84,11 @@ void Engine::Graphics::GraphicsContext::BeginRecord() {
 
     ClearScreen();
     
-    // 3. Bind the PipelineStateObject
-    p_pipelineState->Bind(*this);
-
     // 2. Bind the RootSignature
     p_rootSignature->Bind(*this);
 
+    // 3. Bind the PipelineStateObject
+    p_pipelineState->Bind(*this);
 
     // 4. Bind Vp, scissor, RenderTarget, Vertex, topology, root constants
     p_vp->Bind(*this);
