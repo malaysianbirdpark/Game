@@ -51,6 +51,9 @@ namespace Engine::Graphics {
     private:
         WindowData _windowData;
     private:
+        using Microsoft::WRL::ComPtr;
+        ComPtr<ID3D12Device> _device;
+
         std::unique_ptr<GraphicsDevice>    p_device;
         std::unique_ptr<CommandQueue>      p_cmdQueue;
         std::unique_ptr<Commander>         p_commander;

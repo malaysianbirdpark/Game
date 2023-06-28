@@ -90,9 +90,6 @@
     <ClInclude Include="src\Graphics\D3D12\Bindable\Viewport.h">
       <Filter>src\Graphics\D3D12\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\CommandQueue.h">
-      <Filter>src\Graphics\D3D12</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\D3D12\Commander.h">
       <Filter>src\Graphics\D3D12</Filter>
     </ClInclude>
@@ -109,9 +106,6 @@
       <Filter>src\Graphics\D3D12\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D12\Fence.h">
-      <Filter>src\Graphics\D3D12</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\GraphicsDevice.h">
       <Filter>src\Graphics\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D12\Resource\CPUBuffer.h">
@@ -171,6 +165,9 @@
     <ClInclude Include="src\pch.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Graphics\D3D12\Resource\Buffer.h" />
+    <ClInclude Include="src\Graphics\D3D12\D3D12Core.h" />
+    <ClInclude Include="src\Graphics\D3D12\D3D12Resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -203,9 +200,6 @@
     <ClCompile Include="src\Graphics\D3D12\Bindable\Viewport.cpp">
       <Filter>src\Graphics\D3D12\Bindable</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\CommandQueue.cpp">
-      <Filter>src\Graphics\D3D12</Filter>
-    </ClCompile>
     <ClCompile Include="src\Graphics\D3D12\Commander.cpp">
       <Filter>src\Graphics\D3D12</Filter>
     </ClCompile>
@@ -222,9 +216,6 @@
       <Filter>src\Graphics\D3D12\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D12\Fence.cpp">
-      <Filter>src\Graphics\D3D12</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\GraphicsDevice.cpp">
       <Filter>src\Graphics\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D12\Resource\CPUBuffer.cpp">
@@ -275,6 +266,9 @@
     <ClCompile Include="src\pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Graphics\D3D12\Resource\Buffer.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\D3D12Core.cpp" />
+    <ClCompile Include="src\Graphics\D3D12\D3D12Resource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Graphics\HLSL\basicPS.hlsl">
