@@ -6,7 +6,7 @@ namespace Engine::Graphics {
     class Commander {
     public:
         Commander(GraphicsContext& gfx, D3D12_COMMAND_LIST_TYPE type);
-        ~Commander() = default;
+        ~Commander();
 
         void Reset();
         void Close();

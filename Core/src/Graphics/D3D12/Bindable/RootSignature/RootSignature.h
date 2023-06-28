@@ -2,32 +2,48 @@
 
 #include "../Bindable.h"
 #include "Graphics/GraphicsContext.h"
+#include "Graphics/D3D12/Commander.h"
 
 namespace Engine::Graphics {
 class RootSignatureElement : public Bindable {
 public:
-    RootSignatureElement() = default;
+    RootSignatureElement(UINT slot) : _slot{slot} {};
     virtual ~RootSignatureElement() override = default;
     virtual void Bind(GraphicsContext& gfx) noexcept override {}
     [[nodiscard]] std::string GetUID() const noexcept override { return {}; }
+protected:
+    UINT _slot;
 };
 
 template <typename T>
 class RSConstant : public RootSignatureElement {
 public:
-    RSConstant(T& data, UINT slot) : _data{data}, _slot{slot} {}
+    RSConstant(T& data, UINT slot) : RootSignatureElement{slot}, _data{data} {}
     virtual ~RSConstant() override = default;
 
     virtual void Bind(GraphicsContext& gfx) noexcept override {
-        std::cout << "Bind!!!" << std::endl;
-        auto const rotate {DirectX::XMMatrixRotationZ(10.0f)};
-        CMD_LIST().SetGraphicsRoot32BitConstants(_slot, sizeof(rotate) / sizeof(DWORD), &rotate, 0);
+        CMD_LIST().SetGraphicsRoot32BitConstants(_slot, sizeof(_data) / sizeof(DWORD), &_data, 0);
     }
 
     [[nodiscard]] std::string GetUID() const noexcept override { return {}; };
 private:
     T _data;
-    UINT _slot;
+};
+
+//class RSConstantBuffer : public RootSignatureElement {
+//public:
+//    RSConstantBuffer(UINT slot) : RootSignatureElement{slot} {}
+//    virtual ~RSConstantBuffer() override = default;
+//    void Bind(GraphicsContext& gfx) noexcept override {
+//        //CMD_LIST().SetGraphicsRootConstantBufferView(_slot, nullptr);
+//    }
+//    [[nodiscard]] std::string GetUID() const noexcept override { return {}; };
+//private:
+//    //std::unique_ptr<class CPUBuffer> _buffer;
+//};
+
+class RSDescTable : public RootSignatureElement {
+    
 };
 
 class RootSignature : public Bindable {
@@ -37,6 +53,7 @@ public:
 
     template <typename T>
     RootSignature&    AddConstant(T& data, D3D12_SHADER_VISIBILITY visibility);
+    RootSignature&    AddConstantBuffer();
     void              Cook(GraphicsContext& gfx);
     void              SetFlag(D3D12_ROOT_SIGNATURE_FLAGS flag) { _flag |= flag; }
     void              ClearFlag(D3D12_ROOT_SIGNATURE_FLAGS flag) { _flag &= ~flag; }
@@ -46,7 +63,7 @@ public:
     virtual void Bind(GraphicsContext& gfx) noexcept override;
     [[nodiscard]] virtual std::string GetUID() const noexcept override;
 private:
-    CD3DX12_ROOT_SIGNATURE_DESC GenerateDesc();
+    CD3DX12_ROOT_SIGNATURE_DESC GenerateDesc() const;
 protected:
     UINT                                             _slot {};
     x_vector<std::unique_ptr<RootSignatureElement>>  _elems;

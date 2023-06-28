@@ -8,6 +8,8 @@ namespace Engine::Graphics {
 #if DEBUG
         ThrowIfFailed(::D3D12GetDebugInterface(IID_PPV_ARGS(_debug.ReleaseAndGetAddressOf())));
         _debug->EnableDebugLayer();
+        _debug->SetEnableGPUBasedValidation(true);
+        _debug->SetEnableSynchronizedCommandQueueValidation(true);
 #endif
 
         ThrowIfFailed(::CreateDXGIFactory(IID_PPV_ARGS(_dxgi.ReleaseAndGetAddressOf())));

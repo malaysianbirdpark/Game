@@ -23,6 +23,10 @@ Engine::Graphics::Commander::Commander(GraphicsContext& gfx, D3D12_COMMAND_LIST_
     p_list->Close();
 }
 
+Engine::Graphics::Commander::~Commander() {
+    Reset();
+}
+
 void Engine::Graphics::Commander::Reset() {
     p_allocator->Reset();
     p_list->Reset(p_allocator.Get(), nullptr);

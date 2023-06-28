@@ -10,9 +10,9 @@ public:
 
     D3D12_CPU_DESCRIPTOR_HANDLE GetHandle(size_t idx) const { return _handle[idx]; }
 protected:
-    D3D12_DESCRIPTOR_HEAP_TYPE                   _type {};
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _descHeap {};
-    size_t                                       _heapSize {};
-    x_vector<D3D12_CPU_DESCRIPTOR_HANDLE>        _handle   {};
+    D3D12_DESCRIPTOR_HEAP_TYPE                    _type {};
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>  _descHeap {};
+    size_t                                        _heapSize {};
+    x_vector<D3D12_CPU_DESCRIPTOR_HANDLE>         _handle   {};
 };
 };

@@ -33,6 +33,7 @@ Engine::Graphics::GraphicsContext::GraphicsContext(int width, int height, HWND n
     auto const rotate {DirectX::XMMatrixRotationZ(10.0f)};
     p_rootSignature = MakeUnique<RootSignature>();
     p_rootSignature->AddConstant(rotate, D3D12_SHADER_VISIBILITY_VERTEX);
+    p_rootSignature->SetFlag(D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS);
     p_rootSignature->Cook(*this);
 
     p_vertexShader = MakeUnique<VertexShader>(L"./ShaderLib/basicVS.cso");
@@ -43,6 +44,7 @@ Engine::Graphics::GraphicsContext::GraphicsContext(int width, int height, HWND n
 }
 
 Engine::Graphics::GraphicsContext::~GraphicsContext() {
+    p_cmdQueue.release();
 }
 
 std::unique_ptr<Engine::Graphics::GraphicsDevice>& Engine::Graphics::GraphicsContext::GetDeviceImpl() {

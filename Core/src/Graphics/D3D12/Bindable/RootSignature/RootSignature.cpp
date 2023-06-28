@@ -2,7 +2,15 @@
 #include "RootSignature.h"
 
 #include "Graphics/D3D12/GraphicsDevice.h"
-#include "Graphics/D3D12/Commander.h"
+
+Engine::Graphics::RootSignature& Engine::Graphics::RootSignature::AddConstantBuffer() {
+    _params.push_back(std::move(CD3DX12_ROOT_PARAMETER{}));
+    _params.back().InitAsConstantBufferView(_slot);
+    //_elems.push_back(std::move(MakeUnique<RSConstantBuffer>()));
+    ++_slot;
+
+    return *this;
+}
 
 void Engine::Graphics::RootSignature::Cook(GraphicsContext& gfx) {
     auto const desc {GenerateDesc()};
@@ -31,7 +39,7 @@ void Engine::Graphics::RootSignature::Cook(GraphicsContext& gfx) {
 
 void Engine::Graphics::RootSignature::Bind(GraphicsContext& gfx) noexcept {
     CMD_LIST().SetGraphicsRootSignature(_signature.Get());
-    for (auto& e : _elems)
+    for (auto const& e : _elems)
         e->Bind(gfx);
 }
 
@@ -39,7 +47,7 @@ std::string Engine::Graphics::RootSignature::GetUID() const noexcept {
     return Bindable::GetUID();
 }
 
-CD3DX12_ROOT_SIGNATURE_DESC Engine::Graphics::RootSignature::GenerateDesc() {
+CD3DX12_ROOT_SIGNATURE_DESC Engine::Graphics::RootSignature::GenerateDesc() const {
     return CD3DX12_ROOT_SIGNATURE_DESC(
         _params.size(),
         _params.data(),
