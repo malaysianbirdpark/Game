@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.props" Condition="Exists('..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -110,32 +111,11 @@
   <ItemGroup>
     <ClInclude Include="src\Graphics\D3D12\D3D12Resource.h" />
     <ClInclude Include="src\Graphics\D3D12\D3D12Core.h" />
-    <ClInclude Include="src\Graphics\D3D12\Resource\Buffer.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Core.h" />
     <ClInclude Include="src\Core\Log.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\EntryPoint.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\Bindable.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\PipelineState\PipelineState.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\PipelineState\PixelShader.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\PipelineState\VertexShader.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\RootSignature\RootSignature.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\ScissorRect.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\Topology.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\VertexBuffer.h" />
-    <ClInclude Include="src\Graphics\D3D12\Bindable\Viewport.h" />
-    <ClInclude Include="src\Graphics\D3D12\Commander.h" />
-    <ClInclude Include="src\Graphics\D3D12\Descriptor\ConstantBufferView.h" />
-    <ClInclude Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.h" />
-    <ClInclude Include="src\Graphics\D3D12\Descriptor\RenderTargetView.h" />
-    <ClInclude Include="src\Graphics\D3D12\Drawable\Triangle.h" />
-    <ClInclude Include="src\Graphics\D3D12\Fence.h" />
-    <ClInclude Include="src\Graphics\D3D12\Resource\CPUBuffer.h" />
-    <ClInclude Include="src\Graphics\D3D12\Resource\GPUBuffer.h" />
-    <ClInclude Include="src\Graphics\D3D12\Resource\RenderTarget.h" />
-    <ClInclude Include="src\Graphics\D3D12\Resource\Resource.h" />
-    <ClInclude Include="src\Graphics\D3D12\SwapChain.h" />
     <ClInclude Include="src\Graphics\D3D12\TEMP\Vertex.h" />
     <ClInclude Include="src\Graphics\GraphicsContext.h" />
     <ClInclude Include="src\Memory\MemoryAllocator.h" />
@@ -154,28 +134,8 @@
   <ItemGroup>
     <ClCompile Include="src\Graphics\D3D12\D3D12Resource.cpp" />
     <ClCompile Include="src\Graphics\D3D12\D3D12Core.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Resource\Buffer.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Bindable\PipelineState\PipelineState.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Bindable\PipelineState\PixelShader.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Bindable\PipelineState\VertexShader.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Bindable\RootSignature\RootSignature.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Bindable\ScissorRect.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Bindable\Topology.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Bindable\VertexBuffer.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Bindable\Viewport.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Commander.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Descriptor\ConstantBufferView.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Descriptor\RenderTargetView.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Drawable\Triangle.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Fence.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Resource\CPUBuffer.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Resource\GPUBuffer.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Resource\RenderTarget.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\Resource\Resource.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\SwapChain.cpp" />
     <ClCompile Include="src\Graphics\D3D12\TEMP\Vertex.cpp" />
     <ClCompile Include="src\Graphics\GraphicsContext.cpp" />
     <ClCompile Include="src\Memory\MemoryAllocator.cpp" />
@@ -209,12 +169,13 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\Microsoft.Direct3D.D3D12.1.610.3\build\native\Microsoft.Direct3D.D3D12.targets" Condition="Exists('..\packages\Microsoft.Direct3D.D3D12.1.610.3\build\native\Microsoft.Direct3D.D3D12.targets')" />
+    <Import Project="..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.targets" Condition="Exists('..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Direct3D.D3D12.1.610.3\build\native\Microsoft.Direct3D.D3D12.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Direct3D.D3D12.1.610.3\build\native\Microsoft.Direct3D.D3D12.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.targets'))" />
   </Target>
 </Project>

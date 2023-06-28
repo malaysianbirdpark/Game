@@ -3,7 +3,6 @@
 
 #include "Graphics/GraphicsContext.h"
 #include "Graphics/D3D12/Bindable/VertexBuffer.h"
-#include "Graphics/D3D12/Commander.h"
 #include "Graphics/D3D12/TEMP/Vertex.h"
 
 
@@ -22,5 +21,5 @@ Engine::Graphics::Triangle::Triangle(GraphicsContext& gfx) {
 
 void Engine::Graphics::Triangle::Draw(GraphicsContext& gfx) {
 	_vertexBuffer->Bind(gfx);
-    CMD_LIST().DrawInstanced(_vertexBuffer->GetCount(), 1u, 0u, 0u);
+    //CMD_LIST().DrawInstanced(_vertexBuffer->GetCount(), 1u, 0u, 0u);
 }

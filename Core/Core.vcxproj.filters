@@ -63,66 +63,6 @@
     <ClInclude Include="src\EntryPoint.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Bindable\Bindable.h">
-      <Filter>src\Graphics\D3D12\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Bindable\PipelineState\PipelineState.h">
-      <Filter>src\Graphics\D3D12\Bindable\PipelineState</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Bindable\PipelineState\PixelShader.h">
-      <Filter>src\Graphics\D3D12\Bindable\PipelineState</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Bindable\PipelineState\VertexShader.h">
-      <Filter>src\Graphics\D3D12\Bindable\PipelineState</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Bindable\RootSignature\RootSignature.h">
-      <Filter>src\Graphics\D3D12\Bindable\RootSignature</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Bindable\ScissorRect.h">
-      <Filter>src\Graphics\D3D12\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Bindable\Topology.h">
-      <Filter>src\Graphics\D3D12\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Bindable\VertexBuffer.h">
-      <Filter>src\Graphics\D3D12\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Bindable\Viewport.h">
-      <Filter>src\Graphics\D3D12\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Commander.h">
-      <Filter>src\Graphics\D3D12</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Descriptor\ConstantBufferView.h">
-      <Filter>src\Graphics\D3D12\Descriptor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.h">
-      <Filter>src\Graphics\D3D12\Descriptor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Descriptor\RenderTargetView.h">
-      <Filter>src\Graphics\D3D12\Descriptor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Drawable\Triangle.h">
-      <Filter>src\Graphics\D3D12\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Fence.h">
-      <Filter>src\Graphics\D3D12</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Resource\CPUBuffer.h">
-      <Filter>src\Graphics\D3D12\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Resource\GPUBuffer.h">
-      <Filter>src\Graphics\D3D12\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Resource\RenderTarget.h">
-      <Filter>src\Graphics\D3D12\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Resource\Resource.h">
-      <Filter>src\Graphics\D3D12\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\SwapChain.h">
-      <Filter>src\Graphics\D3D12</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\D3D12\TEMP\Vertex.h">
       <Filter>src\Graphics\D3D12\TEMP</Filter>
     </ClInclude>
@@ -165,7 +105,6 @@
     <ClInclude Include="src\pch.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D12\Resource\Buffer.h" />
     <ClInclude Include="src\Graphics\D3D12\D3D12Core.h" />
     <ClInclude Include="src\Graphics\D3D12\D3D12Resource.h" />
   </ItemGroup>
@@ -175,63 +114,6 @@
     </ClCompile>
     <ClCompile Include="src\Core\Log.cpp">
       <Filter>src\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Bindable\PipelineState\PipelineState.cpp">
-      <Filter>src\Graphics\D3D12\Bindable\PipelineState</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Bindable\PipelineState\PixelShader.cpp">
-      <Filter>src\Graphics\D3D12\Bindable\PipelineState</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Bindable\PipelineState\VertexShader.cpp">
-      <Filter>src\Graphics\D3D12\Bindable\PipelineState</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Bindable\RootSignature\RootSignature.cpp">
-      <Filter>src\Graphics\D3D12\Bindable\RootSignature</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Bindable\ScissorRect.cpp">
-      <Filter>src\Graphics\D3D12\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Bindable\Topology.cpp">
-      <Filter>src\Graphics\D3D12\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Bindable\VertexBuffer.cpp">
-      <Filter>src\Graphics\D3D12\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Bindable\Viewport.cpp">
-      <Filter>src\Graphics\D3D12\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Commander.cpp">
-      <Filter>src\Graphics\D3D12</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Descriptor\ConstantBufferView.cpp">
-      <Filter>src\Graphics\D3D12\Descriptor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Descriptor\DescriptorHeap.cpp">
-      <Filter>src\Graphics\D3D12\Descriptor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Descriptor\RenderTargetView.cpp">
-      <Filter>src\Graphics\D3D12\Descriptor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Drawable\Triangle.cpp">
-      <Filter>src\Graphics\D3D12\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Fence.cpp">
-      <Filter>src\Graphics\D3D12</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Resource\CPUBuffer.cpp">
-      <Filter>src\Graphics\D3D12\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Resource\GPUBuffer.cpp">
-      <Filter>src\Graphics\D3D12\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Resource\RenderTarget.cpp">
-      <Filter>src\Graphics\D3D12\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Resource\Resource.cpp">
-      <Filter>src\Graphics\D3D12\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\SwapChain.cpp">
-      <Filter>src\Graphics\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D12\TEMP\Vertex.cpp">
       <Filter>src\Graphics\D3D12\TEMP</Filter>
@@ -266,7 +148,6 @@
     <ClCompile Include="src\pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D12\Resource\Buffer.cpp" />
     <ClCompile Include="src\Graphics\D3D12\D3D12Core.cpp" />
     <ClCompile Include="src\Graphics\D3D12\D3D12Resource.cpp" />
   </ItemGroup>
