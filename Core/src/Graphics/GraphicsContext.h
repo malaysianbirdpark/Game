@@ -1,6 +1,7 @@
 #pragma once
 
 namespace Engine::Graphics {
+    class D3D11Core;
     class D3D12Core;
     
     class GraphicsContext {
@@ -10,6 +11,7 @@ namespace Engine::Graphics {
 
         void Render();
     private:
-        std::unique_ptr<D3D12Core> _graphicsCore;
+        std::unique_ptr<D3D11Core> _core11;
+        std::unique_ptr<D3D12Core> _core12;
     };
 }

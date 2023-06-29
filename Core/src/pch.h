@@ -30,6 +30,13 @@
 #include "Thread/ThreadMan.h"
 #include "Thread/DeadLockProfiler.h"
 
+struct WindowInfo {
+    int width;
+    int height;
+    HWND nativeWnd;
+    bool windowed;
+};
+
 #ifdef PLATFORM_WINDOWS
     // target Windows 10 or later
     #define _WIN32_WINNT 0x0A00
@@ -78,6 +85,9 @@
     #include <d3d12.h>
     #include <dxgi.h>
     #include <DirectxMath.h>
+
+    #include <d3d11.h>
+    #include <dxgiformat.h>
 #endif
 
 #endif //PCH_H

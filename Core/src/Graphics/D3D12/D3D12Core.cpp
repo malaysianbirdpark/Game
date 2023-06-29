@@ -29,10 +29,10 @@ Engine::Graphics::D3D12Core::D3D12Core(int width, int height, HWND native_wnd, b
         // SwapChain and BackBuffers
         {
             DXGI_SWAP_CHAIN_DESC sd {};
-            sd.BufferDesc.Width = static_cast<uint16_t>(_windowInfo.width); 
-            sd.BufferDesc.Height = static_cast<uint16_t>(_windowInfo.height); 
-            sd.BufferDesc.RefreshRate.Numerator = 60; 
-            sd.BufferDesc.RefreshRate.Denominator = 1; 
+            sd.BufferDesc.Width = 0;
+            sd.BufferDesc.Height = 0;
+            sd.BufferDesc.RefreshRate.Numerator = 0; 
+            sd.BufferDesc.RefreshRate.Denominator = 0; 
             sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; 
             sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
             sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;

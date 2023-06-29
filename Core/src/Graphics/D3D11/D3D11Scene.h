@@ -1,5 +1,5 @@
 #pragma once
-class GPUBuffer
+class D3D11Scene
 {
 };
 

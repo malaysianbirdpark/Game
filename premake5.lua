@@ -30,6 +30,7 @@ project "Core"
     }
 
     links {
+        "d3d11",
         "d3d12",
         "dxgi",
         "dxguid",

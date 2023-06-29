@@ -1,0 +1,28 @@
+#pragma once
+
+namespace Engine::Graphics {
+class D3D11Core {
+public:
+    D3D11Core(int width, int height, HWND native_wnd, bool windowed);
+    ~D3D11Core();
+
+    void Render();
+private:
+    void BeginFrame();
+    void EndFrame();
+private:
+    WindowInfo _windowInfo;
+private:
+    Microsoft::WRL::ComPtr<ID3D11Device>             _device;
+    Microsoft::WRL::ComPtr<ID3D11DeviceContext>      _context;
+
+    Microsoft::WRL::ComPtr<IDXGISwapChain>           _swapChain;
+    Microsoft::WRL::ComPtr<ID3D11Resource>           _backBuffers;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView>   _backBufferView;
+
+    Microsoft::WRL::ComPtr<ID3D11DepthStencilView>   _DSV;
+
+    D3D11_VIEWPORT                                   _viewPort {};
+};
+}
+

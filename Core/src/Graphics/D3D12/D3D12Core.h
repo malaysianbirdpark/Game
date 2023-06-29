@@ -1,13 +1,6 @@
 #pragma once
 
 namespace Engine::Graphics {
-    struct WindowInfo {
-        int width;
-        int height;
-        HWND nativeWnd;
-        bool windowed;
-    };
-
     class D3D12Core {
     public:
         D3D12Core(int width, int height, HWND native_wnd, bool windowed);
