@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.props" Condition="Exists('..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -79,8 +78,11 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d11.lib;d3d12.lib;dxgi.lib;dxguid.lib;D3DCompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;;dxgi.lib;dxguid.lib;D3DCompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -105,42 +107,37 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d11.lib;d3d12.lib;dxgi.lib;dxguid.lib;D3DCompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;;dxgi.lib;dxguid.lib;D3DCompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11ConstantBuffer.h" />
+    <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11RootSignatureCommon.h" />
+    <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11RootSignatureHolder.h" />
+    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateObject.h" />
+    <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11RootSignature.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Core.h" />
     <ClInclude Include="src\Core\Log.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\EntryPoint.h" />
-    <ClInclude Include="src\Graphics\D3D11\D3D11Camera.h" />
+    <ClInclude Include="src\Graphics\Camera.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11Core.h" />
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11Bindable.h" />
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\BindableCodex.h" />
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\BindableCommon.h" />
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11ConstantBuffer.h" />
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineState.h" />
+    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateCommon.h" />
+    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateHolder.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11Scene.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11IndexBuffer.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.h" />
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11Sampler.h" />
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11Texture.h" />
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11Topology.h" />
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11TransformCbuf.h" />
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11TransformCbufBoth.h" />
+    <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11Sampler.h" />
+    <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11Texture.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11VertexBuffer.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.h" />
-    <ClInclude Include="src\Graphics\D3D12\D3D12Buffer.h" />
-    <ClInclude Include="src\Graphics\D3D12\D3D12Camera.h" />
-    <ClInclude Include="src\Graphics\D3D12\D3D12Core.h" />
-    <ClInclude Include="src\Graphics\D3D12\D3D12Descriptor.h" />
-    <ClInclude Include="src\Graphics\D3D12\D3D12PipelineState.h" />
-    <ClInclude Include="src\Graphics\D3D12\D3D12Resource.h" />
-    <ClInclude Include="src\Graphics\D3D12\D3D12RootSignature.h" />
-    <ClInclude Include="src\Graphics\D3D12\D3D12Scene.h" />
     <ClInclude Include="src\Graphics\GraphicsContext.h" />
+    <ClInclude Include="src\Graphics\Vertex.h" />
     <ClInclude Include="src\Memory\MemoryAllocator.h" />
     <ClInclude Include="src\Memory\MemoryLib.h" />
     <ClInclude Include="src\Memory\MemoryPool.h" />
@@ -153,34 +150,29 @@
     <ClInclude Include="src\Thread\LockQueue.h" />
     <ClInclude Include="src\Thread\ThreadMan.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\Graphics\D3D11\TEMP\Triangle.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11ConstantBuffer.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11RootSignatureHolder.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateObject.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11RootSignature.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\D3D11Camera.cpp" />
+    <ClCompile Include="src\Graphics\Camera.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11Core.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PipelineState.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateHolder.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11Scene.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11IndexBuffer.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11Sampler.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11Texture.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11Topology.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11TransformCbuf.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11TransformCbufBoth.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11Sampler.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11Texture.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11VertexBuffer.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\D3D12Buffer.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\D3D12Camera.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\D3D12Core.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\D3D12Descriptor.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\D3D12PipelineState.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\D3D12Resource.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\D3D12RootSignature.cpp" />
-    <ClCompile Include="src\Graphics\D3D12\D3D12Scene.cpp" />
     <ClCompile Include="src\Graphics\GraphicsContext.cpp" />
     <ClCompile Include="src\Memory\MemoryAllocator.cpp" />
+    <ClCompile Include="src\Memory\MemoryLib.cpp" />
     <ClCompile Include="src\Memory\MemoryPool.cpp" />
     <ClCompile Include="src\Platform\Platform.cpp" />
     <ClCompile Include="src\Thread\DeadLockProfiler.cpp" />
@@ -191,6 +183,8 @@
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Graphics\Vertex.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\TEMP\Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Graphics\HLSL\basicPS.hlsl">
@@ -198,26 +192,18 @@
       <ShaderModel>5.1</ShaderModel>
       <EntryPointName>main</EntryPointName>
       <ObjectFileOutput>../Game/ShaderLib/basicPS.cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="src\Graphics\HLSL\basicVS.hlsl">
       <ShaderType>Vertex</ShaderType>
       <ShaderModel>5.1</ShaderModel>
       <EntryPointName>main</EntryPointName>
       <ObjectFileOutput>../Game/ShaderLib/basicVS.cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.targets" Condition="Exists('..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.targets')" />
-  </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Direct3D.D3D12.1.610.4\build\native\Microsoft.Direct3D.D3D12.targets'))" />
-  </Target>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

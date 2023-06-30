@@ -1,51 +1,37 @@
-#include "gwpch.h"
+#include "pch.h"
 #include "D3D11IndexBuffer.h"
-#include "BindableCodex.h"
 
-#include "Renderer/RenderDevice.h"
-
-namespace Glowing::Bind {
-    IndexBuffer::IndexBuffer(std::vector<unsigned short> const& indices)
-        : IndexBuffer{"?", indices}
-    {
-    }
-
-    IndexBuffer::IndexBuffer(std::string const& tag, std::vector<unsigned short> const& indices)
-        : tag{std::move(tag)}, m_Count{static_cast<UINT>(indices.size())}
+namespace Engine::Graphics {
+    D3D11IndexBuffer::D3D11IndexBuffer(ID3D11Device& device, x_vector<unsigned short> const& indices, char const* tag)
+        : _tag{tag}, _count{static_cast<UINT>(indices.size())}
     {
         D3D11_BUFFER_DESC bd {};
         bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
         bd.Usage = D3D11_USAGE_DEFAULT;
         bd.CPUAccessFlags = 0u;
         bd.MiscFlags = 0u;
-        bd.ByteWidth = static_cast<UINT>(m_Count * sizeof(unsigned short));
+        bd.ByteWidth = static_cast<UINT>(_count * sizeof(unsigned short));
         bd.StructureByteStride = sizeof(unsigned short);
 
         D3D11_SUBRESOURCE_DATA sd {};
         sd.pSysMem = indices.data();
 
-        GET_DEVICE->CreateBuffer(&bd, &sd, m_pIndexBuffer.ReleaseAndGetAddressOf());
+        device.CreateBuffer(&bd, &sd, _indexBuffer.ReleaseAndGetAddressOf());
     }
 
-    std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(std::string const& tag, std::vector<unsigned short> const& indices) {
-        GW_CORE_ASSERT(tag != "?", "you screwed up with tag");
-        return Codex::Resolve<IndexBuffer>(tag, indices);
+    void D3D11IndexBuffer::Bind(ID3D11DeviceContext& context) noexcept {
+        context.IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
     }
 
-    std::string IndexBuffer::GetUID() const noexcept {
-        return GenerateUID(tag);
+    UINT D3D11IndexBuffer::GetCount() const noexcept {
+        return _count;
     }
 
-    std::string IndexBuffer::GenerateUID_(std::string const& tag) {
-        using namespace std::string_literals;
-        return typeid(IndexBuffer).name() + "#"s + tag;
+    x_string D3D11IndexBuffer::GenUID(char const* tag) {
+        return x_string{typeid(D3D11IndexBuffer).name()} + "#" + tag;
     }
 
-    void IndexBuffer::Bind() noexcept {
-        GET_CONTEXT->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
-    }
-
-    UINT IndexBuffer::GetCount() const noexcept {
-        return m_Count;
+    x_string D3D11IndexBuffer::GetUID() const {
+        return GenUID(_tag.c_str());
     }
 }

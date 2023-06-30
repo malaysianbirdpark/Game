@@ -1,18 +1,21 @@
-#include "gwpch.h"
+#include "pch.h"
 #include "D3D11VertexShader.h"
-#include "BindableCodex.h"
-#include "../../Utility/UTFConv.h"
-
-#include "Renderer/RenderDevice.h"
 
 #include <d3dcompiler.h>
 
-namespace Glowing::Bind {
-    VertexShader::VertexShader(std::string&& path)
-        : path{std::forward<std::string>(path)}
+namespace Engine::Graphics {
+    D3D11VertexShader::D3D11VertexShader(ID3D11Device& device, char const* path)
+        : _path{path}
     {
-        D3DReadFileToBlob(Glowing::Util::UTFConv::ConvertStoW(this->path).data(), m_pByteCode.ReleaseAndGetAddressOf());
-        GET_DEVICE->CreateVertexShader(
+        std::wstring p (_path.length(), L' ');
+        std::ranges::copy(_path, p.begin());
+
+        D3DReadFileToBlob(
+            p.c_str(),
+            m_pByteCode.ReleaseAndGetAddressOf()
+        );
+
+        device.CreateVertexShader(
             m_pByteCode->GetBufferPointer(),
             m_pByteCode->GetBufferSize(),
             nullptr,
@@ -20,29 +23,19 @@ namespace Glowing::Bind {
         );
     }
 
-    VertexShader::VertexShader(char const* path)
-        : VertexShader{std::string{path}}
-    {
+    void D3D11VertexShader::Bind(ID3D11DeviceContext& context) noexcept {
+        context.VSSetShader(m_pVertexShader.Get(), nullptr, 0u);
     }
 
-    void VertexShader::Bind() noexcept {
-        GET_CONTEXT->VSSetShader(m_pVertexShader.Get(), nullptr, 0u);
-    }
-
-    ID3DBlob* VertexShader::GetByteCode() const noexcept {
+    ID3DBlob* D3D11VertexShader::GetByteCode() const noexcept {
         return m_pByteCode.Get();
     }
 
-    std::shared_ptr<VertexShader> VertexShader::Resolve(std::string const& path) {
-        return Codex::Resolve<VertexShader>(path);
+    x_string D3D11VertexShader::GenUID(x_string const& path) {
+        return x_string{typeid(D3D11VertexShader).name()} + "#" + path;
     }
 
-    std::string VertexShader::GenerateUID(std::string const& path) {
-        using namespace std::string_literals;
-        return typeid(VertexShader).name() + "#"s + path;
-    }
-
-    std::string VertexShader::GetUID() const noexcept {
-        return GenerateUID(path);
+    x_string D3D11VertexShader::GetUID() const {
+        return GenUID(_path);
     }
 }

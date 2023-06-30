@@ -1,27 +1,19 @@
 #pragma once
 
-#include "D3D11Bindable.h"
+namespace Engine::Graphics {
+    namespace Vertex {
+        class Buffer;
+    }
 
-/*** Forward Decl ***/
-namespace Glowing::Vertex {
-    class VertexBuffer;
-}
-/********************/
-
-namespace Glowing::Bind {
-    class VertexBuffer final : public Bindable {
+    class D3D11VertexBuffer {
     public:
-        VertexBuffer(std::string const& tag, Vertex::VertexBuffer&& vbuf);
-        VertexBuffer(Vertex::VertexBuffer&& vbuf);
+        D3D11VertexBuffer(ID3D11Device& device, Vertex::Buffer const& vbuf, char const* tag);
 
-        void Bind() noexcept override;
-
-        [[nodiscard]] static std::shared_ptr<VertexBuffer> Resolve(std::string const& tag, Vertex::VertexBuffer const& vbuf);
-        template <typename... Ignore>
-        [[nodiscard]] static std::string GenerateUID(std::string const& tag, Ignore&&... ignore);
-        [[nodiscard]] std::string GetUID() const noexcept override;
+        void Bind(ID3D11DeviceContext& context) noexcept;
+        [[nodiscard]] static x_string GenUID(char const* tag);
+        [[nodiscard]] x_string GetUID() const;
     private:
-        std::string tag;
+        x_string _tag;
         UINT stride;
         Microsoft::WRL::ComPtr<ID3D11Buffer> p_VertexBuffer;
     };

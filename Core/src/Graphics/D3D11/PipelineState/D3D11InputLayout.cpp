@@ -1,44 +1,29 @@
-#include "gwpch.h"
+#include "pch.h"
 #include "D3D11InputLayout.h"
 
-#include "BindableCodex.h"
-
-#include "Renderer/RenderDevice.h"
-
-namespace Glowing {
-    namespace Vertex {
-        class Layout;
-    }
-}
-
-namespace Glowing::Bind {
-    InputLayout::InputLayout(Vertex::Layout const& layout, ID3DBlob* pVertexShaderByteCode)
+namespace Engine::Graphics {
+    D3D11InputLayout::D3D11InputLayout(ID3D11Device& device, Vertex::Layout const& layout, ID3DBlob* p_vertex_shader_byte_code)
         : layout{layout}
     {
-        auto const D3DLayout {layout.GenerateD3D11Layout()};
-        GET_DEVICE->CreateInputLayout(
+        auto const D3DLayout {layout.GetD3D11Layout()};
+        device.CreateInputLayout(
             D3DLayout.data(),
             static_cast<UINT>(D3DLayout.size()),
-            pVertexShaderByteCode->GetBufferPointer(),
-            pVertexShaderByteCode->GetBufferSize(),
+            p_vertex_shader_byte_code->GetBufferPointer(),
+            p_vertex_shader_byte_code->GetBufferSize(),
             m_pInputLayout.ReleaseAndGetAddressOf()
         );
     }
 
-    void InputLayout::Bind() noexcept {
-        GET_CONTEXT->IASetInputLayout(m_pInputLayout.Get());
+    void D3D11InputLayout::Bind(ID3D11DeviceContext& context) noexcept {
+        context.IASetInputLayout(m_pInputLayout.Get());
     }
 
-    std::shared_ptr<InputLayout> InputLayout::Resolve(Vertex::Layout const& layout, ID3DBlob* pVertexShaderByteCode) {
-        return Codex::Resolve<InputLayout>(layout, pVertexShaderByteCode);
+    x_string D3D11InputLayout::GenUID(Vertex::Layout const& layout) {
+        return x_string{typeid(D3D11InputLayout).name()} + "#" + layout.GetCode();
     }
 
-    std::string InputLayout::GenerateUID(Vertex::Layout const& layout, ID3DBlob* pVertexShaderByteCode) {
-        using namespace std::string_literals;
-        return typeid(InputLayout).name() + "#"s + layout.GetCode();
-    }
-
-    std::string InputLayout::GetUID() const noexcept {
-        return Bindable::GetUID();
+    x_string D3D11InputLayout::GetUID() const {
+        return GenUID(layout);
     }
 }

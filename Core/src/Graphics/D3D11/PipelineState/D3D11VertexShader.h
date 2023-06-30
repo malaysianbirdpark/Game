@@ -1,21 +1,16 @@
 #pragma once
 
-#include "D3D11Bindable.h"
-
-namespace Glowing::Bind {
-    class GLOWING_API VertexShader final : public Bindable {
+namespace Engine::Graphics {
+    class D3D11VertexShader {
     public:
-        VertexShader(std::string&& path);
-        VertexShader(char const* path);
+        D3D11VertexShader(ID3D11Device& device, char const* path);
 
-        void Bind() noexcept override;
+        void Bind(ID3D11DeviceContext& context) noexcept;
         [[nodiscard]] ID3DBlob* GetByteCode() const noexcept;
-
-        [[nodiscard]] static std::shared_ptr<VertexShader> Resolve( std::string const& path);
-        [[nodiscard]] static std::string GenerateUID(std::string const& path);
-        [[nodiscard]] std::string GetUID() const noexcept override;
+        [[nodiscard]] static x_string GenUID(x_string const& path);
+        [[nodiscard]] x_string GetUID() const;
     protected:
-        std::string path;
+        x_string _path;
         Microsoft::WRL::ComPtr<ID3DBlob> m_pByteCode;
         Microsoft::WRL::ComPtr<ID3D11VertexShader> m_pVertexShader;
     };

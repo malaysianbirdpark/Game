@@ -1,20 +1,15 @@
 #pragma once
 
-#include "D3D11Bindable.h"
-
-namespace Glowing::Bind {
-    class GLOWING_API PixelShader final : public Bindable {
+namespace Engine::Graphics {
+    class D3D11PixelShader {
     public:
-        PixelShader(std::string&& path);
-        PixelShader(char const* path);
+        D3D11PixelShader(ID3D11Device& device, char const* path);
 
-        void Bind() noexcept override;
-
-        [[nodiscard]] static std::shared_ptr<PixelShader> Resolve(std::string const& path);
-        [[nodiscard]] static std::string GenerateUID(std::string const& path);
-        [[nodiscard]] std::string GetUID() const noexcept override;
+        void Bind(ID3D11DeviceContext& context) noexcept;
+        [[nodiscard]] static x_string GenUID(x_string const& path);
+        [[nodiscard]] x_string GetUID() const;
     protected:
-        std::string path;
+        x_string _path;
         Microsoft::WRL::ComPtr<ID3D11PixelShader> m_pPixelShader;
     };
 }

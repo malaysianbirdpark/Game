@@ -14,7 +14,7 @@ public:
 private:    
     D3D12_RESOURCE_STATES                    _state;
     Microsoft::WRL::ComPtr<ID3D12Resource>   _resource;
-    std::unique_ptr<D3D12Descriptor>         _descriptor;
+    //std::unique_ptr<D3D12Descriptor>         _descriptor;
     size_t                                   _capacity {};
     size_t                                   _elemSize {};
     size_t                                   _curIdx {};

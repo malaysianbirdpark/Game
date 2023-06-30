@@ -1,6 +1,13 @@
 #include "pch.h"
 #include "D3D11Core.h"
 
+#include "PipelineState/D3D11PipelineStateHolder.h"
+#include "PipelineState/D3D11PipelineStateObject.h"
+#include "RootSignature/D3D11RootSignatureHolder.h"
+#include "RootSignature/D3D11RootSignature.h"
+
+#include "../Vertex.h"
+
 Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, bool windowed)
     : _windowInfo{width, height, native_wnd, windowed}
 {
@@ -39,7 +46,7 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
             _swapChain.ReleaseAndGetAddressOf(),
             _device.ReleaseAndGetAddressOf(),
             nullptr,
-            _context.ReleaseAndGetAddressOf()
+            _immContext.ReleaseAndGetAddressOf()
         );
 
         _swapChain->GetBuffer(0u, IID_PPV_ARGS(_backBuffers.ReleaseAndGetAddressOf()));
@@ -51,7 +58,7 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
         _viewPort.MaxDepth = 1.0f;
         _viewPort.TopLeftX = 0.0f;
         _viewPort.TopLeftY = 0.0f;
-        _context->RSSetViewports(1u, &_viewPort);
+        _immContext->RSSetViewports(1u, &_viewPort);
 
         {
             D3D11_DEPTH_STENCIL_DESC desc {};
@@ -61,7 +68,7 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
 
             Microsoft::WRL::ComPtr<ID3D11DepthStencilState> ds_state;
             _device->CreateDepthStencilState(&desc, ds_state.ReleaseAndGetAddressOf());
-            _context->OMSetDepthStencilState(ds_state.Get(), 1u);
+            _immContext->OMSetDepthStencilState(ds_state.Get(), 1u);
 
             D3D11_TEXTURE2D_DESC descDepth {};
             descDepth.Usage = D3D11_USAGE_DEFAULT;
@@ -84,7 +91,40 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
             _device->CreateDepthStencilView(_ds.Get(), &desc_dsv, _DSV.ReleaseAndGetAddressOf());
         }
 
-        _context->OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _DSV.Get());
+        _immContext->OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _DSV.Get());
+
+        // TODO: TEMP
+        Vertex::Layout layout {};
+        layout.Append(Vertex::Layout::Position3D)
+              .Append(Vertex::Layout::Float4Color);
+
+        Vertex::Buffer vbuf {layout};
+        vbuf.EmplaceBack(
+            DirectX::XMFLOAT3{0.0f, 0.5f, 0.5f},
+            DirectX::XMFLOAT4{1.0f, 0.0f, 0.0f, 1.0f}
+        );
+        vbuf.EmplaceBack(
+            DirectX::XMFLOAT3{0.5f, -0.5f, 0.5f},
+            DirectX::XMFLOAT4{1.0f, 1.0f, 0.0f, 1.0f}
+        );
+        vbuf.EmplaceBack(
+            DirectX::XMFLOAT3{-0.5f, -0.5f, 0.5f},
+            DirectX::XMFLOAT4{1.0f, 0.0f, 1.0f, 1.0f}
+        );
+
+        x_vector<uint16_t> indices {0, 2, 1};
+
+        _pso["triangle"] = MakeUnique<D3D11PipelineStateObject>();
+        auto& device {*_device.Get()};
+        _pso["triangle"]->SetIndexBuffer(device, indices, "triangle");
+        _pso["triangle"]->SetVertexShader(device, "./ShaderLib/basicVS.cso");
+        _pso["triangle"]->SetInputLayout(device, layout);
+        _pso["triangle"]->SetVertexBuffer(device, vbuf, "triangle");
+        _pso["triangle"]->SetPixelShader(device, "./ShaderLib/basicPS.cso");
+
+        _rs["triangle"] = MakeUnique<D3D11RootSignature>();
+        auto rotate {DirectX::XMMatrixRotationZ(10.0f)};
+        _rs["triangle"]->AddConstantBuffer(device, 0u, &rotate, sizeof(rotate), true, true, true, "triangle");
     }
 }
 
@@ -97,10 +137,15 @@ void Engine::Graphics::D3D11Core::Render() {
 }
 
 void Engine::Graphics::D3D11Core::BeginFrame() {
-    _context->OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _DSV.Get());
+    _immContext->OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _DSV.Get());
     static float clear_color[4] {0.23f, 0.08f, 0.73f, 1.0f};
-    _context->ClearRenderTargetView(_backBufferView.Get(), clear_color);
+    _immContext->ClearRenderTargetView(_backBufferView.Get(), clear_color);
 
+    ID3D11DeviceContext& context {*_immContext.Get()};
+    _pso["triangle"]->Bind(context);
+    _rs["triangle"]->Bind(context);
+
+    context.DrawIndexed(3, 0u, 0u);
 }
 
 void Engine::Graphics::D3D11Core::EndFrame() {

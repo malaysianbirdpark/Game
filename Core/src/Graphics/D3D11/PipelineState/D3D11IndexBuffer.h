@@ -1,28 +1,18 @@
 #pragma once
 
-#include "D3D11Bindable.h"
-
-namespace Glowing::Bind {
-    class IndexBuffer final : public Bindable {
+namespace Engine::Graphics {
+    class D3D11IndexBuffer {
     public:
-        IndexBuffer(std::vector<unsigned short> const& indices);
-        IndexBuffer(std::string const& tag, std::vector<unsigned short> const& indices);
+        D3D11IndexBuffer(ID3D11Device& device, x_vector<unsigned short> const& indices, char const* tag);
 
-        void Bind() noexcept override;
+        void Bind(ID3D11DeviceContext& context) noexcept;
         [[nodiscard]] UINT GetCount() const noexcept;
-
-        [[nodiscard]] static std::shared_ptr<IndexBuffer> Resolve(std::string const& tag, std::vector<unsigned short> const& indices);
-
-        template <typename... Ignore>
-        [[nodiscard]] static std::string GenerateUID(std::string const& tag, Ignore&&... ignore) { return GenerateUID_(tag); }
-
-        [[nodiscard]] std::string GetUID() const noexcept override;
-    private:
-        [[nodiscard]] static std::string GenerateUID_(std::string const& tag);
+        [[nodiscard]] static x_string GenUID(char const* tag);
+        [[nodiscard]] x_string GetUID() const;
     protected:
-        std::string tag;
-        UINT m_Count;
-        Microsoft::WRL::ComPtr<ID3D11Buffer> m_pIndexBuffer;
+        x_string _tag;
+        UINT _count;
+        Microsoft::WRL::ComPtr<ID3D11Buffer> _indexBuffer;
     };
 }
 
