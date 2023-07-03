@@ -11,8 +11,8 @@ namespace Engine::Graphics {
         [[nodiscard]] static x_string GenUID(Vertex::Layout const& layout);
         [[nodiscard]] x_string GetUID() const;
     private:
-        Vertex::Layout layout;
-        Microsoft::WRL::ComPtr<ID3D11InputLayout> m_pInputLayout;
+        Vertex::Layout _layout;
+        Microsoft::WRL::ComPtr<ID3D11InputLayout> _inputLayout;
     };
 }
 

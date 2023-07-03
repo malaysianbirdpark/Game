@@ -8,6 +8,11 @@
 
 #include "../Vertex.h"
 
+//TEMP
+#include <random>
+
+#include "RootSignature/D3D11ConstantBuffer.h"
+
 Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, bool windowed)
     : _windowInfo{width, height, native_wnd, windowed}
 {
@@ -49,6 +54,11 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
             _immContext.ReleaseAndGetAddressOf()
         );
 
+        _device->CreateDeferredContext(
+            0u,
+            _defContext0.ReleaseAndGetAddressOf()
+        );
+
         _swapChain->GetBuffer(0u, IID_PPV_ARGS(_backBuffers.ReleaseAndGetAddressOf()));
         _device->CreateRenderTargetView(_backBuffers.Get(), nullptr, _backBufferView.ReleaseAndGetAddressOf());
 
@@ -59,6 +69,7 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
         _viewPort.TopLeftX = 0.0f;
         _viewPort.TopLeftY = 0.0f;
         _immContext->RSSetViewports(1u, &_viewPort);
+        _defContext0->RSSetViewports(1u, &_viewPort);
 
         {
             D3D11_DEPTH_STENCIL_DESC desc {};
@@ -69,6 +80,7 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
             Microsoft::WRL::ComPtr<ID3D11DepthStencilState> ds_state;
             _device->CreateDepthStencilState(&desc, ds_state.ReleaseAndGetAddressOf());
             _immContext->OMSetDepthStencilState(ds_state.Get(), 1u);
+            _defContext0->OMSetDepthStencilState(ds_state.Get(), 1u);
 
             D3D11_TEXTURE2D_DESC descDepth {};
             descDepth.Usage = D3D11_USAGE_DEFAULT;
@@ -91,25 +103,23 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
             _device->CreateDepthStencilView(_ds.Get(), &desc_dsv, _DSV.ReleaseAndGetAddressOf());
         }
 
-        _immContext->OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _DSV.Get());
-
         // TODO: TEMP
         Vertex::Layout layout {};
         layout.Append(Vertex::Layout::Position3D)
-              .Append(Vertex::Layout::Float4Color);
+              .Append(Vertex::Layout::Float3Color);
 
         Vertex::Buffer vbuf {layout};
         vbuf.EmplaceBack(
-            DirectX::XMFLOAT3{0.0f, 0.5f, 0.5f},
-            DirectX::XMFLOAT4{1.0f, 0.0f, 0.0f, 1.0f}
+            DirectX::XMFLOAT3{0.0f, 0.0f, 0.0f},
+            DirectX::XMFLOAT3{1.0f, 0.0f, 0.0f}
         );
         vbuf.EmplaceBack(
-            DirectX::XMFLOAT3{0.5f, -0.5f, 0.5f},
-            DirectX::XMFLOAT4{1.0f, 1.0f, 0.0f, 1.0f}
+            DirectX::XMFLOAT3{1.0f, 0.0f, 0.0f},
+            DirectX::XMFLOAT3{0.0f, 1.0f, 0.0f}
         );
         vbuf.EmplaceBack(
-            DirectX::XMFLOAT3{-0.5f, -0.5f, 0.5f},
-            DirectX::XMFLOAT4{1.0f, 0.0f, 1.0f, 1.0f}
+            DirectX::XMFLOAT3{0.0f, 1.0f, 0.0f},
+            DirectX::XMFLOAT3{0.0f, 0.0f, 1.0f}
         );
 
         x_vector<uint16_t> indices {0, 2, 1};
@@ -123,8 +133,8 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
         _pso["triangle"]->SetPixelShader(device, "./ShaderLib/basicPS.cso");
 
         _rs["triangle"] = MakeUnique<D3D11RootSignature>();
-        auto rotate {DirectX::XMMatrixRotationZ(10.0f)};
-        _rs["triangle"]->AddConstantBuffer(device, 0u, &rotate, sizeof(rotate), true, true, true, "triangle");
+        auto rotate {DirectX::XMMatrixRotationZ((std::rand() / static_cast<float>(RAND_MAX)) * 20.0f)};
+        _rs["triangle"]->AddConstantBuffer(device, 0u, &rotate, sizeof(DirectX::XMFLOAT4X4), true, true, true, "triangle");
     }
 }
 
@@ -137,17 +147,33 @@ void Engine::Graphics::D3D11Core::Render() {
 }
 
 void Engine::Graphics::D3D11Core::BeginFrame() {
-    _immContext->OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _DSV.Get());
-    static float clear_color[4] {0.23f, 0.08f, 0.73f, 1.0f};
-    _immContext->ClearRenderTargetView(_backBufferView.Get(), clear_color);
+    ID3D11DeviceContext& context {*_defContext0.Get()};
 
-    ID3D11DeviceContext& context {*_immContext.Get()};
+    auto r {static_cast<float>(std::rand()) / RAND_MAX};
+    auto g {static_cast<float>(std::rand()) / RAND_MAX};
+    auto b {static_cast<float>(std::rand()) / RAND_MAX};
+    float clear_color[4] {r, g, b, 1.0f};
+
+    context.OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _DSV.Get());
+    context.ClearRenderTargetView(_backBufferView.Get(), clear_color);
+    context.ClearDepthStencilView(_DSV.Get(), D3D11_CLEAR_DEPTH, 1.0f , 0u);
+
     _pso["triangle"]->Bind(context);
+
+    auto num {std::rand() / static_cast<float>(RAND_MAX)};
+    auto rotate {DirectX::XMMATRIX(DirectX::XMMatrixRotationZ(num * 90.0f))};
+    _rs["triangle"]->GetConstantBufferAt(0)->Update(context, &rotate, sizeof(rotate));
+
     _rs["triangle"]->Bind(context);
 
     context.DrawIndexed(3, 0u, 0u);
 }
 
 void Engine::Graphics::D3D11Core::EndFrame() {
+    ID3D11CommandList* _cmdList {};
+    _defContext0->FinishCommandList(FALSE, &_cmdList);
+
+    _immContext->ExecuteCommandList(_cmdList, TRUE);
+
     _swapChain->Present(1u, 0u);
 }

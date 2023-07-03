@@ -30,7 +30,7 @@ void Engine::Graphics::D3D11ConstantBuffer::Update(ID3D11DeviceContext& context,
         0u,
         &msr
     );
-    memcpy(msr.pData, &data, data_size);
+    memcpy(msr.pData, data, data_size);
     context.Unmap(_resource.Get(), 0u);
 }
 

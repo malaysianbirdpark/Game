@@ -21,6 +21,7 @@ namespace Engine::Graphics {
     private:
         Microsoft::WRL::ComPtr<ID3D11Device>             _device;
         Microsoft::WRL::ComPtr<ID3D11DeviceContext>      _immContext;
+        Microsoft::WRL::ComPtr<ID3D11DeviceContext>      _defContext0;
 
         Microsoft::WRL::ComPtr<IDXGISwapChain>           _swapChain;
         Microsoft::WRL::ComPtr<ID3D11Resource>           _backBuffers;

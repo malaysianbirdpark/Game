@@ -5,7 +5,7 @@
 
 namespace Engine::Graphics {
     D3D11VertexBuffer::D3D11VertexBuffer(ID3D11Device& device, Vertex::Buffer const& vbuf, char const* tag)
-        : _tag{tag}, stride{static_cast<UINT>(vbuf.GetLayout().Size())}
+        : _tag{tag}, _stride{static_cast<UINT>(vbuf.GetLayout().Size())}
     {
         D3D11_BUFFER_DESC bd {};
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -13,7 +13,7 @@ namespace Engine::Graphics {
         bd.CPUAccessFlags = 0u;
         bd.MiscFlags = 0u;
         bd.ByteWidth = static_cast<UINT>(vbuf.SizeBytes());
-        bd.StructureByteStride = stride;
+        bd.StructureByteStride = _stride;
 
         D3D11_SUBRESOURCE_DATA sd {};
         sd.pSysMem = vbuf.GetData();
@@ -23,7 +23,7 @@ namespace Engine::Graphics {
 
     void D3D11VertexBuffer::Bind(ID3D11DeviceContext& context) noexcept {
         constexpr UINT offset {0u};
-        context.IASetVertexBuffers(0u, 1u, p_VertexBuffer.GetAddressOf(), &stride, &offset);
+        context.IASetVertexBuffers(0u, 1u, p_VertexBuffer.GetAddressOf(), &_stride, &offset);
     }
 
     x_string D3D11VertexBuffer::GenUID(char const* tag) {

@@ -14,7 +14,7 @@ namespace Engine::Graphics {
         [[nodiscard]] x_string GetUID() const;
     private:
         x_string _tag;
-        UINT stride;
+        UINT _stride;
         Microsoft::WRL::ComPtr<ID3D11Buffer> p_VertexBuffer;
     };
 }
