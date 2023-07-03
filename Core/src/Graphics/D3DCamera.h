@@ -1,9 +1,9 @@
 #pragma once
 
 namespace Engine::Graphics {
-    class Camera {
+    class D3DCamera {
     public:
-        Camera(DirectX::XMFLOAT3 init_pos = DirectX::XMFLOAT3());
+        D3DCamera(DirectX::XMFLOAT3 init_pos = DirectX::XMFLOAT3());
 
         DirectX::XMMATRIX LookAt() const;
 

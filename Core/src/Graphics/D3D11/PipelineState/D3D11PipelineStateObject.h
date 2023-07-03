@@ -17,6 +17,8 @@ namespace Engine::Graphics {
         void SetPixelShader(ID3D11Device& device, char const* path);
         void SetVertexShader(ID3D11Device& device, char const* path);
 
+        uint16_t GetIndexCount();
+
         void Bind(ID3D11DeviceContext& context);
     private:
         std::shared_ptr<class D3D11IndexBuffer>  _indexBuffer {};

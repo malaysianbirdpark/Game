@@ -108,12 +108,13 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Graphics\D3D11\D3D11ShaderTechnique.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Core.h" />
     <ClInclude Include="src\Core\Log.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\EntryPoint.h" />
-    <ClInclude Include="src\Graphics\Camera.h" />
+    <ClInclude Include="src\Graphics\D3DCamera.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11Core.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11Scene.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11IndexBuffer.h" />
@@ -132,7 +133,7 @@
     <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11Texture.h" />
     <ClInclude Include="src\Graphics\D3D11\TEMP\Triangle.h" />
     <ClInclude Include="src\Graphics\GraphicsContext.h" />
-    <ClInclude Include="src\Graphics\Vertex.h" />
+    <ClInclude Include="src\Graphics\D3DVertex.h" />
     <ClInclude Include="src\Memory\MemoryAllocator.h" />
     <ClInclude Include="src\Memory\MemoryLib.h" />
     <ClInclude Include="src\Memory\MemoryPool.h" />
@@ -147,9 +148,10 @@
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Graphics\D3D11\D3D11ShaderTechnique.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
-    <ClCompile Include="src\Graphics\Camera.cpp" />
+    <ClCompile Include="src\Graphics\D3DCamera.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11Core.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11Scene.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11IndexBuffer.cpp" />
@@ -166,7 +168,7 @@
     <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11Texture.cpp" />
     <ClCompile Include="src\Graphics\D3D11\TEMP\Triangle.cpp" />
     <ClCompile Include="src\Graphics\GraphicsContext.cpp" />
-    <ClCompile Include="src\Graphics\Vertex.cpp" />
+    <ClCompile Include="src\Graphics\D3DVertex.cpp" />
     <ClCompile Include="src\Memory\MemoryAllocator.cpp" />
     <ClCompile Include="src\Memory\MemoryLib.cpp" />
     <ClCompile Include="src\Memory\MemoryPool.cpp" />

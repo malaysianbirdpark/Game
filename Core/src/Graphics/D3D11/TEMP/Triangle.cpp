@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Triangle.h"
 
-#include "../../Vertex.h"
+#include "..\..\D3DVertex.h"
 
 Engine::Graphics::Triangle::Triangle() {
 }

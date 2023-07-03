@@ -5,6 +5,8 @@ struct OUT {
 
 cbuffer buf {
     matrix rot;
+    matrix scale;
+    matrix translate;
 };
 
 OUT main(float3 pos : POSITION, float3 color : COLOR)
@@ -12,7 +14,8 @@ OUT main(float3 pos : POSITION, float3 color : COLOR)
     OUT output;
 
     output.color = float4(color, 1.0f);
-    output.pos = mul(rot, float4(pos, 1.0f));
+    const matrix transform = scale * translate;
+    output.pos = mul(transform, float4(pos, 1.0f));
 
 	return output;
 }

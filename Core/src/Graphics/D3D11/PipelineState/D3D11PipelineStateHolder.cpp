@@ -3,7 +3,7 @@
 
 #include "D3D11PipelineStateCommon.h"
 
-#include "../../Vertex.h"
+#include "..\..\D3DVertex.h"
 
 std::shared_ptr<Engine::Graphics::D3D11IndexBuffer> Engine::Graphics::D3D11PipelineStateHolder::ResolveIndexBuffer(ID3D11Device& device, x_vector<unsigned short> const& indices, char const* tag) {
     auto const uid {D3D11IndexBuffer::GenUID(tag)};

@@ -6,7 +6,7 @@
 #include "RootSignature/D3D11RootSignatureHolder.h"
 #include "RootSignature/D3D11RootSignature.h"
 
-#include "../Vertex.h"
+#include "..\D3DVertex.h"
 
 //TEMP
 #include <random>
@@ -100,7 +100,7 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
             desc_dsv.Format = DXGI_FORMAT_D32_FLOAT;
             desc_dsv.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
             desc_dsv.Texture2D.MipSlice = 0u;
-            _device->CreateDepthStencilView(_ds.Get(), &desc_dsv, _DSV.ReleaseAndGetAddressOf());
+            _device->CreateDepthStencilView(_ds.Get(), &desc_dsv, _depthStencilView.ReleaseAndGetAddressOf());
         }
 
         // TODO: TEMP
@@ -113,16 +113,28 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
             DirectX::XMFLOAT3{0.0f, 0.0f, 0.0f},
             DirectX::XMFLOAT3{1.0f, 0.0f, 0.0f}
         );
-        vbuf.EmplaceBack(
-            DirectX::XMFLOAT3{1.0f, 0.0f, 0.0f},
-            DirectX::XMFLOAT3{0.0f, 1.0f, 0.0f}
-        );
-        vbuf.EmplaceBack(
-            DirectX::XMFLOAT3{0.0f, 1.0f, 0.0f},
-            DirectX::XMFLOAT3{0.0f, 0.0f, 1.0f}
-        );
 
-        x_vector<uint16_t> indices {0, 2, 1};
+        constexpr int edge {10};
+        constexpr auto dtheta {2 * (3.141592f / edge)};
+        for (auto i {0}; i != edge; ++i)
+            vbuf.EmplaceBack(
+                DirectX::XMFLOAT3{
+                    0.5f * std::cos(dtheta * i),
+                    0.5f * std::sin(dtheta * i),
+                    0.0f},
+                DirectX::XMFLOAT3{(dtheta * i) / 20.0f, (dtheta * i) / 10.0f, (dtheta * i) / 15.0f}
+            );
+
+        x_vector<uint16_t> indices {};
+        indices.reserve(edge * 3 + 3);
+        for (auto i {1}; i != edge + 1; ++i) {
+            indices.push_back(0);
+            indices.push_back(i + 1);
+            indices.push_back(i);
+        }
+        indices.push_back(0);
+        indices.push_back(1);
+        indices.push_back(edge);
 
         _pso["triangle"] = MakeUnique<D3D11PipelineStateObject>();
         auto& device {*_device.Get()};
@@ -133,8 +145,14 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
         _pso["triangle"]->SetPixelShader(device, "./ShaderLib/basicPS.cso");
 
         _rs["triangle"] = MakeUnique<D3D11RootSignature>();
-        auto rotate {DirectX::XMMatrixRotationZ((std::rand() / static_cast<float>(RAND_MAX)) * 20.0f)};
-        _rs["triangle"]->AddConstantBuffer(device, 0u, &rotate, sizeof(DirectX::XMFLOAT4X4), true, true, true, "triangle");
+
+        struct transform {
+            DirectX::XMMATRIX rotate {DirectX::XMMatrixRotationZ((std::rand() / static_cast<float>(RAND_MAX)) * 20.0f)}; 
+            DirectX::XMMATRIX scale {DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f)}; 
+            DirectX::XMMATRIX translate {DirectX::XMMatrixTranslation(0.0f, 0.0f, 0.0f)}; 
+        } tr;
+
+        _rs["triangle"]->AddConstantBuffer(device, 0u, &tr, sizeof(tr), true, true, true, "triangle");
     }
 }
 
@@ -154,26 +172,80 @@ void Engine::Graphics::D3D11Core::BeginFrame() {
     auto b {static_cast<float>(std::rand()) / RAND_MAX};
     float clear_color[4] {r, g, b, 1.0f};
 
-    context.OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _DSV.Get());
+    context.RSSetViewports(1u, &_viewPort);
+    context.OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _depthStencilView.Get());
     context.ClearRenderTargetView(_backBufferView.Get(), clear_color);
-    context.ClearDepthStencilView(_DSV.Get(), D3D11_CLEAR_DEPTH, 1.0f , 0u);
+    context.ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f , 0u);
 
     _pso["triangle"]->Bind(context);
 
-    auto num {std::rand() / static_cast<float>(RAND_MAX)};
-    auto rotate {DirectX::XMMATRIX(DirectX::XMMatrixRotationZ(num * 90.0f))};
-    _rs["triangle"]->GetConstantBufferAt(0)->Update(context, &rotate, sizeof(rotate));
 
-    _rs["triangle"]->Bind(context);
+    // Sun
+    //{
+    //    auto const num {std::rand() / static_cast<float>(RAND_MAX)};
+    //    struct transform {
+    //        DirectX::XMMATRIX rotate {};
+    //        DirectX::XMMATRIX scale {}; 
+    //        DirectX::XMMATRIX translate {}; 
+    //    };
 
-    context.DrawIndexed(3, 0u, 0u);
+    //    transform const tr {
+    //        DirectX::XMMATRIX(DirectX::XMMatrixRotationZ(num * 90.0f)),
+    //        DirectX::XMMATRIX(DirectX::XMMatrixScaling(0.6f, 0.6f, 0.6f)),
+    //        DirectX::XMMATRIX(DirectX::XMMatrixTranslation(0.0f, 0.0f, 0.0f))
+    //    };
+
+    //    _rs["triangle"]->GetConstantBufferAt(0)->Update(context, &tr, sizeof(tr));
+    //    _rs["triangle"]->Bind(context);
+    //    context.DrawIndexed(_pso["triangle"]->GetIndexCount(), 0u, 0u);
+    //}
+
+    // Earth
+    //{
+    //    auto const num {std::rand() / static_cast<float>(RAND_MAX)};
+
+    //    struct transform {
+    //        DirectX::XMMATRIX rotate {};
+    //        DirectX::XMMATRIX scale {}; 
+    //        DirectX::XMMATRIX translate {}; 
+    //    };
+    //    transform const tr {
+    //        DirectX::XMMATRIX(DirectX::XMMatrixRotationZ(num * 90.0f)),
+    //        DirectX::XMMATRIX(DirectX::XMMatrixScaling(0.3f, 0.3f, 0.3f)),
+    //        DirectX::XMMATRIX(DirectX::XMMatrixTranslation(0.2f, 0.0f, 0.0f))
+    //    };
+
+    //    _rs["triangle"]->GetConstantBufferAt(0)->Update(context, &tr, sizeof(tr));
+    //    _rs["triangle"]->Bind(context);
+    //    context.DrawIndexed(_pso["triangle"]->GetIndexCount(), 0u, 0u);
+    //}
+
+    // Moon
+    {
+        auto const num {std::rand() / static_cast<float>(RAND_MAX)};
+
+        struct transform {
+            DirectX::XMMATRIX rotate {};
+            DirectX::XMMATRIX scale {}; 
+            DirectX::XMMATRIX translate {}; 
+        };
+        transform const tr {
+           DirectX::XMMATRIX(DirectX::XMMatrixRotationZ(num * 90.0f)),
+            DirectX::XMMATRIX(DirectX::XMMatrixScaling(0.2f, 0.2f, 0.2f)),
+            DirectX::XMMATRIX(DirectX::XMMatrixTranslation(50.0f, 0.0f, 0.0f))
+        };
+
+        _rs["triangle"]->GetConstantBufferAt(0)->Update(context, &tr, sizeof(tr));
+        _rs["triangle"]->Bind(context);
+        context.DrawIndexed(_pso["triangle"]->GetIndexCount(), 0u, 0u);
+    }
 }
 
 void Engine::Graphics::D3D11Core::EndFrame() {
     ID3D11CommandList* _cmdList {};
     _defContext0->FinishCommandList(FALSE, &_cmdList);
 
-    _immContext->ExecuteCommandList(_cmdList, TRUE);
+    _immContext->ExecuteCommandList(_cmdList, FALSE);
 
     _swapChain->Present(1u, 0u);
 }

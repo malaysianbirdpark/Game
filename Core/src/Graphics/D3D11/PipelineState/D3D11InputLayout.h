@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Vertex.h"
+#include "..\..\D3DVertex.h"
 
 namespace Engine::Graphics {
     class D3D11InputLayout {

@@ -4,7 +4,7 @@
 #include "D3D11PipelineStateHolder.h"
 #include "D3D11PipelineStateCommon.h"
 
-#include "../../Vertex.h"
+#include "..\..\D3DVertex.h"
 
 void Engine::Graphics::D3D11PipelineStateObject::SetIndexBuffer(ID3D11Device& device, x_vector<unsigned short> const& indices, char const* tag) {
     _indexBuffer = D3D11PipelineStateHolder::ResolveIndexBuffer(device, indices, tag);
@@ -29,6 +29,10 @@ void Engine::Graphics::D3D11PipelineStateObject::SetPixelShader(ID3D11Device& de
 
 void Engine::Graphics::D3D11PipelineStateObject::SetVertexShader(ID3D11Device& device, char const* path) {
     _vertexShader = D3D11PipelineStateHolder::ResolveVertexShader(device, path); 
+}
+
+uint16_t Engine::Graphics::D3D11PipelineStateObject::GetIndexCount() {
+    return _indexBuffer->GetCount();
 }
 
 void Engine::Graphics::D3D11PipelineStateObject::Bind(ID3D11DeviceContext& context) {

@@ -3,7 +3,7 @@
 namespace Engine::Graphics {
     class D3D11Core;
     //class D3D12Core;
-    class Camera;
+    class D3DCamera;
     
     class GraphicsContext {
     public:
@@ -15,6 +15,6 @@ namespace Engine::Graphics {
         std::unique_ptr<D3D11Core> _core11;
         //std::unique_ptr<D3D12Core> _core12;
 
-        std::unique_ptr<Camera> _cam;
+        std::unique_ptr<D3DCamera> _cam;
     };
 }
