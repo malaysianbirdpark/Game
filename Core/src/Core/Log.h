@@ -62,7 +62,7 @@ namespace Engine::Core {
 #define CLIENT_FATAL(...)        ::Engine::Core::Log::GetClientLogger()->fatal(__VA_ARGS__)
 
 // Throw Exception
-#ifdef GW_PLATFORM_WINDOWS
+#ifdef PLATFORM_WINDOWS
 #define WND_EXCEPT(hr) PlatformWin32::HrException(__LINE__,__FILE__,hr)
 #define WND_LAST_EXCEPT() PlatformWin32::HrException(__LINE__,__FILE__,GetLastError())
 #endif

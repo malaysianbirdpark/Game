@@ -30,7 +30,7 @@ project "Core"
     }
 
     links {
-        "d3d12",
+        "d3d11",
         "dxgi",
         "dxguid",
         "D3DCompiler",
@@ -46,7 +46,7 @@ project "Core"
 
     filter "files:**.hlsl"
         shaderentry "main"
-        shadermodel "5.1"
+        shadermodel "5.0"
         shaderobjectfileoutput "%{wks.location}/Game/ShaderLib/%{file.basename}.cso"
 
     filter "files:**PS.hlsl"

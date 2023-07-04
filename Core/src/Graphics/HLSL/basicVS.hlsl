@@ -3,18 +3,19 @@ struct OUT {
     float4 pos   : SV_POSITION;
 };
 
-struct Rotation {
-    matrix transform;
+cbuffer buf {
+    matrix rot;
+    matrix scale;
+    matrix translate;
 };
 
-ConstantBuffer<Rotation> rot : register(b0);
-
-OUT main(float3 pos : POSITION, float4 color : COLOR)
+OUT main(float3 pos : POSITION, float3 color : COLOR)
 {
     OUT output;
 
-    output.color = color;
-    output.pos = mul(rot.transform, float4(pos, 1.0f));
+    output.color = float4(color, 1.0f);
+    const matrix transform = mul(mul(scale, rot), translate);
+    output.pos = mul(transform, float4(pos, 1.0f));
 
 	return output;
 }
