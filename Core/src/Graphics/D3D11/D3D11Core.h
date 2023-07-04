@@ -4,14 +4,12 @@ namespace Engine::Graphics {
     class D3D11PipelineStateObject;
     class D3D11RootSignature;
 
-    // TODO: TEMP
-    class Triangle;
-
     class D3D11Core {
     public:
         D3D11Core(int width, int height, HWND native_wnd, bool windowed);
         ~D3D11Core();
 
+        void Update();
         void Render();
     private:
         void BeginFrame();

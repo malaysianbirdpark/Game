@@ -5,7 +5,7 @@ namespace Engine::Graphics {
     public:
         D3DCamera(DirectX::XMFLOAT3 init_pos = DirectX::XMFLOAT3());
 
-        DirectX::XMMATRIX LookAt() const;
+        DirectX::XMMATRIX GetView() const;
 
         void Rotate(float const dx, float const dy);
         void Translate(DirectX::XMFLOAT3 mat);

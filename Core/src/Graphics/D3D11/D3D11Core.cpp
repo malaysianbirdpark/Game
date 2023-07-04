@@ -201,24 +201,24 @@ void Engine::Graphics::D3D11Core::BeginFrame() {
     //}
 
     // Earth
-    //{
-    //    auto const num {std::rand() / static_cast<float>(RAND_MAX)};
+    {
+        auto const num {std::rand() / static_cast<float>(RAND_MAX)};
 
-    //    struct transform {
-    //        DirectX::XMMATRIX rotate {};
-    //        DirectX::XMMATRIX scale {}; 
-    //        DirectX::XMMATRIX translate {}; 
-    //    };
-    //    transform const tr {
-    //        DirectX::XMMATRIX(DirectX::XMMatrixRotationZ(num * 90.0f)),
-    //        DirectX::XMMATRIX(DirectX::XMMatrixScaling(0.3f, 0.3f, 0.3f)),
-    //        DirectX::XMMATRIX(DirectX::XMMatrixTranslation(0.2f, 0.0f, 0.0f))
-    //    };
+        struct transform {
+            DirectX::XMMATRIX rotate {};
+            DirectX::XMMATRIX scale {}; 
+            DirectX::XMMATRIX translate {}; 
+        };
+        transform const tr {
+            DirectX::XMMATRIX(DirectX::XMMatrixRotationZ(num * 90.0f)),
+            DirectX::XMMATRIX(DirectX::XMMatrixScaling(0.3f, 0.3f, 0.3f)),
+            DirectX::XMMATRIX(DirectX::XMMatrixTranslation(0.5f, 0.0f, 0.0f))
+        };
 
-    //    _rs["triangle"]->GetConstantBufferAt(0)->Update(context, &tr, sizeof(tr));
-    //    _rs["triangle"]->Bind(context);
-    //    context.DrawIndexed(_pso["triangle"]->GetIndexCount(), 0u, 0u);
-    //}
+        _rs["triangle"]->GetConstantBufferAt(0)->Update(context, &tr, sizeof(tr));
+        _rs["triangle"]->Bind(context);
+        context.DrawIndexed(_pso["triangle"]->GetIndexCount(), 0u, 0u);
+    }
 
     // Moon
     {
@@ -232,7 +232,7 @@ void Engine::Graphics::D3D11Core::BeginFrame() {
         transform const tr {
            DirectX::XMMATRIX(DirectX::XMMatrixRotationZ(num * 90.0f)),
             DirectX::XMMATRIX(DirectX::XMMatrixScaling(0.2f, 0.2f, 0.2f)),
-            DirectX::XMMATRIX(DirectX::XMMatrixTranslation(50.0f, 0.0f, 0.0f))
+            DirectX::XMMATRIX(DirectX::XMMatrixTranslation(1.0f, 0.0f, 0.0f))
         };
 
         _rs["triangle"]->GetConstantBufferAt(0)->Update(context, &tr, sizeof(tr));

@@ -108,7 +108,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Graphics\D3D11\D3D11ShaderTechnique.h" />
+    <ClInclude Include="src\Graphics\D3DSceneGraph.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Core.h" />
     <ClInclude Include="src\Core\Log.h" />
@@ -116,7 +116,6 @@
     <ClInclude Include="src\EntryPoint.h" />
     <ClInclude Include="src\Graphics\D3DCamera.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11Core.h" />
-    <ClInclude Include="src\Graphics\D3D11\D3D11Scene.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11IndexBuffer.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateCommon.h" />
@@ -148,12 +147,11 @@
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Graphics\D3D11\D3D11ShaderTechnique.cpp" />
+    <ClCompile Include="src\Graphics\D3DSceneGraph.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
     <ClCompile Include="src\Graphics\D3DCamera.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11Core.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\D3D11Scene.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11IndexBuffer.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateHolder.cpp" />

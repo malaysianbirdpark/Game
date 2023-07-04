@@ -8,7 +8,7 @@ Engine::Graphics::D3DCamera::D3DCamera(DirectX::XMFLOAT3 init_pos)
 {
 }
 
-DirectX::XMMATRIX Engine::Graphics::D3DCamera::LookAt() const {
+DirectX::XMMATRIX Engine::Graphics::D3DCamera::GetView() const {
         auto const lookAt {
             DirectX::XMVector3Transform(
             DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
