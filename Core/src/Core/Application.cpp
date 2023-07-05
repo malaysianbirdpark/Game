@@ -3,12 +3,19 @@
 
 #include "Platform/Platform.h"
 #include "Graphics/GraphicsContext.h"
+#include "Graphics/D3DCamera.h"
+#include "Graphics/D3DSceneGraph.h"
+
+#include <assimp/scene.h>
 
 Engine::Core::Application::Application() {
     width = 800;
     height = 450;
-    p_platform = MakeUnique<Platform::Platform>(width, height);
-    p_gfx = MakeUnique<Graphics::GraphicsContext>(width, height, p_platform->GetNativeWnd(), true);
+    _platform = MakeUnique<Platform::Platform>(width, height);
+    _gfx = MakeUnique<Graphics::GraphicsContext>(width, height, _platform->GetNativeWnd(), true);
+
+    // camera
+    _cam = MakeShared<Graphics::D3DCamera>();
 }
 
 Engine::Core::Application::~Application() {
@@ -16,7 +23,7 @@ Engine::Core::Application::~Application() {
 
 int Engine::Core::Application::Run() {
     while (true) {
-        if (auto const ecode {p_platform->PumpMessage()}; ecode.has_value()) [[unlikely]]
+        if (auto const ecode {_platform->PumpMessage()}; ecode.has_value()) [[unlikely]]
             return *ecode;
 
         ProcessInput();
@@ -32,5 +39,5 @@ void Engine::Core::Application::Update(float const dt) {
 }
 
 void Engine::Core::Application::Render() {
-    p_gfx->Render();
+    _gfx->Render();
 }

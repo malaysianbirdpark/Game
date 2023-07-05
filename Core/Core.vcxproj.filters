@@ -57,7 +57,7 @@
     <ClInclude Include="src\Graphics\D3D11\D3D11Core.h">
       <Filter>src\Graphics\D3D11</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11IndexBuffer.h">
+    <ClInclude Include="src\Graphics\D3D11\D3D11IndexBuffer.h">
       <Filter>src\Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.h">
@@ -75,7 +75,7 @@
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.h">
       <Filter>src\Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11VertexBuffer.h">
+    <ClInclude Include="src\Graphics\D3D11\D3D11VertexBuffer.h">
       <Filter>src\Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.h">
@@ -145,6 +145,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3DSceneGraph.h" />
+    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.h" />
+    <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11RSLibrary.h" />
+    <ClInclude Include="src\Graphics\D3D11\D3D11MeshDataHolder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -159,7 +162,7 @@
     <ClCompile Include="src\Graphics\D3D11\D3D11Core.cpp">
       <Filter>src\Graphics\D3D11</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11IndexBuffer.cpp">
+    <ClCompile Include="src\Graphics\D3D11\D3D11IndexBuffer.cpp">
       <Filter>src\Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.cpp">
@@ -174,7 +177,7 @@
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.cpp">
       <Filter>src\Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11VertexBuffer.cpp">
+    <ClCompile Include="src\Graphics\D3D11\D3D11VertexBuffer.cpp">
       <Filter>src\Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.cpp">
@@ -235,6 +238,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3DSceneGraph.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11RSLibrary.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\D3D11MeshDataHolder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Graphics\HLSL\basicPS.hlsl">

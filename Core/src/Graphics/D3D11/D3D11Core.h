@@ -3,6 +3,7 @@
 namespace Engine::Graphics {
     class D3D11PipelineStateObject;
     class D3D11RootSignature;
+    class D3DSceneGraph;
 
     class D3D11Core {
     public:
@@ -11,6 +12,10 @@ namespace Engine::Graphics {
 
         void Update();
         void Render();
+
+        void AddScene();
+
+        ID3D11Device& Device() { return *_device.Get(); }
     private:
         void BeginFrame();
         void EndFrame();
@@ -29,8 +34,7 @@ namespace Engine::Graphics {
 
         D3D11_VIEWPORT                                   _viewPort {};
 
-        x_unordered_map<x_string, std::unique_ptr<D3D11PipelineStateObject>> _pso;
-        x_unordered_map<x_string, std::unique_ptr<D3D11RootSignature>>       _rs;
+        std::shared_ptr<Graphics::D3DSceneGraph>         _scene; 
     };
 }
 

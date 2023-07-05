@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "D3D11VertexBuffer.h"
 
-#include "..\..\D3DVertex.h"
+#include "..\D3DVertex.h"
 
 namespace Engine::Graphics {
     D3D11VertexBuffer::D3D11VertexBuffer(ID3D11Device& device, Vertex::Buffer const& vbuf, char const* tag)
