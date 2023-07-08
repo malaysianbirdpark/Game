@@ -43,8 +43,11 @@ namespace Engine::Graphics {
     class D3DSceneNode {
         friend class D3DScene;
     public:
-        D3DSceneNode(x_vector<std::shared_ptr<D3DMesh>>& meshes, DirectX::FXMMATRIX const& parent_transform);
+        D3DSceneNode(x_string& name, x_vector<std::shared_ptr<D3DMesh>>& meshes, DirectX::FXMMATRIX const& parent_transform);
+
+        void Draw(ID3D11DeviceContext& context, DirectX::FXMMATRIX acc_transform);
     private:
+        x_string                                 _name {};
         // Scene holds all the meshes and each node points to them
         x_vector<std::shared_ptr<D3DMesh>>       _pMesh {};
         DirectX::XMFLOAT4X4                      _currentTransform {};
@@ -67,7 +70,7 @@ namespace Engine::Graphics {
     private:
         x_vector<std::shared_ptr<D3DMesh>>       _mesh {};
         x_vector<std::shared_ptr<D3DScene>>      _childScene {};
-        x_vector<std::shared_ptr<D3DSceneNode>>  _sceneTree {};
+        x_vector<std::shared_ptr<D3DSceneNode>>  _sceneTree;
         DirectX::XMFLOAT4X4                      _parentTransform {};
     };
 

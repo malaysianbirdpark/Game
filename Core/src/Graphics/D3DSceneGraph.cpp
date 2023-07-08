@@ -47,11 +47,21 @@ void Engine::Graphics::D3DMesh::SetIndexBuffer(ID3D11Device& device, x_vector<un
     _indexBuffer = D3D11MeshDataHolder::ResolveIndexBuffer(device, indices, tag);
 }
 
-Engine::Graphics::D3DSceneNode::D3DSceneNode(x_vector<std::shared_ptr<D3DMesh>>& meshes, DirectX::FXMMATRIX& parent_transform)
-    : _pMesh{std::move(meshes)}
+Engine::Graphics::D3DSceneNode::D3DSceneNode(x_string& name, x_vector<std::shared_ptr<D3DMesh>>& meshes, DirectX::FXMMATRIX& parent_transform)
+    : _name{std::move(name)}, _pMesh{std::move(meshes)}
 {
     DirectX::XMStoreFloat4x4(&_parentTransform, parent_transform);
     DirectX::XMStoreFloat4x4(&_currentTransform, DirectX::XMMatrixIdentity());
+}
+
+void Engine::Graphics::D3DSceneNode::Draw(ID3D11DeviceContext& context, DirectX::FXMMATRIX acc_transform) {
+    auto const transform {
+        DirectX::XMLoadFloat4x4(&_parentTransform) * acc_transform
+    };
+
+    DirectX::XMStoreFloat4x4(&_parentTransform, transform);
+    for (auto& m : _pMesh)
+        m->Draw(context, acc_transform);
 }
 
 Engine::Graphics::D3DScene::D3DScene(DirectX::FXMMATRIX& parent_transform) {
@@ -78,8 +88,8 @@ void Engine::Graphics::D3DScene::Draw(ID3D11DeviceContext& context, DirectX::FXM
         acc_transform
     };
 
-    for (auto& m : _mesh)
-        m->Draw(context, transform);
+    for (auto& node : _sceneTree)
+        node->Draw(context, transform);
     for (auto& ch : _childScene)
         ch->Draw(context, transform);
 }
@@ -99,7 +109,8 @@ std::shared_ptr<Engine::Graphics::D3DSceneNode> Engine::Graphics::D3DScene::Pars
     for (auto i {0}; i != ai_node->mNumMeshes; ++i)
         temp.push_back(_mesh[ai_node->mMeshes[i]]);
 
-    auto new_node {MakeShared<D3DSceneNode>(temp, transform)};
+    x_string name {ai_node->mName.C_Str()};
+    auto new_node {MakeShared<D3DSceneNode>(name, temp, transform)};
     for (auto i {0}; i != ai_node->mNumChildren; ++i)
         new_node->_child.push_back(std::move(ParseNode(ai_node->mChildren[i])));
 
@@ -131,8 +142,8 @@ std::shared_ptr<Engine::Graphics::D3DMesh> Engine::Graphics::D3DScene::ParseMesh
         indices.push_back(face.mIndices[2]);
     }
 
-    auto vertex_buffer {D3D11MeshDataHolder::ResolveVertexBuffer(device, vbuf, "air_balloon")};
-    auto index_buffer {D3D11MeshDataHolder::ResolveIndexBuffer(device, indices, "air_balloon")};
+    auto vertex_buffer {D3D11MeshDataHolder::ResolveVertexBuffer(device, vbuf, ai_mesh->mName.C_Str())};
+    auto index_buffer {D3D11MeshDataHolder::ResolveIndexBuffer(device, indices, ai_mesh->mName.C_Str())};
 
     x_string tag {"basic"};
     return MakeShared<D3DMesh>(tag, vertex_buffer, index_buffer, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

@@ -141,7 +141,7 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
 
     // init scene
     _scene = MakeShared<Graphics::D3DSceneGraph>();
-    _scene->AddScene(*_device.Get(), "./Assets/mongolfire/air_balloon.obj");
+    _scene->AddScene(*_device.Get(), "./Assets/nanosuit.obj");
 }
 
 Engine::Graphics::D3D11Core::~D3D11Core() {
