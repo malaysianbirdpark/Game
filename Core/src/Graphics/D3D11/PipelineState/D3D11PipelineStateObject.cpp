@@ -4,9 +4,7 @@
 #include "D3D11PipelineStateHolder.h"
 #include "D3D11PipelineStateCommon.h"
 
-#include "..\..\D3DVertex.h"
-
-void Engine::Graphics::D3D11PipelineStateObject::SetInputLayout(ID3D11Device& device, Vertex::Layout const& layout) {
+void Engine::Graphics::D3D11PipelineStateObject::SetInputLayout(ID3D11Device& device, x_vector<D3D11_INPUT_ELEMENT_DESC> const& layout) {
     if (_vertexShader == nullptr) {
         GRAPHICS_ERROR("Set SetVertexShader First!!!!!!!");
         CRASH();

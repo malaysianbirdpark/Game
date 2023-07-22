@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "D3D11RSLibrary.h"
 
-void Engine::Graphics::D3D11RSLibrary::AddRS(x_string const& tag, std::shared_ptr<D3D11RootSignature> rs) {
+void Engine::Graphics::D3D11RSLibrary::RegisterRS(x_string const& tag, std::shared_ptr<D3D11RootSignature> rs) {
     if (_lib.contains(tag)) {
         GRAPHICS_ERROR("Other RootSignature already has this tag");
         return;

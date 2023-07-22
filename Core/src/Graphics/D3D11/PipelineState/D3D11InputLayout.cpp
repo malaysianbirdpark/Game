@@ -2,13 +2,13 @@
 #include "D3D11InputLayout.h"
 
 namespace Engine::Graphics {
-    D3D11InputLayout::D3D11InputLayout(ID3D11Device& device, Vertex::Layout const& layout, ID3DBlob* p_vertex_shader_byte_code)
-        : _layout{layout}
-    {
-        auto const D3DLayout {layout.GetD3D11Layout()};
+    D3D11InputLayout::D3D11InputLayout(ID3D11Device& device, x_vector<D3D11_INPUT_ELEMENT_DESC> const& layout, ID3DBlob* p_vertex_shader_byte_code) {
+        for (auto const& element : layout)
+            _layoutDesc += element.SemanticName;
+
         device.CreateInputLayout(
-            D3DLayout.data(),
-            static_cast<UINT>(D3DLayout.size()),
+            layout.data(),
+            layout.size(),
             p_vertex_shader_byte_code->GetBufferPointer(),
             p_vertex_shader_byte_code->GetBufferSize(),
             _inputLayout.ReleaseAndGetAddressOf()
@@ -19,11 +19,19 @@ namespace Engine::Graphics {
         context.IASetInputLayout(_inputLayout.Get());
     }
 
-    x_string D3D11InputLayout::GenUID(Vertex::Layout const& layout) {
-        return x_string{typeid(D3D11InputLayout).name()} + "#" + layout.GetCode();
+    x_string D3D11InputLayout::GenUID(x_string const& layout_desc) {
+        return x_string{typeid(D3D11InputLayout).name()} + "#" + layout_desc;
+    }
+
+    x_string D3D11InputLayout::GenUID(x_vector<D3D11_INPUT_ELEMENT_DESC> const& layout) {
+        x_string layout_desc {};
+        for (auto const& element : layout)
+            layout_desc += element.SemanticName;
+
+        return x_string{typeid(D3D11InputLayout).name()} + "#" + layout_desc;
     }
 
     x_string D3D11InputLayout::GetUID() const {
-        return GenUID(_layout);
+        return GenUID(_layoutDesc);
     }
 }

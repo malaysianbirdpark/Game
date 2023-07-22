@@ -12,7 +12,7 @@ namespace Engine::Graphics {
             bool dynamic,
             char const* tag
         );
-        ~D3D11ConstantBuffer() = default;
+        ~D3D11ConstantBuffer();
 
         void Update(ID3D11DeviceContext& context, void const* data, size_t data_size);
         void Bind(ID3D11DeviceContext& context, UINT slot);

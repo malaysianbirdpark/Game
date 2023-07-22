@@ -10,7 +10,7 @@ namespace Engine::Graphics {
         D3D11PipelineStateObject() = default;
         ~D3D11PipelineStateObject() = default;
 
-        void SetInputLayout(ID3D11Device& device, Vertex::Layout const& layout);
+        void SetInputLayout(ID3D11Device& device, x_vector<D3D11_INPUT_ELEMENT_DESC> const& layout);
         void SetPixelShader(ID3D11Device& device, char const* path);
         void SetVertexShader(ID3D11Device& device, char const* path);
 

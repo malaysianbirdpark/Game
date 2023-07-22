@@ -5,6 +5,10 @@ namespace Engine::Graphics {
     class D3D11RootSignature;
     class D3DSceneGraph;
 
+    // TODO: TEST
+    class D3D11VertexBuffer;
+    class D3D11IndexBuffer;
+
     class D3D11Core {
     public:
         D3D11Core(int width, int height, HWND native_wnd, bool windowed);
@@ -15,12 +19,15 @@ namespace Engine::Graphics {
 
         void AddScene();
 
+        [[nodiscard]] DirectX::XMMATRIX GetProj();
+
         ID3D11Device& Device() { return *_device.Get(); }
     private:
         void BeginFrame();
         void EndFrame();
     private:
-        WindowInfo _windowInfo;
+        WindowInfo          _windowInfo;
+        DirectX::XMFLOAT4X4 _proj;
     private:
         Microsoft::WRL::ComPtr<ID3D11Device>             _device;
         Microsoft::WRL::ComPtr<ID3D11DeviceContext>      _immContext;
@@ -35,6 +42,10 @@ namespace Engine::Graphics {
         D3D11_VIEWPORT                                   _viewPort {};
 
         std::shared_ptr<Graphics::D3DSceneGraph>         _scene; 
+
+        // TODO: TEST
+        std::shared_ptr<D3D11VertexBuffer> _vb;
+        std::shared_ptr<D3D11IndexBuffer>  _ib;
     };
 }
 

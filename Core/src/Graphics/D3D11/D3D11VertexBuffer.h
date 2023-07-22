@@ -1,13 +1,9 @@
 #pragma once
 
 namespace Engine::Graphics {
-    namespace Vertex {
-        class Buffer;
-    }
-
     class D3D11VertexBuffer {
     public:
-        D3D11VertexBuffer(ID3D11Device& device, Vertex::Buffer const& vbuf, char const* tag);
+        D3D11VertexBuffer(ID3D11Device& device, UINT stride, UINT byte_width, void const* data, char const* tag);
 
         void Bind(ID3D11DeviceContext& context) noexcept;
         [[nodiscard]] static x_string GenUID(char const* tag);

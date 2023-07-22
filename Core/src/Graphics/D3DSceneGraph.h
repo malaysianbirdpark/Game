@@ -11,11 +11,6 @@ namespace Engine::Graphics {
     class D3D11PipelineStateObject;
     class D3D11RootSignature;
 
-    namespace Vertex {
-        class Layout;        
-        class Buffer;
-    }
-
     class D3DMesh {
     public:
         D3DMesh() = default;
@@ -30,7 +25,7 @@ namespace Engine::Graphics {
 
         DirectX::XMMATRIX GetModelMatrix() const { return DirectX::XMLoadFloat4x4(&_transform); }
     private:
-        void SetVertexBuffer(ID3D11Device& device, Vertex::Buffer const& vbuf, char const* tag);
+        void SetVertexBuffer(ID3D11Device& device, char const* tag);
         void SetIndexBuffer(ID3D11Device& device, x_vector<unsigned short> const& indices, char const* tag);
     private:
         x_string                            _rsTag;
@@ -45,7 +40,7 @@ namespace Engine::Graphics {
     public:
         D3DSceneNode(x_string& name, x_vector<std::shared_ptr<D3DMesh>>& meshes, DirectX::FXMMATRIX const& parent_transform);
 
-        void Draw(ID3D11DeviceContext& context, DirectX::FXMMATRIX acc_transform);
+        void Draw(ID3D11DeviceContext& context, DirectX::FXMMATRIX const& acc_transform);
     private:
         x_string                                 _name {};
         // Scene holds all the meshes and each node points to them
@@ -61,12 +56,12 @@ namespace Engine::Graphics {
         D3DScene(DirectX::FXMMATRIX const& parent_transform = DirectX::XMMatrixIdentity());
         D3DScene(ID3D11Device& device, aiScene const* ai_scene, DirectX::FXMMATRIX const& parent_transform = DirectX::XMMatrixIdentity());
 
-        void Draw(ID3D11DeviceContext& context, DirectX::FXMMATRIX acc_transform = DirectX::XMMatrixIdentity());
+        void Draw(ID3D11DeviceContext& context, DirectX::FXMMATRIX const& acc_transform = DirectX::XMMatrixIdentity());
 
         void SetMeshes(x_vector<std::shared_ptr<D3DMesh>> const& meshes);
     private:
-        [[nodiscard]] std::shared_ptr<D3DSceneNode>  ParseNode(aiNode* const ai_node);
-        [[nodiscard]] std::shared_ptr<D3DMesh>       ParseMesh(ID3D11Device& device, aiMesh* const ai_mesh, aiMaterial** const ai_material);
+        [[nodiscard]] std::shared_ptr<D3DSceneNode>  ParseNode(aiNode const* ai_node);
+        [[nodiscard]] std::shared_ptr<D3DMesh>       ParseMesh(ID3D11Device& device, aiMesh const* ai_mesh, aiMaterial const* const* ai_material);
     private:
         x_vector<std::shared_ptr<D3DMesh>>       _mesh {};
         x_vector<std::shared_ptr<D3DScene>>      _childScene {};

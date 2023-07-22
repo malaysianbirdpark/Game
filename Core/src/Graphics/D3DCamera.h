@@ -3,18 +3,18 @@
 namespace Engine::Graphics {
     class D3DCamera {
     public:
-        D3DCamera(DirectX::XMFLOAT3 init_pos = DirectX::XMFLOAT3());
+        static void Init();
 
-        DirectX::XMMATRIX GetView() const;
+        static DirectX::XMMATRIX GetView();
 
-        void Rotate(float const dx, float const dy);
-        void Translate(DirectX::XMFLOAT3 mat);
+        static void Rotate(float const dx, float const dy);
+        static void Translate(DirectX::XMFLOAT3 mat);
     private:
-        DirectX::XMFLOAT3 _pos;
-        float _pitch {0.0f};
-        float _yaw {0.0f};
-        float _travelSpeed {12.0f};
-        float _rotationSpeed {0.4f};
+        inline static DirectX::XMFLOAT3 _pos;
+        inline static float _pitch {0.0f};
+        inline static float _yaw {0.0f};
+        inline static float _travelSpeed {12.0f};
+        inline static float _rotationSpeed {0.4f};
     };
 }
 

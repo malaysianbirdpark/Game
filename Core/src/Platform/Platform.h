@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Engine::Platform {
+namespace Engine {
     class Platform {
     public:
         class WindowClass {
@@ -20,31 +20,30 @@ namespace Engine::Platform {
             HINSTANCE hInst;
         };
     public:
-        Platform(int const width, int const height, char const* name = "window");
-        virtual ~Platform();
+        static void Init(int const width, int const height, char const* name = "Game");
+        static void Shutdown();
 
-        std::optional<int> PumpMessage();
+        static std::optional<int> PumpMessage();
 
-        [[nodiscard]] HWND GetNativeWnd() { return win32Data.hWnd; }
-        [[nodiscard]] int GetWidth() const { return win32Data.width; }
-        [[nodiscard]] int GetHeight() const { return win32Data.height; }
+        [[nodiscard]] static HWND GetNativeWnd() { return _wndData.hWnd; }
+        [[nodiscard]] static int GetWidth() { return _wndData.width; }
+        [[nodiscard]] static int GetHeight() { return _wndData.height; }
 
-        void SetWindowSize(int width, int height);
-        void SetViewportSize(int width, int height);
+        static void SetWindowSize(int width, int height);
+        static void SetViewportSize(int width, int height);
     private:
         static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
         static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
-        LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
-    private:
-        void EnableImGuiMouse();
-        void DisableImGuiMouse();
+        static LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
     private:
         struct win32_data {
             int width {0};
             int height {0};
             WindowClass* wndClass;
             HWND hWnd {nullptr};
-        } win32Data;
+        };
+
+        inline static win32_data          _wndData {};
     };
 }
 

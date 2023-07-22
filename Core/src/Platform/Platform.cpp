@@ -4,8 +4,9 @@
 #include <imgui.h>
 #include <imgui_impl_win32.h>
 
+#include "Input.h"
 
-namespace Engine::Platform {
+namespace Engine {
     Platform::WindowClass::WindowClass() noexcept
         : _name{"Window"}, hInst{GetModuleHandle(nullptr)}
     {
@@ -32,11 +33,11 @@ namespace Engine::Platform {
         UnregisterClass(_name.c_str(), GetInstance());
     }
 
-    Platform::Platform(int const width, int const height, char const* name) {
-        win32Data.wndClass = new WindowClass{};
+    void Platform::Init(int const width, int const height, char const* name) {
+        _wndData.wndClass = new WindowClass{};
 
-        this->win32Data.width = width;
-        this->win32Data.height = width;
+        _wndData.width = width;
+        _wndData.height = width;
 
         // calculate window size base on desired client region size 
         RECT wr;
@@ -49,8 +50,9 @@ namespace Engine::Platform {
         }
 
         // create window & get hWnd
-        win32Data.hWnd = CreateWindow(
-            win32Data.wndClass->GetName(),
+        Platform p {};
+        _wndData.hWnd = CreateWindow(
+            _wndData.wndClass->GetName(),
             name,
             WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, //| WS_THICKFRAME,
             CW_USEDEFAULT,
@@ -59,26 +61,25 @@ namespace Engine::Platform {
             wr.bottom - wr.top,
             nullptr,
             nullptr,
-            win32Data.wndClass->GetInstance(),
-            this // this is the lpCreateParams!!
+            _wndData.wndClass->GetInstance(),
+            &p
         );
         /*
-        if (win32Data.hWnd == nullptr) {
+        if (_wndData.hWnd == nullptr) {
             throw LAST_EXCEPT();
         } 
         */
 
-        //Input::InputHandler::Init(win32Data.hWnd);
-        //Input::RawInputHandler::Init();
+        Input::Init(_wndData.hWnd);
 
-        ShowWindow(win32Data.hWnd, SW_SHOWDEFAULT);
+        ShowWindow(_wndData.hWnd, SW_SHOWDEFAULT);
     }
 
-    Platform::~Platform() {
+    void Platform::Shutdown() {
         PLATFORM_INFO("Shutting down Platform!");
-        win32Data.wndClass->Shutdown();
-        delete win32Data.wndClass;
-        DestroyWindow(win32Data.hWnd);
+        _wndData.wndClass->Shutdown();
+        delete _wndData.wndClass;
+        DestroyWindow(_wndData.hWnd);
     }
 
     std::optional<int> Platform::PumpMessage() {
@@ -95,8 +96,8 @@ namespace Engine::Platform {
     }
 
     void Platform::SetWindowSize(int width, int height) {
-        win32Data.width = width;
-        win32Data.height = height;
+        _wndData.width = width;
+        _wndData.height = height;
     }
 
     void Platform::SetViewportSize(int width, int height) {
@@ -142,7 +143,7 @@ namespace Engine::Platform {
                     PostQuitMessage(0);
                     return 0;
                 case WM_KILLFOCUS:
-                    //kbd->Reset();
+                    Input::ClearKeyboard();
                     break;
                 // KEYBOARD
                 case WM_KEYDOWN:
@@ -150,20 +151,20 @@ namespace Engine::Platform {
                 case WM_KEYUP:
                 case WM_SYSKEYUP:
                 case WM_CHAR:
-                    //Input::InputHandler::ProcessKbdMsg(msg, wParam, lParam);
+                    DirectX::Keyboard::ProcessMessage(msg, wParam, lParam);
                     break;
                 case WM_MENUCHAR:
                     return MAKELRESULT(0, MNC_CLOSE);
                 // MOUSE
                 case WM_ACTIVATE:
-                case WM_ACTIVATEAPP:
-                    //Input::InputHandler::ToggleActivation(wParam & WA_ACTIVE, hWnd);
-                    //Input::InputHandler::ProcessMouseMsg(msg, wParam, lParam);
+            case WM_ACTIVATEAPP:
+                    Input::ToggleActivation(wParam & WA_ACTIVE);
+                    DirectX::Mouse::ProcessMessage(msg, wParam, lParam);
                     break; 
                 case WM_LBUTTONDOWN:
                     SetForegroundWindow(hWnd);
-                    //Input::InputHandler::ButtonDown(hWnd);
-                    //Input::InputHandler::ProcessMouseMsg(msg, wParam, lParam);
+                    Input::KeyboardButtonDown();
+                    DirectX::Mouse::ProcessMessage(msg, wParam, lParam);
                     break; 
                 case WM_MOUSEMOVE:
                 case WM_LBUTTONUP:
@@ -175,24 +176,16 @@ namespace Engine::Platform {
                 case WM_XBUTTONDOWN:
                 case WM_XBUTTONUP:
                 case WM_MOUSEHOVER:
-                    //Input::InputHandler::ProcessMouseMsg(msg, wParam, lParam);
+                    DirectX::Mouse::ProcessMessage(msg, wParam, lParam);
                     break; 
                 case WM_MOUSEACTIVATE:
                     return MA_ACTIVATEANDEAT;
                 /*** RAW MOUSE INPUT ***/
                 case WM_INPUT:
-                    //Input::RawInputHandler::ProcessRawInput(msg, wParam, lParam);
+                    Input::ProcessRawInput(msg, wParam, lParam);
                     break; 
             }
         }
         return DefWindowProc(hWnd, msg, wParam, lParam);
-    }
-
-    void Platform::EnableImGuiMouse() {
-        ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
-    }
-
-    void Platform::DisableImGuiMouse() {
-        ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
     }
 }

@@ -3,7 +3,7 @@
 
 #include "D3D11PipelineStateCommon.h"
 
-std::shared_ptr<Engine::Graphics::D3D11InputLayout> Engine::Graphics::D3D11PipelineStateHolder::ResolveInputLayout(ID3D11Device& device, Vertex::Layout const& layout, ID3DBlob* p_vertex_shader_byte_code) {
+std::shared_ptr<Engine::Graphics::D3D11InputLayout> Engine::Graphics::D3D11PipelineStateHolder::ResolveInputLayout(ID3D11Device& device, x_vector<D3D11_INPUT_ELEMENT_DESC> const& layout, ID3DBlob* p_vertex_shader_byte_code) {
     auto const uid {D3D11InputLayout::GenUID(layout)};
 
     if (_inputLayout.contains(uid))

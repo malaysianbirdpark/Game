@@ -105,9 +105,6 @@
     <ClInclude Include="src\Graphics\GraphicsContext.h">
       <Filter>src\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3DVertex.h">
-      <Filter>src\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\Memory\MemoryAllocator.h">
       <Filter>src\Memory</Filter>
     </ClInclude>
@@ -148,6 +145,10 @@
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.h" />
     <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11RSLibrary.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11MeshDataHolder.h" />
+    <ClInclude Include="src\DSAL\x_circular_queue.h" />
+    <ClInclude Include="src\Platform\Input.h" />
+    <ClInclude Include="src\Utils\Clk.h" />
+    <ClInclude Include="src\Graphics\D3DRenderTech.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -204,9 +205,6 @@
     <ClCompile Include="src\Graphics\GraphicsContext.cpp">
       <Filter>src\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3DVertex.cpp">
-      <Filter>src\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="src\Memory\MemoryAllocator.cpp">
       <Filter>src\Memory</Filter>
     </ClCompile>
@@ -241,14 +239,19 @@
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11RSLibrary.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11MeshDataHolder.cpp" />
+    <ClCompile Include="src\Platform\Input.cpp" />
+    <ClCompile Include="src\Utils\Clk.cpp" />
+    <ClCompile Include="src\Graphics\D3DRenderTech.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="src\Graphics\HLSL\basicPS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL\solid_PS.hlsl">
       <Filter>src\Graphics\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\basicVS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL\solid_VS.hlsl">
       <Filter>src\Graphics\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL\solid_texture_VS.hlsl" />
+    <FxCompile Include="src\Graphics\HLSL\solid_texture_PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

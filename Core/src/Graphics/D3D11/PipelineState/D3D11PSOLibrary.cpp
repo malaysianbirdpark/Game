@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "D3D11PSOLibrary.h"
 
-void Engine::Graphics::D3D11PSOLibrary::AddPSO(x_string const& tag, std::shared_ptr<D3D11PipelineStateObject> const& pso) {
+void Engine::Graphics::D3D11PSOLibrary::RegisterPSO(x_string const& tag, std::shared_ptr<D3D11PipelineStateObject> const& pso) {
     if (_lib.contains(tag))
         return;
 
