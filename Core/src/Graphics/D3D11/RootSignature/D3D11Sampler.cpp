@@ -12,6 +12,7 @@ namespace Engine::Graphics {
         sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
         device.CreateSamplerState(&sd, _sampler.ReleaseAndGetAddressOf());
+        GRAPHICS_INFO("sampler");
     }
 
     void D3D11Sampler::Bind(ID3D11DeviceContext& context, UINT slot) noexcept {

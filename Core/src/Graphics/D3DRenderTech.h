@@ -20,14 +20,14 @@ namespace Engine::Graphics {
 
         static void Init(ID3D11Device& device, DirectX::XMMATRIX const& proj);
 
-        void QueryVertexLayout(aiMesh const* ai_mesh);
-        void QueryMaterialProp(aiMesh const* ai_mesh, aiMaterial const* ai_material);
-
         using vb = std::shared_ptr<D3D11VertexBuffer>;
         using ib = std::shared_ptr<D3D11IndexBuffer>;
-        std::pair<vb, ib> Cook(ID3D11Device& device, aiMesh const* ai_mesh, aiMaterial const* ai_material);
+        std::tuple<x_string, vb, ib> Cook(ID3D11Device& device, aiMesh const* ai_mesh, aiMaterial const* ai_material);
     private:
-        void CookVertexLayout();
+        void QueryVertexLayout(aiMesh const* ai_mesh);
+        void QueryMaterial(aiMaterial const* ai_material, x_string& tag);
+
+        void CookVertexLayout(x_string& tag);
         x_vector<int8_t> CookVertex(aiMesh const* ai_mesh, size_t idx);
         std::pair<vb, ib> CookVertexBuffer(ID3D11Device& device, aiMesh const* ai_mesh);
     private:

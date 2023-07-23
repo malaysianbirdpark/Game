@@ -8,7 +8,7 @@
 #include "D3D11/RootSignature/D3D11RootSignature.h"
 #include "D3D11/RootSignature/D3D11RSLibrary.h"
 
-#include <algorithm>
+#include <filesystem>
 
 void Engine::Graphics::D3DRenderTech::Init(ID3D11Device& device, DirectX::XMMATRIX const& proj) {
     if (_initiated)
@@ -39,11 +39,10 @@ void Engine::Graphics::D3DRenderTech::Init(ID3D11Device& device, DirectX::XMMATR
         D3D11PSOLibrary::RegisterPSO(_tag, pso);
 
         auto const rs {MakeShared<D3D11RootSignature>(device, proj, pso, 100)};
-
         D3D11RSLibrary::RegisterRS(_tag, rs);
     }
 
-    // solid texture
+    // solid diffuse-only texture
     {
         auto pso {MakeShared<D3D11PipelineStateObject>()};
 
@@ -62,16 +61,15 @@ void Engine::Graphics::D3DRenderTech::Init(ID3D11Device& device, DirectX::XMMATR
         );
         aligned_byte_offset += sizeof(DirectX::XMFLOAT2);
 
-
-        pso->SetVertexShader(device, "./ShaderLib/solid_texture_VS.cso");
+        pso->SetVertexShader(device, "./ShaderLib/solid_pos3_nor_tex2_dif_VS.cso");
         pso->SetInputLayout(device, layout);
-        pso->SetPixelShader(device, "./ShaderLib/solid_texture_PS.cso");
+        pso->SetPixelShader(device, "./ShaderLib/solid_pos3_nor_tex2_dif_PS.cso");
 
-        x_string const _tag {"solid_texture"};
+        x_string const _tag {"solid_pos3_nor_tex2_dif"};
         D3D11PSOLibrary::RegisterPSO(_tag, pso);
 
         auto const rs {MakeShared<D3D11RootSignature>(device, proj, pso, 100)};
-
+        rs->AddSamplerSlot(device, 0u, "sampler");
         D3D11RSLibrary::RegisterRS(_tag, rs);
     }
 }
@@ -84,19 +82,41 @@ void Engine::Graphics::D3DRenderTech::QueryVertexLayout(aiMesh const* ai_mesh) {
     _vertexFlag |= ai_mesh->HasTextureCoords(0) *   Texture2D;
 }
 
-void Engine::Graphics::D3DRenderTech::QueryMaterialProp(aiMesh const* ai_mesh, aiMaterial const* ai_material) {
+void Engine::Graphics::D3DRenderTech::QueryMaterial(aiMaterial const* ai_material, x_string& tag) {
+    if (auto const count {ai_material->GetTextureCount(aiTextureType_DIFFUSE)}; count >= 1) {
+        tag += "_dif";
+
+        aiString ai_path {};
+        for (auto i {0u}; i != count; ++i) {
+            ai_material->GetTexture(aiTextureType_DIFFUSE, i, &ai_path);
+
+            auto path {std::filesystem::path{ai_path.C_Str()}};
+            if (path.extension() != ".dds")
+                path.replace_extension(".dds");
+            std::cout << path << std::endl;
+        }
+    }
 }
 
-std::pair<Engine::Graphics::D3DRenderTech::vb, Engine::Graphics::D3DRenderTech::ib> Engine::Graphics::D3DRenderTech::Cook(ID3D11Device& device, aiMesh const* ai_mesh, aiMaterial const* ai_material) {
-    return CookVertexBuffer(device, ai_mesh);
+std::tuple<Engine::x_string, Engine::Graphics::D3DRenderTech::vb, Engine::Graphics::D3DRenderTech::ib> Engine::Graphics::D3DRenderTech::Cook(ID3D11Device& device, aiMesh const* ai_mesh, aiMaterial const* ai_material) {
+    x_string tag {"solid"};
+
+    QueryVertexLayout(ai_mesh);
+    CookVertexLayout(tag);
+    auto [vertex_buffer, index_buffer] {CookVertexBuffer(device, ai_mesh)};
+
+    QueryMaterial(ai_material, tag);
+
+    return {tag, vertex_buffer, index_buffer}; 
 }
 
-void Engine::Graphics::D3DRenderTech::CookVertexLayout() {
+void Engine::Graphics::D3DRenderTech::CookVertexLayout(x_string& tag) {
     if (_vertexFlag & Position3D) {
         _layout.push_back(
             {"POSITION", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, _stride, D3D11_INPUT_PER_VERTEX_DATA, 0u}
         );
         _stride += sizeof(DirectX::XMFLOAT3);
+        tag += "_pos3";
     }
 
     if (_vertexFlag & Normal) {
@@ -104,6 +124,7 @@ void Engine::Graphics::D3DRenderTech::CookVertexLayout() {
             {"Normal", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, _stride, D3D11_INPUT_PER_VERTEX_DATA, 0u}
         );
         _stride += sizeof(DirectX::XMFLOAT3);
+        tag += "_nor";
     }
 
     if (_vertexFlag & Tangent) {
@@ -111,6 +132,7 @@ void Engine::Graphics::D3DRenderTech::CookVertexLayout() {
             {"TANGENT", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, _stride, D3D11_INPUT_PER_VERTEX_DATA, 0u}
         );
         _stride += sizeof(DirectX::XMFLOAT3);
+        tag += "_tan";
     }
 
     if (_vertexFlag & BiTangent) {
@@ -118,6 +140,7 @@ void Engine::Graphics::D3DRenderTech::CookVertexLayout() {
             {"BINORMAL", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, _stride, D3D11_INPUT_PER_VERTEX_DATA, 0u}
         );
         _stride += sizeof(DirectX::XMFLOAT3);
+        tag += "_bit";
     }
 
     if (_vertexFlag & Texture2D) {
@@ -125,6 +148,7 @@ void Engine::Graphics::D3DRenderTech::CookVertexLayout() {
             {"TEXCOORD", 0u, DXGI_FORMAT_R32G32_FLOAT, 0u, _stride, D3D11_INPUT_PER_VERTEX_DATA, 0u}
         );
         _stride += sizeof(DirectX::XMFLOAT2);
+        tag += "_tex2";
     }
 }
 
@@ -166,8 +190,6 @@ Engine::x_vector<int8_t> Engine::Graphics::D3DRenderTech::CookVertex(aiMesh cons
 }
 
 std::pair<Engine::Graphics::D3DRenderTech::vb, Engine::Graphics::D3DRenderTech::ib> Engine::Graphics::D3DRenderTech::CookVertexBuffer(ID3D11Device& device, aiMesh const* ai_mesh) {
-    CookVertexLayout();
-
     _vertices.resize(_stride * ai_mesh->mNumVertices);
     for (auto i {0}; i != ai_mesh->mNumVertices; ++i) {
         auto const vertex {CookVertex(ai_mesh, i)};

@@ -20,11 +20,11 @@ void Engine::Graphics::D3D11RootSignature::AddConstantBuffer(ID3D11Device& devic
     _cb[slot] = D3D11RootSignatureHolder::ResolveConstantBuffer(device, data, data_size, vsVisible, psVisible, dynamic, tag);
 }
 
-void Engine::Graphics::D3D11RootSignature::AddSampler(ID3D11Device& device, UINT slot, char const* tag) {
+void Engine::Graphics::D3D11RootSignature::AddSamplerSlot(ID3D11Device& device, UINT slot, char const* tag) {
     _sampler[slot] = D3D11RootSignatureHolder::ResolveSampler(device, tag);
 }
 
-void Engine::Graphics::D3D11RootSignature::AddTexture(ID3D11Device& device, UINT slot, char const* path) {
+void Engine::Graphics::D3D11RootSignature::AddShaderResourceSlot(ID3D11Device& device, UINT slot, char const* path) {
     _texture[slot] = D3D11RootSignatureHolder::ResolveTexture(device, path);
 }
 

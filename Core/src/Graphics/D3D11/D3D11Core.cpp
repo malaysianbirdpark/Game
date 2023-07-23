@@ -112,7 +112,7 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
 
     // init scene
     _scene = MakeShared<Graphics::D3DSceneGraph>();
-    _scene->AddScene(*_device.Get(), "./Assets/nanosuit.obj");
+    _scene->AddScene(*_device.Get(), "./Assets/Models/Zelda/Meshes/zeldaPosed001.fbx");
 }
 
 Engine::Graphics::D3D11Core::~D3D11Core() {

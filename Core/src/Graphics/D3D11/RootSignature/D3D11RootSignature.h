@@ -7,6 +7,13 @@ namespace Engine::Graphics {
     class D3D11Texture;
 
     class D3D11RootSignature {
+        enum ShaderResourceType {
+            DIFFUSE,
+            AMBIENT,
+            SPECULAR,
+            NORMAL_MAP,
+        };
+
         struct MVP {
             DirectX::XMFLOAT4X4 model;
             DirectX::XMFLOAT4X4 view;
@@ -22,8 +29,8 @@ namespace Engine::Graphics {
         ~D3D11RootSignature() = default;
 
         void AddConstantBuffer(ID3D11Device& device, UINT slot, void* data, size_t data_size, bool vsVisible, bool psVisible, bool dynamic, char const* tag);
-        void AddSampler(ID3D11Device& device, UINT slot, char const* tag);
-        void AddTexture(ID3D11Device& device, UINT slot, char const* path);
+        void AddSamplerSlot(ID3D11Device& device, UINT slot, char const* tag);
+        void AddShaderResourceSlot(ID3D11Device& device, UINT slot, char const* path);
 
         std::shared_ptr<D3D11ConstantBuffer>& GetConstantBufferAt(UINT slot) { return _cb[slot]; };
 

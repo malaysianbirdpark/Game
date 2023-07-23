@@ -111,11 +111,10 @@ std::shared_ptr<Engine::Graphics::D3DSceneNode> Engine::Graphics::D3DScene::Pars
 std::shared_ptr<Engine::Graphics::D3DMesh> Engine::Graphics::D3DScene::ParseMesh(ID3D11Device& device, aiMesh const* ai_mesh, aiMaterial const* const* ai_material) {
     D3DRenderTech tech {};
 
-    tech.QueryVertexLayout(ai_mesh);
-    auto buffers {tech.Cook(device, ai_mesh, ai_material[ai_mesh->mMaterialIndex])};
+    auto [tag, vertex_buffer, index_buffer] {tech.Cook(device, ai_mesh, ai_material[ai_mesh->mMaterialIndex])};
+    std::cout << tag << std::endl;
 
-    x_string tag {"solid"};
-    return MakeShared<D3DMesh>(tag, buffers.first, buffers.second, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    return MakeShared<D3DMesh>(tag, vertex_buffer, index_buffer, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 Engine::Graphics::D3DSceneGraph::D3DSceneGraph() {
