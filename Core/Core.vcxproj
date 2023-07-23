@@ -108,34 +108,43 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Graphics\D3DSceneGraph.h" />
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11ShaderResourceVisitor.h" />
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11NormalMap.h" />
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularMap.h" />
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseMap.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Core.h" />
     <ClInclude Include="src\Core\Log.h" />
+    <ClInclude Include="src\DSAL\x_circular_queue.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\EntryPoint.h" />
-    <ClInclude Include="src\Graphics\D3DCamera.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11Core.h" />
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11IndexBuffer.h" />
+    <ClInclude Include="src\Graphics\D3D11\D3D11IndexBuffer.h" />
+    <ClInclude Include="src\Graphics\D3D11\D3D11MeshDataHolder.h" />
+    <ClInclude Include="src\Graphics\D3D11\D3D11VertexBuffer.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.h" />
+    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateCommon.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateHolder.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateObject.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.h" />
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11VertexBuffer.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.h" />
     <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11ConstantBuffer.h" />
+    <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11RSLibrary.h" />
     <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11RootSignature.h" />
     <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11RootSignatureCommon.h" />
     <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11RootSignatureHolder.h" />
     <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11Sampler.h" />
     <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11Texture.h" />
     <ClInclude Include="src\Graphics\D3D11\TEMP\Triangle.h" />
+    <ClInclude Include="src\Graphics\D3DCamera.h" />
+    <ClInclude Include="src\Graphics\D3DRenderTech.h" />
+    <ClInclude Include="src\Graphics\D3DSceneGraph.h" />
     <ClInclude Include="src\Graphics\GraphicsContext.h" />
-    <ClInclude Include="src\Graphics\D3DVertex.h" />
     <ClInclude Include="src\Memory\MemoryAllocator.h" />
     <ClInclude Include="src\Memory\MemoryLib.h" />
     <ClInclude Include="src\Memory\MemoryPool.h" />
+    <ClInclude Include="src\Platform\Input.h" />
     <ClInclude Include="src\Platform\Platform.h" />
     <ClInclude Include="src\Thread\DeadLockProfiler.h" />
     <ClInclude Include="src\Thread\GlobalQueue.h" />
@@ -144,54 +153,88 @@
     <ClInclude Include="src\Thread\Lock.h" />
     <ClInclude Include="src\Thread\LockQueue.h" />
     <ClInclude Include="src\Thread\ThreadMan.h" />
+    <ClInclude Include="src\Utils\Clk.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Graphics\D3DSceneGraph.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11ShaderResourceVisitor.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11NormalMap.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularMap.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseMap.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
-    <ClCompile Include="src\Graphics\D3DCamera.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11Core.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11IndexBuffer.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\D3D11IndexBuffer.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\D3D11MeshDataHolder.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\D3D11VertexBuffer.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateHolder.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateObject.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11VertexBuffer.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11ConstantBuffer.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11RSLibrary.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11RootSignature.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11RootSignatureHolder.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11Sampler.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11Texture.cpp" />
     <ClCompile Include="src\Graphics\D3D11\TEMP\Triangle.cpp" />
+    <ClCompile Include="src\Graphics\D3DCamera.cpp" />
+    <ClCompile Include="src\Graphics\D3DRenderTech.cpp" />
+    <ClCompile Include="src\Graphics\D3DSceneGraph.cpp" />
     <ClCompile Include="src\Graphics\GraphicsContext.cpp" />
-    <ClCompile Include="src\Graphics\D3DVertex.cpp" />
     <ClCompile Include="src\Memory\MemoryAllocator.cpp" />
     <ClCompile Include="src\Memory\MemoryLib.cpp" />
     <ClCompile Include="src\Memory\MemoryPool.cpp" />
+    <ClCompile Include="src\Platform\Input.cpp" />
     <ClCompile Include="src\Platform\Platform.cpp" />
     <ClCompile Include="src\Thread\DeadLockProfiler.cpp" />
     <ClCompile Include="src\Thread\GlobalQueue.cpp" />
     <ClCompile Include="src\Thread\JobQueue.cpp" />
     <ClCompile Include="src\Thread\Lock.cpp" />
     <ClCompile Include="src\Thread\ThreadMan.cpp" />
+    <ClCompile Include="src\Utils\Clk.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="src\Graphics\HLSL\basicPS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL\solid_PS.hlsl">
       <ShaderType>Pixel</ShaderType>
       <ShaderModel>5.0</ShaderModel>
       <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/basicPS.cso</ObjectFileOutput>
+      <ObjectFileOutput>../Game/ShaderLib/solid_PS.cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\basicVS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL\solid_VS.hlsl">
       <ShaderType>Vertex</ShaderType>
       <ShaderModel>5.0</ShaderModel>
       <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/basicVS.cso</ObjectFileOutput>
+      <ObjectFileOutput>../Game/ShaderLib/solid_VS.cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL\solid_pos3_nor_tex2_dif_PS.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/solid_pos3_nor_tex2_dif_PS.cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL\solid_pos3_nor_tex2_dif_VS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/solid_pos3_nor_tex2_dif_VS.cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL\solid_texture_PS.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/solid_texture_PS.cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL\solid_texture_VS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/solid_texture_VS.cso</ObjectFileOutput>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -28,7 +28,6 @@ namespace Engine::Graphics {
             _textureView[0].ReleaseAndGetAddressOf(),
             &alphaMode
         );
-
     }
 
     void D3D11Texture::Bind(ID3D11DeviceContext& context, UINT slot) noexcept {

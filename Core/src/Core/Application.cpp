@@ -2,35 +2,79 @@
 #include "Application.h"
 
 #include "Platform/Platform.h"
+#include "Platform/Input.h"
 #include "Graphics/GraphicsContext.h"
+#include "Graphics/D3DCamera.h"
+#include "Graphics/D3DSceneGraph.h"
+
+#include <assimp/scene.h>
+
+#include "Utils/Clk.h"
 
 Engine::Core::Application::Application() {
     width = 800;
     height = 450;
-    p_platform = MakeUnique<Platform::Platform>(width, height);
-    p_gfx = MakeUnique<Graphics::GraphicsContext>(width, height, p_platform->GetNativeWnd(), true);
+    Platform::Init(width, height);
+    _gfx = MakeUnique<Graphics::GraphicsContext>(width, height, Platform::GetNativeWnd(), true);
+
+    // camera
+    Graphics::D3DCamera::Init();
+
+    Clk::Init();
 }
 
 Engine::Core::Application::~Application() {
+    Platform::Shutdown();
 }
 
 int Engine::Core::Application::Run() {
     while (true) {
-        if (auto const ecode {p_platform->PumpMessage()}; ecode.has_value()) [[unlikely]]
+        if (auto const ecode {Platform::PumpMessage()}; ecode.has_value()) [[unlikely]]
             return *ecode;
 
-        ProcessInput();
-        Update(1.0f);
+        auto const dt {Clk::Mark()};
+
+        ProcessInput(dt);
+        Update(dt);
         Render();
     }
 }
 
-void Engine::Core::Application::ProcessInput() {
+void Engine::Core::Application::ProcessInput(float const dt) {
+    auto const kbd {Input::GetKeyboardState()};
+    auto const mouse {Input::GetMouseState()};
+
+    if (kbd.Escape)
+        Input::ToggleRaw();
+
+
+    if (!Input::_cursorEnabled) {
+        DirectX::XMFLOAT3 translate {};
+
+        translate.x -= kbd.IsKeyDown(DirectX::Keyboard::Keys::A) * dt;
+        translate.x += kbd.IsKeyDown(DirectX::Keyboard::Keys::D) * dt;
+
+        translate.y += kbd.IsKeyDown(DirectX::Keyboard::Keys::R) * dt;
+        translate.y -= kbd.IsKeyDown(DirectX::Keyboard::Keys::F) * dt;
+
+        translate.z += kbd.IsKeyDown(DirectX::Keyboard::Keys::W) * dt;
+        translate.z -= kbd.IsKeyDown(DirectX::Keyboard::Keys::S) * dt;
+
+        Graphics::D3DCamera::Translate(translate);
+    }
+
+    while (auto const raw_delta {Input::ReadRawDelta()}) {
+        if (!Input::_cursorEnabled) 
+            Graphics::D3DCamera::Rotate(raw_delta.value().first * dt, raw_delta.value().second * dt);
+    }
+
+    Input::ClearKeyboard();
+    Input::ClearMouse();
 }
 
 void Engine::Core::Application::Update(float const dt) {
 }
 
 void Engine::Core::Application::Render() {
-    p_gfx->Render();
+    _gfx->Render();
 }

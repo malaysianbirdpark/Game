@@ -12,7 +12,9 @@ namespace Engine::Graphics {
         ~GraphicsContext();
 
         void Update(float const dt, DirectX::XMMATRIX view_projection);
-        void Render(D3DSceneGraph& scene);
+        void Render();
+
+        ID3D11Device& Device();
     private:
         std::unique_ptr<D3D11Core> _core11;
         //std::unique_ptr<D3D12Core> _core12;

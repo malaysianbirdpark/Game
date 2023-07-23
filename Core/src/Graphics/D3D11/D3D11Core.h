@@ -3,6 +3,11 @@
 namespace Engine::Graphics {
     class D3D11PipelineStateObject;
     class D3D11RootSignature;
+    class D3DSceneGraph;
+
+    // TODO: TEST
+    class D3D11VertexBuffer;
+    class D3D11IndexBuffer;
 
     class D3D11Core {
     public:
@@ -11,11 +16,18 @@ namespace Engine::Graphics {
 
         void Update();
         void Render();
+
+        void AddScene();
+
+        [[nodiscard]] DirectX::XMMATRIX GetProj();
+
+        ID3D11Device& Device() { return *_device.Get(); }
     private:
         void BeginFrame();
         void EndFrame();
     private:
-        WindowInfo _windowInfo;
+        WindowInfo          _windowInfo;
+        DirectX::XMFLOAT4X4 _proj;
     private:
         Microsoft::WRL::ComPtr<ID3D11Device>             _device;
         Microsoft::WRL::ComPtr<ID3D11DeviceContext>      _immContext;
@@ -29,8 +41,11 @@ namespace Engine::Graphics {
 
         D3D11_VIEWPORT                                   _viewPort {};
 
-        x_unordered_map<x_string, std::unique_ptr<D3D11PipelineStateObject>> _pso;
-        x_unordered_map<x_string, std::unique_ptr<D3D11RootSignature>>       _rs;
+        std::shared_ptr<Graphics::D3DSceneGraph>         _scene; 
+
+        // TODO: TEST
+        std::shared_ptr<D3D11VertexBuffer> _vb;
+        std::shared_ptr<D3D11IndexBuffer>  _ib;
     };
 }
 

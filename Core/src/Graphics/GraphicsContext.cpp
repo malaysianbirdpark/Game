@@ -19,7 +19,11 @@ void Engine::Graphics::GraphicsContext::Update(float const dt, DirectX::XMMATRIX
 
 }
 
-void Engine::Graphics::GraphicsContext::Render(D3DSceneGraph& scene) {
-    _core11->Render(scene);
+void Engine::Graphics::GraphicsContext::Render() {
+    _core11->Render();
     //_core12->Render();
+}
+
+ID3D11Device& Engine::Graphics::GraphicsContext::Device() {
+    return _core11->Device();
 }

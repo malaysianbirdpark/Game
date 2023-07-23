@@ -7,6 +7,9 @@
     <Filter Include="src\Core">
       <UniqueIdentifier>{A5D31CCF-91A0-77DA-BAB9-6582A6E5AC68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\DSAL">
+      <UniqueIdentifier>{80E21CCF-6CAF-77DA-95C8-658281F4AC68}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Graphics">
       <UniqueIdentifier>{0D564864-F9B8-D708-A23E-10BF8E80A38B}</UniqueIdentifier>
     </Filter>
@@ -34,6 +37,9 @@
     <Filter Include="src\Thread">
       <UniqueIdentifier>{F464C930-E01C-0B7E-4924-E4D935FBA56E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Utils">
+      <UniqueIdentifier>{4D9AFFB3-B904-B42A-0243-65D06EEC917F}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Application.h">
@@ -45,22 +51,31 @@
     <ClInclude Include="src\Core\Log.h">
       <Filter>src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\DSAL\x_circular_queue.h">
+      <Filter>src\DSAL</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\EntryPoint.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3DCamera.h">
-      <Filter>src\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\D3D11Core.h">
       <Filter>src\Graphics\D3D11</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11IndexBuffer.h">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+    <ClInclude Include="src\Graphics\D3D11\D3D11IndexBuffer.h">
+      <Filter>src\Graphics\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\D3D11MeshDataHolder.h">
+      <Filter>src\Graphics\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\D3D11VertexBuffer.h">
+      <Filter>src\Graphics\D3D11</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.h">
+      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.h">
       <Filter>src\Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateCommon.h">
@@ -75,13 +90,13 @@
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.h">
       <Filter>src\Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11VertexBuffer.h">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.h">
       <Filter>src\Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11ConstantBuffer.h">
+      <Filter>src\Graphics\D3D11\RootSignature</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11RSLibrary.h">
       <Filter>src\Graphics\D3D11\RootSignature</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\RootSignature\D3D11RootSignature.h">
@@ -102,10 +117,16 @@
     <ClInclude Include="src\Graphics\D3D11\TEMP\Triangle.h">
       <Filter>src\Graphics\D3D11\TEMP</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\GraphicsContext.h">
+    <ClInclude Include="src\Graphics\D3DCamera.h">
       <Filter>src\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3DVertex.h">
+    <ClInclude Include="src\Graphics\D3DRenderTech.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3DSceneGraph.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\GraphicsContext.h">
       <Filter>src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Memory\MemoryAllocator.h">
@@ -116,6 +137,9 @@
     </ClInclude>
     <ClInclude Include="src\Memory\MemoryPool.h">
       <Filter>src\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Input.h">
+      <Filter>src\Platform</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Platform.h">
       <Filter>src\Platform</Filter>
@@ -141,10 +165,16 @@
     <ClInclude Include="src\Thread\ThreadMan.h">
       <Filter>src\Thread</Filter>
     </ClInclude>
+    <ClInclude Include="src\Utils\Clk.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="src\pch.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3DSceneGraph.h" />
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseMap.h" />
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularMap.h" />
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11NormalMap.h" />
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11ShaderResourceVisitor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -153,16 +183,22 @@
     <ClCompile Include="src\Core\Log.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3DCamera.cpp">
-      <Filter>src\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\D3D11Core.cpp">
       <Filter>src\Graphics\D3D11</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11IndexBuffer.cpp">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+    <ClCompile Include="src\Graphics\D3D11\D3D11IndexBuffer.cpp">
+      <Filter>src\Graphics\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\D3D11MeshDataHolder.cpp">
+      <Filter>src\Graphics\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\D3D11VertexBuffer.cpp">
+      <Filter>src\Graphics\D3D11</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.cpp">
+      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.cpp">
       <Filter>src\Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateHolder.cpp">
@@ -174,13 +210,13 @@
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.cpp">
       <Filter>src\Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11VertexBuffer.cpp">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
-    </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.cpp">
       <Filter>src\Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11ConstantBuffer.cpp">
+      <Filter>src\Graphics\D3D11\RootSignature</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11RSLibrary.cpp">
       <Filter>src\Graphics\D3D11\RootSignature</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\RootSignature\D3D11RootSignature.cpp">
@@ -198,10 +234,16 @@
     <ClCompile Include="src\Graphics\D3D11\TEMP\Triangle.cpp">
       <Filter>src\Graphics\D3D11\TEMP</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\GraphicsContext.cpp">
+    <ClCompile Include="src\Graphics\D3DCamera.cpp">
       <Filter>src\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3DVertex.cpp">
+    <ClCompile Include="src\Graphics\D3DRenderTech.cpp">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3DSceneGraph.cpp">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\GraphicsContext.cpp">
       <Filter>src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Memory\MemoryAllocator.cpp">
@@ -212,6 +254,9 @@
     </ClCompile>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
       <Filter>src\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Input.cpp">
+      <Filter>src\Platform</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Platform.cpp">
       <Filter>src\Platform</Filter>
@@ -231,16 +276,34 @@
     <ClCompile Include="src\Thread\ThreadMan.cpp">
       <Filter>src\Thread</Filter>
     </ClCompile>
+    <ClCompile Include="src\Utils\Clk.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
     <ClCompile Include="src\pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3DSceneGraph.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseMap.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularMap.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11NormalMap.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11ShaderResourceVisitor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="src\Graphics\HLSL\basicPS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL\solid_PS.hlsl">
       <Filter>src\Graphics\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\basicVS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL\solid_VS.hlsl">
+      <Filter>src\Graphics\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL\solid_pos3_nor_tex2_dif_PS.hlsl">
+      <Filter>src\Graphics\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL\solid_pos3_nor_tex2_dif_VS.hlsl">
+      <Filter>src\Graphics\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL\solid_texture_PS.hlsl">
+      <Filter>src\Graphics\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL\solid_texture_VS.hlsl">
       <Filter>src\Graphics\HLSL</Filter>
     </FxCompile>
   </ItemGroup>

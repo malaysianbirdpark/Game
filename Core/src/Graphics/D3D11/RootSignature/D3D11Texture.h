@@ -3,6 +3,7 @@
 namespace Engine::Graphics {
     class D3D11Texture {
     public:
+        D3D11Texture(ID3D11Device& device);
         D3D11Texture(ID3D11Device& device, char const* path);
 
         void Bind(ID3D11DeviceContext& context, UINT slot) noexcept;
