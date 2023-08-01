@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "D3D11SpecularMap.h"
+#include "D3D11DiffuseTexture.h"
 
 #include <directxtk/DDSTextureLoader.h>
 
-Engine::Graphics::D3D11SpecularMap::D3D11SpecularMap(ID3D11Device& device, char const* path)
+Engine::Graphics::D3D11DiffuseTexture::D3D11DiffuseTexture(ID3D11Device& device, char const* path)
     : _path{path}
 {
     using namespace DirectX;
@@ -28,14 +28,14 @@ Engine::Graphics::D3D11SpecularMap::D3D11SpecularMap(ID3D11Device& device, char 
     );
 }
 
-void Engine::Graphics::D3D11SpecularMap::Bind(ID3D11DeviceContext& context) const {
-    context.PSSetShaderResources(2u, 1u, _srv.GetAddressOf());
+void Engine::Graphics::D3D11DiffuseTexture::Bind(ID3D11DeviceContext& context) const {
+    context.PSSetShaderResources(0u, 1u, _srv.GetAddressOf());
 }
 
-Engine::x_string Engine::Graphics::D3D11SpecularMap::GenUID(char const* path) {
-    return x_string{typeid(D3D11SpecularMap).name()} + "#" + path;
+Engine::x_string Engine::Graphics::D3D11DiffuseTexture::GenUID(char const* path) {
+    return x_string{typeid(D3D11DiffuseTexture).name()} + "#" + path;
 }
 
-Engine::x_string Engine::Graphics::D3D11SpecularMap::GetUID() const {
+Engine::x_string Engine::Graphics::D3D11DiffuseTexture::GetUID() const {
     return GenUID(_path.c_str());
 }

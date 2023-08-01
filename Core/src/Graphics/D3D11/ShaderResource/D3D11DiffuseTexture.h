@@ -1,9 +1,10 @@
 #pragma once
 
+
 namespace Engine::Graphics {
-    class D3D11NormalMap {
+    class D3D11DiffuseTexture {
     public:
-        D3D11NormalMap(ID3D11Device& device, char const* path);
+        D3D11DiffuseTexture(ID3D11Device& device, char const* path);
 
         void Bind(ID3D11DeviceContext& context) const;
 

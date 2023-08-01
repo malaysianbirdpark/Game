@@ -4,7 +4,7 @@ namespace Engine::Graphics {
     class D3D11Core;
     //class D3D12Core;
     class D3DCamera;
-    class D3DSceneGraph;
+    class D3D11SceneGraph;
     
     class GraphicsContext {
     public:

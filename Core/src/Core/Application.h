@@ -3,7 +3,7 @@
 namespace Engine {
     namespace Graphics {
         class GraphicsContext;
-        class D3DSceneGraph;
+        class D3D11SceneGraph;
     }
 }
 

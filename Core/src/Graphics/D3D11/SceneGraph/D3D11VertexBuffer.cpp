@@ -16,12 +16,12 @@ namespace Engine::Graphics {
         D3D11_SUBRESOURCE_DATA sd {};
         sd.pSysMem = data;
 
-        device.CreateBuffer(&bd, &sd, p_VertexBuffer.ReleaseAndGetAddressOf());
+        device.CreateBuffer(&bd, &sd, _VertexBuffer.ReleaseAndGetAddressOf());
     }
 
     void D3D11VertexBuffer::Bind(ID3D11DeviceContext& context) noexcept {
         constexpr UINT offset {0u};
-        context.IASetVertexBuffers(0u, 1u, p_VertexBuffer.GetAddressOf(), &_stride, &offset);
+        context.IASetVertexBuffers(0u, 1u, _VertexBuffer.GetAddressOf(), &_stride, &offset);
     }
 
     x_string D3D11VertexBuffer::GenUID(char const* tag) {
