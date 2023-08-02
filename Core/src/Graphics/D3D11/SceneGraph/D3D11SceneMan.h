@@ -1,5 +1,7 @@
 #pragma once
 
+#include <bitset>
+
 namespace Engine::Graphics {
     class D3D11SceneGraph;
 

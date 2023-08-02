@@ -16,7 +16,7 @@ void Engine::Graphics::D3D11TexturedStrategy::Render(ID3D11DeviceContext& contex
     _pso->Bind(context);
 
     for (auto const& sr : mesh.GetShaderResources()) {
-        if (D3D11DiffuseTexture const* diffuse_texture {std::get_if<D3D11DiffuseTexture>(sr.get())}) {
+        if (D3D11DiffuseMap const* diffuse_texture {std::get_if<D3D11DiffuseMap>(sr.get())}) {
             diffuse_texture->Bind(context);  
         }
     }

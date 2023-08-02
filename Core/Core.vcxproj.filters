@@ -159,7 +159,7 @@
     <ClInclude Include="src\pch.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseTexture.h" />
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseMap.h" />
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularMap.h" />
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11NormalMap.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightPoint.h" />
@@ -178,6 +178,8 @@
     <ClInclude Include="src\Graphics\D3D11\DummyEnd.h" />
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11ShaderResourcesInclude.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11RenderStrategyInclude.h" />
+    <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11VertexAttribute.h" />
+    <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11Material.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -276,7 +278,7 @@
     <ClCompile Include="src\pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseTexture.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseMap.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularMap.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11NormalMap.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightPoint.cpp" />
@@ -292,6 +294,8 @@
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11BlinPhongNormSpecMapStrategy.cpp" />
     <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11SceneMan.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11RenderStrategy.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11VertexAttribute.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11Material.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Graphics\HLSL\solid_PS.hlsl">

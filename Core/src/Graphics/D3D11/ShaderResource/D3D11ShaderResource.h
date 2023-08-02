@@ -6,7 +6,7 @@ namespace Engine::Graphics {
     class DummyEnd;
 
 #define SHADER_RESOURCE_TYPES \
-    F(D3D11DiffuseTexture)    \
+    F(D3D11DiffuseMap)        \
     F(D3D11NormalMap)         \
     F(D3D11SpecularMap)       
 

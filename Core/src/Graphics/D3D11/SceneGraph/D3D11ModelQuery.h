@@ -8,12 +8,17 @@ namespace Engine::Graphics {
 
     class D3D11ModelQuery {
         enum {
-            Position3D = 0b1,
-            Normal     = 0b10,
-            Tangent    = 0b100,
-            BiTangent  = 0b1000,
-            Texture2D  = 0b10000,
-            END        = Texture2D << 1,
+            Position3D      = 0b1,
+            Normal          = 0b10,
+            Tangent         = 0b100,
+            BiTangent       = 0b1000,
+            Texture2D       = 0b10000,
+            Texture3D       = 0b100000,
+            DiffuseColor    = 0b1000000,
+            SpecularColor   = 0b10000000,
+            SkinningIndex   = 0b100000000,
+            SkinningWeight  = 0b1000000000,
+            END             = SkinningWeight << 1,
         };
     public:
         D3D11ModelQuery() = default;

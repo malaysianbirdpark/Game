@@ -5,6 +5,8 @@
 #include "Graphics/D3D11/PipelineState/D3D11PipelineStateObject.h"
 #include "Graphics/D3D11/PipelineState/D3D11PSOLibrary.h"
 
+#include <assimp/material.h>
+
 #include <filesystem>
 
 void Engine::Graphics::D3D11ModelQuery::Init(ID3D11Device& device, DirectX::XMMATRIX const& proj) {
