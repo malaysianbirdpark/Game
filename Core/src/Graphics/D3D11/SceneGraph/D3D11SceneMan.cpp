@@ -45,13 +45,11 @@ void Engine::Graphics::D3D11SceneMan::Load(ID3D11Device& device) {
     }
 
     auto const& models {doc["models"]};
-    for (auto i {unsigned int{}}; i != models.Size(); ++i) {
+    for (auto i {unsigned int{}}; i != models.Size(); ++i)
         _scenes[models[i]["name"].GetString()] = MakeShared<D3D11SceneGraph>(device, models[i]["path"].GetString());
 
-        auto& textures {models[i]["textures"]};
-        for (auto j {unsigned int{}}; j != textures.Size(); ++j)
-            std::cout << textures[j].GetString() << std::endl;
-    }
+    while (true)
+        ;
 
     GRAPHICS_INFO("Done");
 }

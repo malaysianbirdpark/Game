@@ -66,14 +66,6 @@ void Engine::Graphics::D3D11ModelQuery::Init(ID3D11Device& device, DirectX::XMMA
     }
 }
 
-void Engine::Graphics::D3D11ModelQuery::QueryVertexLayout(aiMesh const* ai_mesh) {
-    _vertexFlag |= ai_mesh->HasPositions() *              Position3D;
-    _vertexFlag |= ai_mesh->HasNormals() *                Normal;
-    _vertexFlag |= ai_mesh->HasTangentsAndBitangents() *  Tangent;
-    _vertexFlag |= ai_mesh->HasTangentsAndBitangents() *  BiTangent;
-    _vertexFlag |= ai_mesh->HasTextureCoords(0) *   Texture2D;
-}
-
 void Engine::Graphics::D3D11ModelQuery::QueryMaterial(aiMaterial const* ai_material, x_string& tag) {
     if (auto const count {ai_material->GetTextureCount(aiTextureType_DIFFUSE)}; count >= 1) {
         tag += "_dif";
