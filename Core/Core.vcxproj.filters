@@ -108,9 +108,6 @@
     <ClInclude Include="src\Graphics\D3DCamera.h">
       <Filter>src\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11ModelQuery.h">
-      <Filter>src\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11SceneGraph.h">
       <Filter>src\Graphics</Filter>
     </ClInclude>
@@ -180,6 +177,7 @@
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11RenderStrategyInclude.h" />
     <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11VertexAttribute.h" />
     <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11Material.h" />
+    <ClInclude Include="src\Platform\WindowsInclude.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -231,9 +229,6 @@
       <Filter>src\Graphics\D3D11\TEMP</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3DCamera.cpp">
-      <Filter>src\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11ModelQuery.cpp">
       <Filter>src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11SceneGraph.cpp">

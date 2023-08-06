@@ -5,6 +5,10 @@
 #include "Graphics/D3D11/PipelineState/D3D11PSOLibrary.h"
 #include "Graphics/D3D11/PipelineState/D3D11PipelineStateObject.h"
 
+Engine::Graphics::D3D11SolidStrategy Engine::Graphics::D3D11SolidStrategy::GetInstance() {
+    return D3D11SolidStrategy{};
+}
+
 void Engine::Graphics::D3D11SolidStrategy::Init() {
     _pso = D3D11PSOLibrary::ResolvePSO("solid");
 }

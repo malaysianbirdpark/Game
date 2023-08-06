@@ -8,6 +8,10 @@
 
 #include "Graphics/D3D11/ShaderResource/D3D11ShaderResourcesInclude.h"
 
+Engine::Graphics::D3D11TexturedStrategy Engine::Graphics::D3D11TexturedStrategy::GetInstance() {
+    return D3D11TexturedStrategy{};
+}
+
 void Engine::Graphics::D3D11TexturedStrategy::Init() {
     _pso = D3D11PSOLibrary::ResolvePSO("textured");
 }

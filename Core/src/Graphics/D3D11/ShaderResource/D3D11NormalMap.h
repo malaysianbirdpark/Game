@@ -5,6 +5,8 @@ namespace Engine::Graphics {
     public:
         D3D11NormalMap(ID3D11Device& device, char const* path);
 
+        static D3D11NormalMap CreateNormalMap(ID3D11Device& device, char const* path);
+
         void Bind(ID3D11DeviceContext& context) const;
 
         [[nodiscard]] static x_string GenUID(char const* path);

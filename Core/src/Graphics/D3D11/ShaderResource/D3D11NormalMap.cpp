@@ -28,6 +28,10 @@ Engine::Graphics::D3D11NormalMap::D3D11NormalMap(ID3D11Device& device, char cons
     );
 }
 
+Engine::Graphics::D3D11NormalMap Engine::Graphics::D3D11NormalMap::CreateNormalMap(ID3D11Device& device, char const* path) {
+    return D3D11NormalMap{device, path};
+}
+
 void Engine::Graphics::D3D11NormalMap::Bind(ID3D11DeviceContext& context) const {
     context.PSSetShaderResources(1u, 1u, _srv.GetAddressOf());
 }

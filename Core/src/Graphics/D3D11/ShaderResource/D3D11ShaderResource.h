@@ -2,22 +2,24 @@
 
 #include <variant>
 
-namespace Engine::Graphics {
-    class DummyEnd;
+#include "D3D11DiffuseMap.h"
+#include "D3D11NormalMap.h"
+#include "D3D11SpecularMap.h"
 
+namespace Engine::Graphics {
 #define SHADER_RESOURCE_TYPES \
     F(D3D11DiffuseMap)        \
     F(D3D11NormalMap)         \
     F(D3D11SpecularMap)       
 
     // Forward Declarations
-    #define F(x) class x;
-        SHADER_RESOURCE_TYPES
-    #undef F
+    //#define F(x) class x;
+    //    SHADER_RESOURCE_TYPES
+    //#undef F
 
     // Variant Definition
     #define F(x) x##,
-        using D3D11ShaderResource = std::variant<SHADER_RESOURCE_TYPES DummyEnd>;
+        using D3D11ShaderResource = std::variant<D3D11DiffuseMap, D3D11NormalMap, D3D11SpecularMap>;
     #undef F
 
     // Bind Declarations
@@ -32,6 +34,14 @@ namespace Engine::Graphics {
     #undef F
     private:
         ID3D11DeviceContext& _context;
+    };
+
+    D3D11ShaderResource ResolveShaderResource(ID3D11Device& device, x_string const& tag, char const* path = "");
+
+    inline static x_unordered_map<x_string, std::function<D3D11ShaderResource(ID3D11Device&, char const*)>> ShaderResourceTable {
+        {"diffuse_map", &D3D11DiffuseMap::CreateDiffuseMap},
+        {"normal_map", &D3D11NormalMap::CreateNormalMap},
+        {"specular_map", &D3D11SpecularMap::CreateSpecularMap}
     };
 }
 

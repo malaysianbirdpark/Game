@@ -6,6 +6,10 @@ namespace Engine::Graphics {
 
     class D3D11TexturedStrategy {
     public:
+        D3D11TexturedStrategy() = default;
+
+        static D3D11TexturedStrategy GetInstance();
+
         static void Init();
 
         void Render(ID3D11DeviceContext& context, D3D11Mesh const& mesh) const;

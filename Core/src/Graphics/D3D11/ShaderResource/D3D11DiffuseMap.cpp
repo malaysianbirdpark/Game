@@ -28,6 +28,10 @@ Engine::Graphics::D3D11DiffuseMap::D3D11DiffuseMap(ID3D11Device& device, char co
     );
 }
 
+Engine::Graphics::D3D11DiffuseMap Engine::Graphics::D3D11DiffuseMap::CreateDiffuseMap(ID3D11Device& device, char const* path) {
+    return D3D11DiffuseMap{device, path};
+}
+
 void Engine::Graphics::D3D11DiffuseMap::Bind(ID3D11DeviceContext& context) const {
     context.PSSetShaderResources(0u, 1u, _srv.GetAddressOf());
 }

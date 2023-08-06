@@ -119,7 +119,7 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
                 D3DCamera::GetView(),
                 GetProj(),
                 DirectX::XMMatrixIdentity(),
-                D3D11SceneMan::ResolveScene("zelda")
+                D3D11SceneMan::ResolveScene("Zelda")
             )
         )
     );

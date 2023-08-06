@@ -17,8 +17,7 @@ void Engine::Graphics::RenderD3D11TexturedStrategy(ID3D11DeviceContext& context,
     strategy.Render(context, *mesh); 
 }
 
-
-
-
-
+Engine::Graphics::D3D11RenderStrategy Engine::Graphics::ResolveRenderStrategy(x_string const& tag) {
+    return RenderStrategyTable[tag]();
+}
 

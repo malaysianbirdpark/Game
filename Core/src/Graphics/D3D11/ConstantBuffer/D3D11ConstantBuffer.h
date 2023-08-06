@@ -16,7 +16,7 @@ namespace Engine::Graphics {
 
     // Variant Definition
     #define F(x) x##,
-        using D3D11ConstantBuffer = std::variant<CONSTANT_BUFFER_TYPES DummyEnd>;
+        using D3D11ConstantBuffer = std::variant<D3D11TransformMVP, D3D11LightDirectional>;
     #undef F
 
     // Bind Declarations

@@ -28,6 +28,10 @@ Engine::Graphics::D3D11SpecularMap::D3D11SpecularMap(ID3D11Device& device, char 
     );
 }
 
+Engine::Graphics::D3D11SpecularMap Engine::Graphics::D3D11SpecularMap::CreateSpecularMap(ID3D11Device& device, char const* path) {
+    return D3D11SpecularMap{device, path};
+}
+
 void Engine::Graphics::D3D11SpecularMap::Bind(ID3D11DeviceContext& context) const {
     context.PSSetShaderResources(2u, 1u, _srv.GetAddressOf());
 }

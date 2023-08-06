@@ -15,20 +15,28 @@ namespace Engine::Graphics {
 
     class D3D11Material {
     public:
+        void Append(ID3D11Device& device, x_string const& tag, char const* path);
+
         [[nodiscard]] x_vector<std::shared_ptr<D3D11ShaderResource>> const& GetShaderResources() const;
     private:
         x_vector<std::shared_ptr<D3D11ShaderResource>>  _srs;
     };
 
     class D3D11Mesh {
+        friend class D3D11SceneGraph;
+        friend class D3D11SceneMan;
+    private:
+        struct MeshLoadData {
+            x_string _vertexFormat;
+            x_string _renderStrategy;
+        };
     public:
         D3D11Mesh() = default;
         D3D11Mesh(
             std::shared_ptr<D3D11VertexBuffer>& vertex_buffer,
             std::shared_ptr<D3D11IndexBuffer>& index_buffer,
             D3D11_PRIMITIVE_TOPOLOGY topology,
-            std::unique_ptr<D3D11Material>& material,
-            std::unique_ptr<D3D11RenderStrategy>& render_strategy
+            D3D11RenderStrategy strategy
         );
 
         //template <typename RenderStrategy>
@@ -41,8 +49,7 @@ namespace Engine::Graphics {
         std::shared_ptr<D3D11VertexBuffer>            _vertexBuffer;
         std::shared_ptr<D3D11IndexBuffer>             _indexBuffer; 
         D3D11_PRIMITIVE_TOPOLOGY                      _topology;
-        std::unique_ptr<D3D11Material>                _material;
-        std::unique_ptr<D3D11RenderStrategy>          _strategy;
+        D3D11RenderStrategy                           _strategy;
     };
 
     class D3D11SceneNode {
@@ -67,7 +74,7 @@ namespace Engine::Graphics {
 
     class D3D11SceneGraph {
     public:
-        D3D11SceneGraph(ID3D11Device& device, char const* path, x_vector<x_string> const& vertex_formats_per_mesh);
+        D3D11SceneGraph(ID3D11Device& device, char const* path, x_vector<D3D11Mesh::MeshLoadData> const& per_mesh_data);
 
         void Render(ID3D11DeviceContext& context);
 
@@ -75,13 +82,17 @@ namespace Engine::Graphics {
 
         int32_t NumOfNodes() const { return _sceneTree.size(); }
         DirectX::XMMATRIX GetTransformAt(int32_t id) const { return DirectX::XMLoadFloat4x4(&_sceneTree[id]->_transform); }
+
+        void SetMaterial(uint32_t const id, std::unique_ptr<D3D11Material>& material);
+        void SetStrategy(uint32_t const id, std::unique_ptr<D3D11RenderStrategy>& strategy);
     private:
         [[nodiscard]] std::shared_ptr<D3D11SceneNode>    ParseNode(int32_t id, int32_t parent_id, aiNode const* ai_node) const;
-        [[nodiscard]] std::shared_ptr<D3D11Mesh>         ParseMesh(ID3D11Device& device, aiMesh const* ai_mesh, aiMaterial const* ai_material, x_string const& vertex_format) const;
-        [[nodiscard]] std::pair<std::unique_ptr<D3D11Material>, std::unique_ptr<D3D11RenderStrategy>>  ParseMaterial(aiMaterial const* ai_material);
-        [[nodiscard]] std::pair<std::shared_ptr<D3D11VertexBuffer>, std::shared_ptr<D3D11IndexBuffer>> ParseVertexData(ID3D11Device& device, aiMesh const* ai_mesh, x_string const& vertex_format);
+        [[nodiscard]] std::shared_ptr<D3D11Mesh>         ParseMesh(ID3D11Device& device, aiMesh const* ai_mesh, D3D11Mesh::MeshLoadData const& data) const;
+        [[nodiscard]] std::shared_ptr<D3D11Material>     ParseMaterial(aiMaterial const* ai_material)
+        [[nodiscard]] std::pair<std::shared_ptr<D3D11VertexBuffer>, std::shared_ptr<D3D11IndexBuffer>> ParseVertexData(ID3D11Device& device, aiMesh const* ai_mesh, x_string const& vertex_format) const;
     private:
         x_vector<std::shared_ptr<D3D11Mesh>>           _mesh {};
+        x_vector<std::shared_ptr<D3D11Material>>       _material {};
         x_vector<std::shared_ptr<D3D11SceneNode>>      _sceneTree;
     };
 }

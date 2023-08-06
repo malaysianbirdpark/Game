@@ -10,7 +10,6 @@
 #include "Graphics/D3D11/ShaderResource/D3D11ShaderResourcesInclude.h"
 #include "Graphics/D3D11/RenderStrategy/D3D11RenderStrategyInclude.h"
 
-
 #include <variant>
 
 #include "D3D11MeshDataHolder.h"
@@ -25,21 +24,28 @@
 //    strategy->Render(context, _indexBuffer->GetCount(), *this);
 //}
 
+void Engine::Graphics::D3D11Material::Append(ID3D11Device& device, x_string const& tag, char const* path) {
+    _srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, tag, path)));
+}
+
+Engine::x_vector<std::shared_ptr<Engine::Graphics::D3D11ShaderResource>> const& Engine::Graphics::D3D11Material::GetShaderResources() const {
+    return _srs;
+}
+
 Engine::Graphics::D3D11Mesh::D3D11Mesh(std::shared_ptr<D3D11VertexBuffer>& vertex_buffer,
-    std::shared_ptr<D3D11IndexBuffer>& index_buffer, D3D11_PRIMITIVE_TOPOLOGY topology,
-    std::unique_ptr<D3D11Material>& material, std::unique_ptr<D3D11RenderStrategy>& render_strategy)
-        : _vertexBuffer{std::move(vertex_buffer)}, _indexBuffer{std::move(index_buffer)}, _topology{topology},
-          _material{std::move(material)}, _strategy{std::move(render_strategy)}
+                                       std::shared_ptr<D3D11IndexBuffer>& index_buffer, D3D11_PRIMITIVE_TOPOLOGY topology,
+                                       D3D11RenderStrategy strategy)
+        : _vertexBuffer{std::move(vertex_buffer)}, _indexBuffer{std::move(index_buffer)}, _topology{topology}, _strategy{strategy}
 {
 }
 
 void Engine::Graphics::D3D11Mesh::Render(ID3D11DeviceContext& context) {
     // Bind
-    //context.IASetPrimitiveTopology(_topology);
-    //_vertexBuffer->Bind(context);
-    //_indexBuffer->Bind(context);
+    context.IASetPrimitiveTopology(_topology);
+    _vertexBuffer->Bind(context);
+    _indexBuffer->Bind(context);
 
-    //std::visit(StrategicRender{context, this}, *_strategy);
+    std::visit(StrategicRender{context, this}, _strategy);
 }
 
 uint32_t Engine::Graphics::D3D11Mesh::GetIndexCount() const {
@@ -57,7 +63,7 @@ void Engine::Graphics::D3D11SceneNode::Render(ID3D11DeviceContext& context) {
         m->Render(context);
 }
 
-Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, char const* path, x_vector<x_string> const& vertex_formats_per_mesh) {
+Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, char const* path, x_vector<D3D11Mesh::MeshLoadData> const& per_mesh_data) {
     Assimp::Importer imp;
     auto const ai_scene {imp.ReadFile(
         path,
@@ -71,7 +77,7 @@ Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, char co
 
     _mesh.reserve(ai_scene->mNumMeshes);
     for (auto i {0}; i != ai_scene->mNumMeshes; ++i)
-        _mesh.push_back(std::move(ParseMesh(device, ai_scene->mMeshes[i], ai_scene->mMaterials[ai_scene->mMeshes[i]->mMaterialIndex], vertex_formats_per_mesh[i])));
+        _mesh.push_back(std::move(ParseMesh(device, ai_scene->mMeshes[i], per_mesh_data[i])));
 
     // For the Root Node
     _sceneTree.reserve(root_node->mNumChildren);
@@ -101,6 +107,14 @@ void Engine::Graphics::D3D11SceneGraph::Render(ID3D11DeviceContext& context) {
         node->Render(context);
 }
 
+void Engine::Graphics::D3D11SceneGraph::SetMaterial(uint32_t const id, std::unique_ptr<D3D11Material>& material) {
+    _mesh[id]->_material = std::move(material);
+}
+
+//void Engine::Graphics::D3D11SceneGraph::SetStrategy(uint32_t const id, std::unique_ptr<D3D11RenderStrategy>& strategy) {
+//    _mesh[id]->_strategy = std::move(strategy);
+//}
+
 std::shared_ptr<Engine::Graphics::D3D11SceneNode> Engine::Graphics::D3D11SceneGraph::ParseNode(int32_t id, int32_t parent_id, aiNode const* ai_node) const {
     auto const transform {
         DirectX::XMMatrixTranspose(
@@ -116,26 +130,19 @@ std::shared_ptr<Engine::Graphics::D3D11SceneNode> Engine::Graphics::D3D11SceneGr
     return MakeShared<D3D11SceneNode>(id, parent_id, name, temp, transform);
 }
 
-std::shared_ptr<Engine::Graphics::D3D11Mesh> Engine::Graphics::D3D11SceneGraph::ParseMesh(ID3D11Device& device, aiMesh const* ai_mesh, aiMaterial const* ai_material, x_string const& vertex_format) const {
-    auto [vertex_buffer, index_buffer] {ParseVertexData(ai_mesh, vertex_format)};
-    auto [material, render_strategy] {ParseMaterial(ai_material)};
+std::shared_ptr<Engine::Graphics::D3D11Mesh> Engine::Graphics::D3D11SceneGraph::ParseMesh(ID3D11Device& device, aiMesh const* ai_mesh, D3D11Mesh::MeshLoadData const& data) const {
+    auto [vertex_buffer, index_buffer] {ParseVertexData(device, ai_mesh, data._vertexFormat)};
 
     return MakeShared<D3D11Mesh>(
         vertex_buffer, 
         index_buffer, 
         D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-        material,
-        render_strategy
+        ResolveRenderStrategy(data._renderStrategy)
     );
 }
 
-std::pair<std::unique_ptr<Engine::Graphics::D3D11Material>, std::unique_ptr<Engine::Graphics::D3D11RenderStrategy>>
-Engine::Graphics::D3D11SceneGraph::ParseMaterial(aiMaterial const* ai_material) {
-
-}
-
 std::pair<std::shared_ptr<Engine::Graphics::D3D11VertexBuffer>, std::shared_ptr<Engine::Graphics::D3D11IndexBuffer>>
-Engine::Graphics::D3D11SceneGraph::ParseVertexData(ID3D11Device& device, aiMesh const* ai_mesh, x_string const& vertex_format) {
+Engine::Graphics::D3D11SceneGraph::ParseVertexData(ID3D11Device& device, aiMesh const* ai_mesh, x_string const& vertex_format) const {
     auto const buffer {D3D11VertexAttribute::GetBuffer(ai_mesh, vertex_format)};
 
     x_vector<uint16_t> indices;
