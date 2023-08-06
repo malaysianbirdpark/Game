@@ -5,7 +5,6 @@
 #include "Platform/Input.h"
 #include "Graphics/GraphicsContext.h"
 #include "Graphics/D3DCamera.h"
-#include "Graphics/D3DSceneGraph.h"
 
 #include <assimp/scene.h>
 
@@ -21,6 +20,8 @@ Engine::Core::Application::Application() {
     Graphics::D3DCamera::Init();
 
     Clk::Init();
+
+    // Load 3D models
 }
 
 Engine::Core::Application::~Application() {

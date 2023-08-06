@@ -3,11 +3,7 @@
 namespace Engine::Graphics {
     class D3D11PipelineStateObject;
     class D3D11RootSignature;
-    class D3DSceneGraph;
-
-    // TODO: TEST
-    class D3D11VertexBuffer;
-    class D3D11IndexBuffer;
+    class D3D11RenderObject;
 
     class D3D11Core {
     public:
@@ -41,11 +37,7 @@ namespace Engine::Graphics {
 
         D3D11_VIEWPORT                                   _viewPort {};
 
-        std::shared_ptr<Graphics::D3DSceneGraph>         _scene; 
-
-        // TODO: TEST
-        std::shared_ptr<D3D11VertexBuffer> _vb;
-        std::shared_ptr<D3D11IndexBuffer>  _ib;
+        x_vector<std::unique_ptr<D3D11RenderObject>>        _obj;
     };
 }
 

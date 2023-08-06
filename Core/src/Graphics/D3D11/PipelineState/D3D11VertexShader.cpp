@@ -12,23 +12,23 @@ namespace Engine::Graphics {
 
         D3DReadFileToBlob(
             p.c_str(),
-            m_pByteCode.ReleaseAndGetAddressOf()
+            _byteCode.ReleaseAndGetAddressOf()
         );
 
         device.CreateVertexShader(
-            m_pByteCode->GetBufferPointer(),
-            m_pByteCode->GetBufferSize(),
+            _byteCode->GetBufferPointer(),
+            _byteCode->GetBufferSize(),
             nullptr,
-            m_pVertexShader.ReleaseAndGetAddressOf()
+            _vertexShader.ReleaseAndGetAddressOf()
         );
     }
 
     void D3D11VertexShader::Bind(ID3D11DeviceContext& context) noexcept {
-        context.VSSetShader(m_pVertexShader.Get(), nullptr, 0u);
+        context.VSSetShader(_vertexShader.Get(), nullptr, 0u);
     }
 
     ID3DBlob* D3D11VertexShader::GetByteCode() const noexcept {
-        return m_pByteCode.Get();
+        return _byteCode.Get();
     }
 
     x_string D3D11VertexShader::GenUID(x_string const& path) {

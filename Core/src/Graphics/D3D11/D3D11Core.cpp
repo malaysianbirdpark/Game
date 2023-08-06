@@ -1,14 +1,16 @@
 #include "pch.h"
 #include "D3D11Core.h"
 
-#include "Graphics/D3DSceneGraph.h"
-
-#include "Graphics/D3DRenderTech.h"
-
 //TEMP
 #include <random>
 
-#include "RootSignature/D3D11ConstantBuffer.h"
+#include "Graphics/D3D11/SceneGraph/D3D11SceneGraph.h"
+#include "Graphics/D3D11/SceneGraph/D3D11SceneMan.h"
+#include "Graphics/D3D11/RenderStrategy/D3D11RenderStrategy.h"
+#include "Graphics/D3D11/ConstantBuffer/D3D11TransformMVP.h"
+#include "Graphics/D3D11/D3D11RenderObject.h"
+
+#include "Graphics/D3DCamera.h"
 
 Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, bool windowed)
     : _windowInfo{width, height, native_wnd, windowed}
@@ -108,11 +110,21 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
 
     auto& device {*_device.Get()};
 
-    D3DRenderTech::Init(device, GetProj());
+    D3D11SceneMan::Load(device);
 
-    // init scene
-    _scene = MakeShared<Graphics::D3DSceneGraph>();
-    _scene->AddScene(*_device.Get(), "./Assets/Models/Zelda/Meshes/zeldaPosed001.fbx");
+    _obj.push_back(
+        std::move(
+            MakeUnique<D3D11RenderObject>(
+                device,
+                D3DCamera::GetView(),
+                GetProj(),
+                DirectX::XMMatrixIdentity(),
+                D3D11SceneMan::ResolveScene("Zelda")
+            )
+        )
+    );
+
+    InitRenderStrategies();
 }
 
 Engine::Graphics::D3D11Core::~D3D11Core() {
@@ -141,8 +153,6 @@ void Engine::Graphics::D3D11Core::BeginFrame() {
     context.OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _depthStencilView.Get());
     context.ClearRenderTargetView(_backBufferView.Get(), clear_color);
     context.ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f , 0u);
-
-    _scene->Draw(context);
 }
 
 void Engine::Graphics::D3D11Core::EndFrame() {

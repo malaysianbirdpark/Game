@@ -1,16 +1,15 @@
 #include "pch.h"
-#include "D3DRenderTech.h"
+#include "D3D11ModelQuery.h"
 
-#include "D3D11/D3D11MeshDataHolder.h"
-#include "D3D11/PipelineState/D3D11PipelineStateObject.h"
-#include "D3D11/PipelineState/D3D11PSOLibrary.h"
+#include "D3D11MeshDataHolder.h"
+#include "Graphics/D3D11/PipelineState/D3D11PipelineStateObject.h"
+#include "Graphics/D3D11/PipelineState/D3D11PSOLibrary.h"
 
-#include "D3D11/RootSignature/D3D11RootSignature.h"
-#include "D3D11/RootSignature/D3D11RSLibrary.h"
+#include <assimp/material.h>
 
 #include <filesystem>
 
-void Engine::Graphics::D3DRenderTech::Init(ID3D11Device& device, DirectX::XMMATRIX const& proj) {
+void Engine::Graphics::D3D11ModelQuery::Init(ID3D11Device& device, DirectX::XMMATRIX const& proj) {
     if (_initiated)
         return;
 
@@ -37,9 +36,6 @@ void Engine::Graphics::D3DRenderTech::Init(ID3D11Device& device, DirectX::XMMATR
 
         x_string const _tag {"solid"};
         D3D11PSOLibrary::RegisterPSO(_tag, pso);
-
-        auto const rs {MakeShared<D3D11RootSignature>(device, proj, pso, 100)};
-        D3D11RSLibrary::RegisterRS(_tag, rs);
     }
 
     // solid diffuse-only texture
@@ -67,22 +63,10 @@ void Engine::Graphics::D3DRenderTech::Init(ID3D11Device& device, DirectX::XMMATR
 
         x_string const _tag {"solid_pos3_nor_tex2_dif"};
         D3D11PSOLibrary::RegisterPSO(_tag, pso);
-
-        auto const rs {MakeShared<D3D11RootSignature>(device, proj, pso, 100)};
-        rs->AddSamplerSlot(device, 0u, "sampler");
-        D3D11RSLibrary::RegisterRS(_tag, rs);
     }
 }
 
-void Engine::Graphics::D3DRenderTech::QueryVertexLayout(aiMesh const* ai_mesh) {
-    _vertexFlag |= ai_mesh->HasPositions() *              Position3D;
-    _vertexFlag |= ai_mesh->HasNormals() *                Normal;
-    _vertexFlag |= ai_mesh->HasTangentsAndBitangents() *  Tangent;
-    _vertexFlag |= ai_mesh->HasTangentsAndBitangents() *  BiTangent;
-    _vertexFlag |= ai_mesh->HasTextureCoords(0) *   Texture2D;
-}
-
-void Engine::Graphics::D3DRenderTech::QueryMaterial(aiMaterial const* ai_material, x_string& tag) {
+void Engine::Graphics::D3D11ModelQuery::QueryMaterial(aiMaterial const* ai_material, x_string& tag) {
     if (auto const count {ai_material->GetTextureCount(aiTextureType_DIFFUSE)}; count >= 1) {
         tag += "_dif";
 
@@ -98,7 +82,7 @@ void Engine::Graphics::D3DRenderTech::QueryMaterial(aiMaterial const* ai_materia
     }
 }
 
-std::tuple<Engine::x_string, Engine::Graphics::D3DRenderTech::vb, Engine::Graphics::D3DRenderTech::ib> Engine::Graphics::D3DRenderTech::Cook(ID3D11Device& device, aiMesh const* ai_mesh, aiMaterial const* ai_material) {
+std::tuple<Engine::x_string, Engine::Graphics::D3D11ModelQuery::vb, Engine::Graphics::D3D11ModelQuery::ib> Engine::Graphics::D3D11ModelQuery::Cook(ID3D11Device& device, aiMesh const* ai_mesh, aiMaterial const* ai_material) {
     x_string tag {"solid"};
 
     QueryVertexLayout(ai_mesh);
@@ -110,7 +94,7 @@ std::tuple<Engine::x_string, Engine::Graphics::D3DRenderTech::vb, Engine::Graphi
     return {tag, vertex_buffer, index_buffer}; 
 }
 
-void Engine::Graphics::D3DRenderTech::CookVertexLayout(x_string& tag) {
+void Engine::Graphics::D3D11ModelQuery::CookVertexLayout(x_string& tag) {
     if (_vertexFlag & Position3D) {
         _layout.push_back(
             {"POSITION", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, _stride, D3D11_INPUT_PER_VERTEX_DATA, 0u}
@@ -152,7 +136,7 @@ void Engine::Graphics::D3DRenderTech::CookVertexLayout(x_string& tag) {
     }
 }
 
-Engine::x_vector<int8_t> Engine::Graphics::D3DRenderTech::CookVertex(aiMesh const* ai_mesh, size_t idx) {
+Engine::x_vector<int8_t> Engine::Graphics::D3D11ModelQuery::CookVertex(aiMesh const* ai_mesh, size_t idx) {
     x_vector<int8_t> vertex (_stride, 0);
 
     size_t pos {};
@@ -189,7 +173,7 @@ Engine::x_vector<int8_t> Engine::Graphics::D3DRenderTech::CookVertex(aiMesh cons
     return vertex;
 }
 
-std::pair<Engine::Graphics::D3DRenderTech::vb, Engine::Graphics::D3DRenderTech::ib> Engine::Graphics::D3DRenderTech::CookVertexBuffer(ID3D11Device& device, aiMesh const* ai_mesh) {
+std::pair<Engine::Graphics::D3D11ModelQuery::vb, Engine::Graphics::D3D11ModelQuery::ib> Engine::Graphics::D3D11ModelQuery::CookVertexBuffer(ID3D11Device& device, aiMesh const* ai_mesh) {
     _vertices.resize(_stride * ai_mesh->mNumVertices);
     for (auto i {0}; i != ai_mesh->mNumVertices; ++i) {
         auto const vertex {CookVertex(ai_mesh, i)};

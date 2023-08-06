@@ -6,17 +6,21 @@ namespace Engine::Graphics {
     class D3D11VertexBuffer;
     class D3D11IndexBuffer;
 
-    class D3DRenderTech {
+    class D3D11ModelQuery {
         enum {
-            Position3D = 0b1,
-            Normal     = 0b10,
-            Tangent    = 0b100,
-            BiTangent  = 0b1000,
-            Texture2D  = 0b10000,
-            END        = Texture2D << 1,
+            Position3D      = 0b1,
+            Normal          = 0b10,
+            Tangent         = 0b100,
+            Texture2D       = 0b1000,
+            Texture3D       = 0b10000,
+            DiffuseColor    = 0b100000,
+            SpecularColor   = 0b1000000,
+            SkinningIndex   = 0b10000000,
+            SkinningWeight  = 0b100000000,
+            END             = SkinningWeight << 1,
         };
     public:
-        D3DRenderTech() = default;
+        D3D11ModelQuery() = default;
 
         static void Init(ID3D11Device& device, DirectX::XMMATRIX const& proj);
 
@@ -34,9 +38,9 @@ namespace Engine::Graphics {
         x_vector<int8_t>                    _vertices {};
         x_vector<D3D11_INPUT_ELEMENT_DESC>  _layout {};
     private:
-        uint16_t _vertexFlag;
-        uint16_t _materialFlag;
-        UINT     _stride {0u};
+        uint16_t                            _vertexFlag;
+        uint16_t                            _materialFlag;
+        UINT                                _stride {0u};
     private:
         inline static bool _initiated {false};
     };

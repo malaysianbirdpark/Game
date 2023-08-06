@@ -11,7 +11,7 @@ namespace Engine::Graphics {
     private:
         x_string _tag;
         UINT _stride;
-        Microsoft::WRL::ComPtr<ID3D11Buffer> p_VertexBuffer;
+        Microsoft::WRL::ComPtr<ID3D11Buffer> _VertexBuffer;
     };
 }
 

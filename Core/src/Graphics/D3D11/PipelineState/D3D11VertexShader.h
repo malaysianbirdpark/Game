@@ -11,8 +11,8 @@ namespace Engine::Graphics {
         [[nodiscard]] x_string GetUID() const;
     protected:
         x_string _path;
-        Microsoft::WRL::ComPtr<ID3DBlob> m_pByteCode;
-        Microsoft::WRL::ComPtr<ID3D11VertexShader> m_pVertexShader;
+        Microsoft::WRL::ComPtr<ID3DBlob> _byteCode;
+        Microsoft::WRL::ComPtr<ID3D11VertexShader> _vertexShader;
     };
 }
 
