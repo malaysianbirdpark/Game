@@ -11,19 +11,17 @@ struct OUT {
 };
 
 cbuffer mvp {
-    matrix model;
-    matrix view;
-    matrix projection;
+    matrix mv;
+    matrix mvp;
 };
 
 OUT main(IN input)
 {
     OUT output;
 
-    const matrix transform = mul(projection, mul(view, model));
-    output.view_pos = mul(mul(view, model), input.pos);
+    output.view_pos = mul(mv, input.pos);
     output.texcoord = input.texcoord;
-    output.sv_pos = mul(transform, float4(input.pos, 1.0f));
+    output.sv_pos = mul(mvp, float4(input.pos, 1.0f));
 
 	return output;
 }

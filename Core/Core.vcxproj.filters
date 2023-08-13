@@ -163,7 +163,6 @@
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightDirectional.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightSpot.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformMVP.h" />
-    <ClInclude Include="src\Graphics\D3D11\D3D11RenderObject.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11RenderStrategy.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11SolidStrategy.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11TexturedStrategy.h" />
@@ -178,6 +177,10 @@
     <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11VertexAttribute.h" />
     <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11Material.h" />
     <ClInclude Include="src\Platform\WindowsInclude.h" />
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11EmissiveMap.h" />
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11HeightMap.h" />
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11OpacityMap.h" />
+    <ClInclude Include="src\Graphics\D3D11\D3D11RenderObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -280,7 +283,6 @@
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightDirectional.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightSpot.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformMVP.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\D3D11RenderObject.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11SolidStrategy.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11TexturedStrategy.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11BlinPhongSolidStrategy.cpp" />
@@ -291,6 +293,10 @@
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11RenderStrategy.cpp" />
     <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11VertexAttribute.cpp" />
     <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11Material.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11EmissiveMap.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11HeightMap.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11OpacityMap.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\D3D11RenderObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Graphics\HLSL\solid_PS.hlsl">

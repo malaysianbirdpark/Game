@@ -31,7 +31,6 @@ void Engine::Graphics::D3D11SceneMan::Load(ID3D11Device& device) {
     doc.ParseStream(jsonStr);
     CORE_ASSERT(doc.IsObject(), "Json parsing failed!");
 
-
     auto const& models {doc["models"]};
     CORE_ASSERT(models.IsArray(), "models is not array!");
 
@@ -39,26 +38,7 @@ void Engine::Graphics::D3D11SceneMan::Load(ID3D11Device& device) {
         auto const model {it_model->GetObj()};
         auto const name {model["name"].GetString()};
 
-        auto const& mesh_data {model["per_mesh_data"]};
-
-        x_vector<D3D11Mesh::MeshLoadData> per_mesh_data;
-        per_mesh_data.reserve(model["number_of_meshes"].GetInt());
-        for (auto i {size_t{}}; i != model["number_of_meshes"].GetInt(); ++i) {
-            per_mesh_data.emplace_back(
-                mesh_data[i]["vertex_format"].GetString(),
-                mesh_data[i]["render_strategy"].GetString()
-            );
-        }
-
-        _scenes[name] = MakeShared<D3D11SceneGraph>(device, model["path"].GetString(), per_mesh_data);
-
-        auto id {uint32_t{}};
-        for (auto it_material {model["material"].Begin()}; it_material != model["material"].End(); ++it_material) {
-            std::unique_ptr<D3D11Material> material {MakeUnique<D3D11Material>()};
-            for (auto it_material_for_a_mesh {it_material->MemberBegin()}; it_material_for_a_mesh != it_material->MemberEnd(); ++it_material_for_a_mesh)
-                material->Append(device, it_material_for_a_mesh->name.GetString(), it_material_for_a_mesh->value.GetString());
-            _scenes[name]->SetMaterial(id++, material);
-        }
+        _scenes[name] = MakeShared<D3D11SceneGraph>(device, model["path"].GetString());
     }
 
     GRAPHICS_INFO("Done");

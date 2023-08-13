@@ -13,6 +13,7 @@ Engine::Graphics::D3D11TexturedStrategy Engine::Graphics::D3D11TexturedStrategy:
 }
 
 void Engine::Graphics::D3D11TexturedStrategy::Init() {
+    GRAPHICS_INFO("Textured Strategy Init()");
     _pso = D3D11PSOLibrary::ResolvePSO("textured");
 }
 

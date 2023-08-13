@@ -4,6 +4,7 @@
 //TEMP
 #include <random>
 
+#include "D3D11Sampler.h"
 #include "Graphics/D3D11/SceneGraph/D3D11SceneGraph.h"
 #include "Graphics/D3D11/SceneGraph/D3D11SceneMan.h"
 #include "Graphics/D3D11/RenderStrategy/D3D11RenderStrategy.h"
@@ -11,6 +12,8 @@
 #include "Graphics/D3D11/D3D11RenderObject.h"
 
 #include "Graphics/D3DCamera.h"
+#include "PipelineState/D3D11PSOLibrary.h"
+#include "PipelineState/D3D11PipelineStateObject.h"
 
 Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, bool windowed)
     : _windowInfo{width, height, native_wnd, windowed}
@@ -112,27 +115,102 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
 
     D3D11SceneMan::Load(device);
 
+    //_obj.push_back(
+    //    std::move(
+    //        MakeUnique<D3D11RenderObject>(
+    //            device,
+    //            D3DCamera::GetView(),
+    //            GetProj(),
+    //            D3D11SceneMan::ResolveScene("Zelda")
+    //        )
+    //    )
+    //);
+
     _obj.push_back(
         std::move(
             MakeUnique<D3D11RenderObject>(
                 device,
                 D3DCamera::GetView(),
                 GetProj(),
-                DirectX::XMMatrixIdentity(),
-                D3D11SceneMan::ResolveScene("Zelda")
+                D3D11SceneMan::ResolveScene("Goblin")
             )
         )
     );
 
+    // solid
+    {
+        auto pso {MakeShared<D3D11PipelineStateObject>()};
+
+        UINT aligned_byte_offset {0u};
+        x_vector<D3D11_INPUT_ELEMENT_DESC> layout;
+        layout.push_back(
+            {"POSITION", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, aligned_byte_offset, D3D11_INPUT_PER_VERTEX_DATA, 0u}
+        );
+        aligned_byte_offset += sizeof(DirectX::XMFLOAT3);
+        layout.push_back(
+            {"NORMAL", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, aligned_byte_offset, D3D11_INPUT_PER_VERTEX_DATA, 0u}
+        );
+        aligned_byte_offset += sizeof(DirectX::XMFLOAT3);
+
+        pso->SetVertexShader(device, "./ShaderLib/solid_VS.cso");
+        pso->SetInputLayout(device, layout);
+        pso->SetPixelShader(device, "./ShaderLib/solid_PS.cso");
+
+        x_string const _tag {"solid"};
+        D3D11PSOLibrary::RegisterPSO(_tag, pso);
+    }
+
+    // solid diffuse-only texture
+    {
+        auto pso {MakeShared<D3D11PipelineStateObject>()};
+
+        UINT aligned_byte_offset {0u};
+        x_vector<D3D11_INPUT_ELEMENT_DESC> layout;
+        layout.push_back(
+            {"POSITION", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, aligned_byte_offset, D3D11_INPUT_PER_VERTEX_DATA, 0u}
+        );
+        aligned_byte_offset += sizeof(DirectX::XMFLOAT3);
+        layout.push_back(
+            {"NORMAL", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, aligned_byte_offset, D3D11_INPUT_PER_VERTEX_DATA, 0u}
+        );
+        aligned_byte_offset += sizeof(DirectX::XMFLOAT3);
+        layout.push_back(
+            {"TEXCOORD", 0u, DXGI_FORMAT_R32G32_FLOAT, 0u, aligned_byte_offset, D3D11_INPUT_PER_VERTEX_DATA, 0u}
+        );
+        aligned_byte_offset += sizeof(DirectX::XMFLOAT2);
+
+        pso->SetVertexShader(device, "./ShaderLib/solid_pos3_nor_tex2_dif_VS.cso");
+        pso->SetInputLayout(device, layout);
+        pso->SetPixelShader(device, "./ShaderLib/solid_pos3_nor_tex2_dif_PS.cso");
+
+        x_string const _tag {"textured"};
+        D3D11PSOLibrary::RegisterPSO(_tag, pso);
+    }
+
     InitRenderStrategies();
+
+    _sampler = std::make_unique<D3D11Sampler>(device, "yes");
 }
 
 Engine::Graphics::D3D11Core::~D3D11Core() {
 }
 
+void Engine::Graphics::D3D11Core::Update(float const dt, DirectX::XMMATRIX const& view) {
+    auto const view_proj {
+        DirectX::XMMatrixMultiply(view, DirectX::XMLoadFloat4x4(&_proj))
+    };
+
+    //std::ranges::for_each(_scenes, [&view_proj](auto& s) {
+    //    s->Update();  
+    //});
+}
+
 void Engine::Graphics::D3D11Core::Render() {
     BeginFrame();
     EndFrame();
+}
+
+void Engine::Graphics::D3D11Core::AddScene() {
 }
 
 DirectX::XMMATRIX Engine::Graphics::D3D11Core::GetProj() {
@@ -147,12 +225,16 @@ void Engine::Graphics::D3D11Core::BeginFrame() {
     //auto g {static_cast<float>(std::rand()) / RAND_MAX};
     //auto b {static_cast<float>(std::rand()) / RAND_MAX};
     //float clear_color[4] {r, g, b, 1.0f};
-    static constexpr float clear_color[4] {1.0f, 1.0f, 1.0f, 1.0f};
+    static constexpr float clear_color[4] {0.0f, 0.0f, 0.0f, 1.0f};
 
     context.RSSetViewports(1u, &_viewPort);
     context.OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _depthStencilView.Get());
     context.ClearRenderTargetView(_backBufferView.Get(), clear_color);
     context.ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f , 0u);
+
+    _sampler->Bind(context, 0u);
+    for (auto& obj : _obj)
+        obj->Render(context, D3DCamera::GetView(), GetProj());
 }
 
 void Engine::Graphics::D3D11Core::EndFrame() {

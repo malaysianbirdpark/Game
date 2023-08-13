@@ -11,7 +11,7 @@ namespace Engine::Graphics {
         GraphicsContext(int width, int height, HWND nativeWnd, bool windowed);
         ~GraphicsContext();
 
-        void Update(float const dt, DirectX::XMMATRIX view_projection);
+        void Update(float const dt);
         void Render();
 
         ID3D11Device& Device();
