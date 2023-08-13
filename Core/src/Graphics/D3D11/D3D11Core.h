@@ -10,7 +10,7 @@ namespace Engine::Graphics {
         D3D11Core(int width, int height, HWND native_wnd, bool windowed);
         ~D3D11Core();
 
-        void Update();
+        void Update(float const dt, DirectX::XMMATRIX const& view);
         void Render();
 
         void AddScene();
@@ -37,7 +37,9 @@ namespace Engine::Graphics {
 
         D3D11_VIEWPORT                                   _viewPort {};
 
-        x_vector<std::unique_ptr<D3D11RenderObject>>        _obj;
+        x_vector<std::unique_ptr<D3D11RenderObject>>     _obj; 
+
+        std::unique_ptr<class D3D11Sampler>              _sampler;
     };
 }
 

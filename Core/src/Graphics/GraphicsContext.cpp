@@ -15,8 +15,8 @@ Engine::Graphics::GraphicsContext::GraphicsContext(int width, int height, HWND n
 Engine::Graphics::GraphicsContext::~GraphicsContext() {
 }
 
-void Engine::Graphics::GraphicsContext::Update(float const dt, DirectX::XMMATRIX view_projection) {
-
+void Engine::Graphics::GraphicsContext::Update(float const dt) {
+    _core11->Update(dt, _cam->GetView());
 }
 
 void Engine::Graphics::GraphicsContext::Render() {

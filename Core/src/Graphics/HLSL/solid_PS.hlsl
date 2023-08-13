@@ -1,15 +1,14 @@
-struct IN {
+struct PS_IN {
     float4 color : COLOR;
-    float4 pos : POSTION;
 };
 
-struct OUT {
+struct PS_OUT {
     float4 color : SV_TARGET;
 };
 
-OUT main(IN input)
+PS_OUT main(PS_IN input)
 {
-    OUT output;
+    PS_OUT output;
 
     output.color = input.color;
 

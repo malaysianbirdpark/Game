@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "D3D11NormalMap.h"
+#include "D3D11HeightMap.h"
 
 #include <directxtk/DDSTextureLoader.h>
 
-Engine::Graphics::D3D11NormalMap::D3D11NormalMap(ID3D11Device& device, char const* path)
+Engine::Graphics::D3D11HeightMap::D3D11HeightMap(ID3D11Device& device, char const* path)
     : _path{path}
 {
     using namespace DirectX;
@@ -28,18 +28,19 @@ Engine::Graphics::D3D11NormalMap::D3D11NormalMap(ID3D11Device& device, char cons
     );
 }
 
-Engine::Graphics::D3D11NormalMap Engine::Graphics::D3D11NormalMap::CreateNormalMap(ID3D11Device& device, char const* path) {
-    return D3D11NormalMap{device, path};
+Engine::Graphics::D3D11HeightMap Engine::Graphics::D3D11HeightMap::CreateHeightMap(ID3D11Device& device, char const* path) {
+    return D3D11HeightMap{device, path};
 }
 
-void Engine::Graphics::D3D11NormalMap::Bind(ID3D11DeviceContext& context) const {
-    context.PSSetShaderResources(3u, 1u, _srv.GetAddressOf());
+void Engine::Graphics::D3D11HeightMap::Bind(ID3D11DeviceContext& context) const {
+    context.PSSetShaderResources(4u, 1u, _srv.GetAddressOf());
 }
 
-Engine::x_string Engine::Graphics::D3D11NormalMap::GenUID(char const* path) {
-    return x_string{typeid(D3D11NormalMap).name()} + "#" + path;
+Engine::x_string Engine::Graphics::D3D11HeightMap::GenUID(char const* path) {
+    return x_string{typeid(D3D11HeightMap).name()} + "#" + path;
 }
 
-Engine::x_string Engine::Graphics::D3D11NormalMap::GetUID() const {
+Engine::x_string Engine::Graphics::D3D11HeightMap::GetUID() const {
     return GenUID(_path.c_str());
 }
+

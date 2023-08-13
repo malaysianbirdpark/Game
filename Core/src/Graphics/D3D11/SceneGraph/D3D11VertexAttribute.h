@@ -17,13 +17,11 @@ namespace Engine::Graphics {
     private:
         struct _1P {
             DirectX::XMFLOAT3 _pos3d;
-            float             _padding {};
         };
 
         struct _1P1N {
             DirectX::XMFLOAT3 _pos3d;
             DirectX::XMFLOAT3 _norm3d;
-            float             _padding[2] {};
         };
 
         struct _1P1N1UV {
@@ -45,7 +43,6 @@ namespace Engine::Graphics {
             DirectX::XMFLOAT3 _tan3d;
             DirectX::XMFLOAT3 _bitan3d;
             DirectX::XMFLOAT2 _uv2d;
-            float             _padding[2] {};
         };
     private:
         inline static x_unordered_map<x_string, size_t> _strideTable {

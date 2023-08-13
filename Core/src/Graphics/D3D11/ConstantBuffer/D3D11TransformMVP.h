@@ -10,7 +10,7 @@ namespace Engine::Graphics {
     public:
         D3D11TransformMVP(
             ID3D11Device& device,
-            DirectX::XMMATRIX const& model, 
+            DirectX::XMMATRIX const& model,
             DirectX::XMMATRIX const& view, 
             DirectX::XMMATRIX const& proj
         );
