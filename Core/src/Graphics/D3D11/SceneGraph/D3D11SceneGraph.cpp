@@ -42,15 +42,13 @@ Engine::Graphics::D3D11Mesh::D3D11Mesh(std::shared_ptr<D3D11VertexBuffer>& verte
 {
 }
 
-void Engine::Graphics::D3D11Mesh::Render(ID3D11DeviceContext& context) const {
-    // Bind
+void Engine::Graphics::D3D11Mesh::Render(ID3D11DeviceContext& context, D3D11Material* material) {
+    // Bind Mesh Data
     context.IASetPrimitiveTopology(_topology);
     _vertexBuffer->Bind(context);
     _indexBuffer->Bind(context);
 
-    //std::visit(StrategicRender{context, this}, _strategy);
-    D3D11SolidStrategy const strategy{};
-    strategy.Render(context, *this);
+    std::visit(StrategicRender{context, this, material}, _strategy);
 }
 
 uint32_t Engine::Graphics::D3D11Mesh::GetIndexCount() const {
@@ -91,7 +89,7 @@ Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, char co
 
     // Parsing Materials =========================================================================================
     std::filesystem::path const fs_path {path};
-    std::string const base_path {fs_path.parent_path().parent_path().string()};
+    std::string const base_path {fs_path.parent_path().parent_path().string() + '/'};
 
     _material.reserve(ai_scene->mNumMaterials);
     for (auto i {0}; i != ai_scene->mNumMaterials; ++i)
@@ -100,7 +98,7 @@ Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, char co
 
     // For the Root Node -------------------------
     auto const root_node {ai_scene->mRootNode};
-    ParseNode(-1, 0, root_node);
+    ParseNode(-1, 0, ai_scene, root_node);
 
     _tree.reserve((root_node->mNumChildren + 1) * 3);
 
@@ -114,7 +112,7 @@ Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, char co
         auto const [parent_id, current_node] {bfs_queue.front()};
         bfs_queue.pop();
 
-        auto const cur_id {ParseNode(parent_id, _tree[parent_id]._level + 1, current_node)};
+        auto const cur_id {ParseNode(parent_id, _tree[parent_id]._level + 1, ai_scene, current_node)};
 
         for (auto i {0}; i != current_node->mNumChildren; ++i)
             bfs_queue.emplace(cur_id, current_node->mChildren[i]);
@@ -122,11 +120,6 @@ Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, char co
     // -------------------------------------------
 
     _tree.shrink_to_fit();
-}
-
-void Engine::Graphics::D3D11SceneGraph::Render(ID3D11DeviceContext& context) {
-    for (auto const& m : _mesh)
-        m.Render(context);
 }
 
 void Engine::Graphics::D3D11SceneGraph::MarkAsUpdated(int32_t node) {
@@ -167,7 +160,7 @@ void Engine::Graphics::D3D11SceneGraph::RecalculateGlobalTransforms() {
     }
 }
 
-int32_t Engine::Graphics::D3D11SceneGraph::ParseNode(int32_t parent_id, int32_t level, aiNode const* ai_node) {
+int32_t Engine::Graphics::D3D11SceneGraph::ParseNode(int32_t parent_id, int32_t level, aiScene const* ai_scene, aiNode const* ai_node) {
     auto const local_transform {
         DirectX::XMMatrixTranspose(
             DirectX::XMLoadFloat4x4(
@@ -192,10 +185,7 @@ int32_t Engine::Graphics::D3D11SceneGraph::ParseNode(int32_t parent_id, int32_t 
         _nodeId_to_namesId[sub_node_id] = _nodeNames.size();
         _nodeNames.emplace_back(parent_node_name + "-mesh" + std::to_string(i));
         _nodeId_to_meshId[sub_node_id] = ai_node->mMeshes[i];
-        //_nodeId_to_materialId[sub_node_id] =
-
-        // TODO: material id
-        //_nodeId_to_materialId[sub_node_id] = _mesh[ai_node->mMeshes[i]].
+        _nodeId_to_materialId[sub_node_id] = ai_scene->mMeshes[ai_node->mMeshes[i]]->mMaterialIndex;
     }
 
     return id;
@@ -235,7 +225,25 @@ int32_t Engine::Graphics::D3D11SceneGraph::AddNode(int32_t parent_id, int32_t le
     return id;
 }
 
-void Engine::Graphics::D3D11SceneGraph::Traverse(int32_t node) {
+std::string Engine::Graphics::process_ai_path(char const* base_path, char const* ai_path) {
+    std::filesystem::path temp {ai_path};
+    
+    if (temp.is_relative()) {
+        auto pos {size_t{}};
+        auto s {temp.string()};
+        while (s[pos] == '.')
+            ++pos;
+        s = s.substr(pos);
+        temp = std::filesystem::path{s};
+    }
+
+    temp.replace_extension("dds");
+
+    std::filesystem::path result {base_path};
+    result.concat(temp.string());
+    result.make_preferred();
+
+    return result.string();
 }
 
 Engine::Graphics::D3D11Mesh Engine::Graphics::D3D11SceneGraph::ParseMesh(ID3D11Device& device, aiMesh const* ai_mesh) {
@@ -327,57 +335,46 @@ Engine::Graphics::D3D11Material Engine::Graphics::D3D11SceneGraph::ParseMaterial
     aiTextureMapMode texture_map_mode[2] {aiTextureMapMode_Wrap, aiTextureMapMode_Wrap};
     uint32_t texture_flags {0u};
 
-
     // Emissive Map
-    if (aiGetMaterialTexture(ai_material, aiTextureType_EMISSIVE, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags)) {
-        std::filesystem::path path {ai_path.C_Str()};
-        path.replace_extension("dds");
-        auto const final_path {base_path + path.string()};
+    if (aiGetMaterialTexture(ai_material, aiTextureType_EMISSIVE, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
+        auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
         result._srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, "emissive_map", final_path.c_str())));
     }
 
     // Diffuse Map
-    if (aiGetMaterialTexture(ai_material, aiTextureType_DIFFUSE, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags)) {
-        std::filesystem::path path {ai_path.C_Str()};
-        path.replace_extension("dds");
-        auto const final_path {base_path + path.string()};
+    if (aiGetMaterialTexture(ai_material, aiTextureType_DIFFUSE, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
+        auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
+
+        std::cout << final_path << std::endl;
 
         result._srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, "diffuse_map", final_path.c_str())));
     }
 
     // Specular Map
-    if (aiGetMaterialTexture(ai_material, aiTextureType_SPECULAR, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags)) {
-        std::filesystem::path path {ai_path.C_Str()};
-        path.replace_extension("dds");
-        auto const final_path {base_path + path.string()};
+    if (aiGetMaterialTexture(ai_material, aiTextureType_SPECULAR, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
+        auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
         result._srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, "specular_map", final_path.c_str())));
     }
 
     // Normal Map
-    if (aiGetMaterialTexture(ai_material, aiTextureType_NORMALS, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags)) {
-        std::filesystem::path path {ai_path.C_Str()};
-        path.replace_extension("dds");
-        auto const final_path {base_path + path.string()};
+    if (aiGetMaterialTexture(ai_material, aiTextureType_NORMALS, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
+        auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
         result._srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, "normal_map", final_path.c_str())));
     }
 
     // Height Map
-    if (aiGetMaterialTexture(ai_material, aiTextureType_HEIGHT, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags)) {
-        std::filesystem::path path {ai_path.C_Str()};
-        path.replace_extension("dds");
-        auto const final_path {base_path + path.string()};
+    if (aiGetMaterialTexture(ai_material, aiTextureType_HEIGHT, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
+        auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
         result._srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, "height_map", final_path.c_str())));
     }
 
     // Opacity Map
-    if (aiGetMaterialTexture(ai_material, aiTextureType_OPACITY, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags)) {
-        std::filesystem::path path {ai_path.C_Str()};
-        path.replace_extension("dds");
-        auto const final_path {base_path + path.string()};
+    if (aiGetMaterialTexture(ai_material, aiTextureType_OPACITY, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
+        auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
         result._srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, "opacity_map", final_path.c_str())));
     }
@@ -405,3 +402,5 @@ Engine::Graphics::D3D11SceneGraph::ParseVertexData(ID3D11Device& device, aiMesh 
 
     return {vertex_buffer, index_buffer};
 }
+
+

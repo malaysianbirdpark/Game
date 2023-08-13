@@ -13,7 +13,7 @@ void Engine::Graphics::D3D11SolidStrategy::Init() {
     _pso = D3D11PSOLibrary::ResolvePSO("solid");
 }
 
-void Engine::Graphics::D3D11SolidStrategy::Render(ID3D11DeviceContext& context, D3D11Mesh const& mesh) const {
+void Engine::Graphics::D3D11SolidStrategy::Render(ID3D11DeviceContext& context, D3D11Mesh const& mesh, D3D11Material const& material) const {
     _pso->Bind(context);
     context.DrawIndexed(mesh.GetIndexCount(), 0u, 0u);
 }

@@ -46,7 +46,7 @@ namespace Engine::Graphics {
 
         //template <typename RenderStrategy>
         //void Render(ID3D11DeviceContext& context, RenderStrategy&& strategy);
-        void Render(ID3D11DeviceContext& context) const;
+        void Render(ID3D11DeviceContext& context, D3D11Material* material);
 
         [[nodiscard]] uint32_t GetIndexCount() const;
     private:
@@ -89,26 +89,24 @@ namespace Engine::Graphics {
 
     class D3D11SceneGraph {
         friend class D3D11RenderObject;
+        friend class D3D11Mesh;
 
         static constexpr int MAX_NODE_LEVEL {20};
     public:
         D3D11SceneGraph(ID3D11Device& device, char const* path);
-
-        void Render(ID3D11DeviceContext& context);
 
         int32_t NumOfNodes() const { return _tree.size(); }
 
         void MarkAsUpdated(int32_t node);
         void RecalculateGlobalTransforms();
     private:
-        int32_t                              ParseNode(int32_t parent_id, int32_t level, aiNode const* ai_node);
+        int32_t                              ParseNode(int32_t parent_id, int32_t level, aiScene const* ai_scene, aiNode const* ai_node);
         [[nodiscard]] static D3D11Mesh       ParseMesh(ID3D11Device& device, aiMesh const* ai_mesh);
         [[nodiscard]] static D3D11Material   ParseMaterial(ID3D11Device& device, aiMaterial const* ai_material, char const* base_path);
         using VertexData = std::pair<std::shared_ptr<D3D11VertexBuffer>, std::shared_ptr<D3D11IndexBuffer>>;
         [[nodiscard]] static VertexData      ParseVertexData(ID3D11Device& device, aiMesh const* ai_mesh, x_string const& vertex_format);
     private:
         int32_t                              AddNode(int32_t parent_id, int32_t level, DirectX::XMMATRIX const& local_transform = DirectX::XMMatrixIdentity());
-        void                                 Traverse(int32_t node);
     private:
         x_vector<D3D11Mesh>                  _mesh {};
         x_vector<D3D11Material>              _material {};
@@ -125,5 +123,7 @@ namespace Engine::Graphics {
         // For the Update
         x_vector<int32_t>                    _updated[MAX_NODE_LEVEL] {};
     };
+
+    std::string process_ai_path(char const* base_path, char const* ai_path);
 }
 

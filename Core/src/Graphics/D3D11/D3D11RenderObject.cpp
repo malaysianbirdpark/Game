@@ -21,6 +21,7 @@ void Engine::Graphics::D3D11RenderObject::Render(ID3D11DeviceContext& context, D
 
     auto const& tree {_scene->_tree};
     auto const& node_to_mesh {_scene->_nodeId_to_meshId};
+    auto const& node_to_material {_scene->_nodeId_to_materialId};
     auto const& global_transforms {_scene->_globalTransforms};
 
     std::stack<int32_t> stack {};
@@ -30,13 +31,15 @@ void Engine::Graphics::D3D11RenderObject::Render(ID3D11DeviceContext& context, D
         stack.pop();
 
         if (node_to_mesh.contains(node)) {
-            std::cout << _scene->_nodeNames[_scene->_nodeId_to_namesId[node]] << std::endl;
+            //std::cout << _scene->_nodeNames[_scene->_nodeId_to_namesId[node]] << std::endl;
 
             _transform->SetModel(DirectX::XMLoadFloat4x4(&global_transforms[node_to_mesh.at(node)]));
             _transform->Update(context);
 
             _transform->Bind(context);
-            _scene->_mesh[node_to_mesh.at(node)].Render(context);
+
+            auto const material_idx {node_to_material.contains(node) ? node_to_material.at(node) : 0};
+            _scene->_mesh[node_to_mesh.at(node)].Render(context, &_scene->_material[material_idx]);
         }
 
         if (tree[node]._firstChild != -1)

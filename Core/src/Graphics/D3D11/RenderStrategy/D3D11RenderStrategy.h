@@ -28,18 +28,19 @@ namespace Engine::Graphics {
     #undef F
 
     // Bind Declarations
-    #define F(x) void Render##x(ID3D11DeviceContext& context, x const& strategy, class D3D11Mesh* mesh);
+#define F(x) void Render##x(ID3D11DeviceContext& context, x const& strategy, class D3D11Mesh* mesh, class D3D11Material* material);
         RENDER_STRATEGIES
     #undef F
 
     struct StrategicRender {
-            StrategicRender(ID3D11DeviceContext& context, D3D11Mesh* mesh) : _context{&context}, _mesh{mesh} {}
-    #define F(x) void operator() (x const& target) { Render##x(*_context, target, _mesh); } 
+            StrategicRender(ID3D11DeviceContext& context, D3D11Mesh* mesh, D3D11Material* material) : _context{&context}, _mesh{mesh}, _material{material} {}
+    #define F(x) void operator() (x const& target) { Render##x(*_context, target, _mesh, _material); } 
         RENDER_STRATEGIES
     #undef F
     private:
         ID3D11DeviceContext*   _context;
         D3D11Mesh*             _mesh;
+        D3D11Material*         _material;
     };
 
     D3D11RenderStrategy ResolveRenderStrategy(x_string const& tag);

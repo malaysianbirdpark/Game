@@ -17,14 +17,14 @@ void Engine::Graphics::D3D11TexturedStrategy::Init() {
     _pso = D3D11PSOLibrary::ResolvePSO("textured");
 }
 
-void Engine::Graphics::D3D11TexturedStrategy::Render(ID3D11DeviceContext& context, D3D11Mesh const& mesh) const {
+void Engine::Graphics::D3D11TexturedStrategy::Render(ID3D11DeviceContext& context, D3D11Mesh const& mesh, D3D11Material const& material) const {
     _pso->Bind(context);
 
-    //for (auto const& sr : mesh.GetShaderResources()) {
-    //    if (D3D11DiffuseMap const* diffuse_texture {std::get_if<D3D11DiffuseMap>(sr.get())}) {
-    //        diffuse_texture->Bind(context);  
-    //    }
-    //}
+    for (auto const& sr : material.GetShaderResources()) {
+        if (D3D11DiffuseMap const* diffuse_texture {std::get_if<D3D11DiffuseMap>(sr.get())}) {
+            diffuse_texture->Bind(context);  
+        }
+    }
 
     context.DrawIndexed(mesh.GetIndexCount(), 0u, 0u);
 }
