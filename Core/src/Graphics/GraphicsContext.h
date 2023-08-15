@@ -12,7 +12,9 @@ namespace Engine::Graphics {
         ~GraphicsContext();
 
         void Update(float const dt);
-        void Render();
+
+        void BeginFrame();
+        void EndFrame();
 
         ID3D11Device& Device();
     private:

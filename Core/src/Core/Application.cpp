@@ -5,8 +5,7 @@
 #include "Platform/Input.h"
 #include "Graphics/GraphicsContext.h"
 #include "Graphics/D3DCamera.h"
-
-#include <assimp/scene.h>
+#include "Graphics/GUI/D3D11ImGuiRenderer.h"
 
 #include "Utils/Clk.h"
 
@@ -36,8 +35,10 @@ int Engine::Core::Application::Run() {
         auto const dt {Clk::Mark()};
 
         ProcessInput(dt);
+
+        _gfx->BeginFrame();
         Update(dt);
-        Render();
+        _gfx->EndFrame();
     }
 }
 
@@ -47,7 +48,6 @@ void Engine::Core::Application::ProcessInput(float const dt) {
 
     if (kbd.Escape)
         Input::ToggleRaw();
-
 
     if (!Input::_cursorEnabled) {
         DirectX::XMFLOAT3 translate {};
@@ -74,8 +74,5 @@ void Engine::Core::Application::ProcessInput(float const dt) {
 }
 
 void Engine::Core::Application::Update(float const dt) {
-}
-
-void Engine::Core::Application::Render() {
-    _gfx->Render();
+    _gfx->Update(dt);
 }

@@ -8,12 +8,17 @@
 #include "Graphics/D3D11/SceneGraph/D3D11SceneGraph.h"
 #include "Graphics/D3D11/SceneGraph/D3D11SceneMan.h"
 #include "Graphics/D3D11/RenderStrategy/D3D11RenderStrategy.h"
-#include "Graphics/D3D11/ConstantBuffer/D3D11TransformMVP.h"
 #include "Graphics/D3D11/D3D11RenderObject.h"
 
 #include "Graphics/D3DCamera.h"
 #include "PipelineState/D3D11PSOLibrary.h"
 #include "PipelineState/D3D11PipelineStateObject.h"
+
+#include <imgui.h>
+#include "Graphics/GUI/D3D11ImGuiRenderer.h"
+
+#include "Graphics/D3D11/ConstantBuffer/D3D11CamPosition.h"
+#include "Graphics/D3D11/ConstantBuffer/D3D11LightDirectional.h"
 
 Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, bool windowed)
     : _windowInfo{width, height, native_wnd, windowed}
@@ -55,10 +60,12 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
         _immContext.ReleaseAndGetAddressOf()
     );
 
-    _device->CreateDeferredContext(
-        0u,
-        _defContext0.ReleaseAndGetAddressOf()
-    );
+    for (auto& context : _defContexts) {
+        _device->CreateDeferredContext(
+            0u,
+            context.ReleaseAndGetAddressOf()
+        );
+    }
 
     _swapChain->GetBuffer(0u, IID_PPV_ARGS(_backBuffers.ReleaseAndGetAddressOf()));
     _device->CreateRenderTargetView(_backBuffers.Get(), nullptr, _backBufferView.ReleaseAndGetAddressOf());
@@ -70,7 +77,8 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
     _viewPort.TopLeftX = 0.0f;
     _viewPort.TopLeftY = 0.0f;
     _immContext->RSSetViewports(1u, &_viewPort);
-    _defContext0->RSSetViewports(1u, &_viewPort);
+    //_defContext0->RSSetViewports(1u, &_viewPort);
+    //_imguiContext->RSSetViewports(1u, &_viewPort);
 
     {
         D3D11_DEPTH_STENCIL_DESC desc {};
@@ -81,7 +89,9 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
         Microsoft::WRL::ComPtr<ID3D11DepthStencilState> ds_state;
         _device->CreateDepthStencilState(&desc, ds_state.ReleaseAndGetAddressOf());
         _immContext->OMSetDepthStencilState(ds_state.Get(), 1u);
-        _defContext0->OMSetDepthStencilState(ds_state.Get(), 1u);
+        for (auto& context : _defContexts)
+            context->OMSetDepthStencilState(ds_state.Get(), 1u);
+
 
         D3D11_TEXTURE2D_DESC descDepth {};
         descDepth.Usage = D3D11_USAGE_DEFAULT;
@@ -117,7 +127,7 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
 
     //_obj.push_back(
     //    std::move(
-    //        MakeUnique<D3D11RenderObject>(
+    //        MakeShared<D3D11RenderObject>(
     //            device,
     //            D3DCamera::GetView(),
     //            GetProj(),
@@ -128,7 +138,7 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
 
     _obj.push_back(
         std::move(
-            MakeUnique<D3D11RenderObject>(
+            MakeShared<D3D11RenderObject>(
                 device,
                 D3DCamera::GetView(),
                 GetProj(),
@@ -137,62 +147,43 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
         )
     );
 
-    // solid
-    {
-        auto pso {MakeShared<D3D11PipelineStateObject>()};
+    _obj.push_back(
+        std::move(
+            MakeShared<D3D11RenderObject>(
+                device,
+                D3DCamera::GetView(),
+                GetProj(),
+                D3D11SceneMan::ResolveScene("Cube")
+            )
+        )
+    );
 
-        UINT aligned_byte_offset {0u};
-        x_vector<D3D11_INPUT_ELEMENT_DESC> layout;
-        layout.push_back(
-            {"POSITION", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, aligned_byte_offset, D3D11_INPUT_PER_VERTEX_DATA, 0u}
-        );
-        aligned_byte_offset += sizeof(DirectX::XMFLOAT3);
-        layout.push_back(
-            {"NORMAL", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, aligned_byte_offset, D3D11_INPUT_PER_VERTEX_DATA, 0u}
-        );
-        aligned_byte_offset += sizeof(DirectX::XMFLOAT3);
 
-        pso->SetVertexShader(device, "./ShaderLib/solid_VS.cso");
-        pso->SetInputLayout(device, layout);
-        pso->SetPixelShader(device, "./ShaderLib/solid_PS.cso");
+    //_obj.push_back(
+    //    std::move(
+    //        MakeShared<D3D11RenderObject>(
+    //            device,
+    //            D3DCamera::GetView(),
+    //            GetProj(),
+    //            D3D11SceneMan::ResolveScene("IridescenceLamp")
+    //        )
+    //    )
+    //);
 
-        x_string const _tag {"solid"};
-        D3D11PSOLibrary::RegisterPSO(_tag, pso);
-    }
+    D3D11PSOLibrary::Init(device);
 
-    // solid diffuse-only texture
-    {
-        auto pso {MakeShared<D3D11PipelineStateObject>()};
-
-        UINT aligned_byte_offset {0u};
-        x_vector<D3D11_INPUT_ELEMENT_DESC> layout;
-        layout.push_back(
-            {"POSITION", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, aligned_byte_offset, D3D11_INPUT_PER_VERTEX_DATA, 0u}
-        );
-        aligned_byte_offset += sizeof(DirectX::XMFLOAT3);
-        layout.push_back(
-            {"NORMAL", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, aligned_byte_offset, D3D11_INPUT_PER_VERTEX_DATA, 0u}
-        );
-        aligned_byte_offset += sizeof(DirectX::XMFLOAT3);
-        layout.push_back(
-            {"TEXCOORD", 0u, DXGI_FORMAT_R32G32_FLOAT, 0u, aligned_byte_offset, D3D11_INPUT_PER_VERTEX_DATA, 0u}
-        );
-        aligned_byte_offset += sizeof(DirectX::XMFLOAT2);
-
-        pso->SetVertexShader(device, "./ShaderLib/solid_pos3_nor_tex2_dif_VS.cso");
-        pso->SetInputLayout(device, layout);
-        pso->SetPixelShader(device, "./ShaderLib/solid_pos3_nor_tex2_dif_PS.cso");
-
-        x_string const _tag {"textured"};
-        D3D11PSOLibrary::RegisterPSO(_tag, pso);
-    }
+    _globalCB.push_back(D3D11CamPosition{device, D3DCamera::GetPos()});
+    _lights.push_back(D3D11LightDirectional{device, {0.0f, -0.5f, 1.0f}, {1.0f, 1.0f, 1.0f}});
 
     InitRenderStrategies();
 
     _sampler = std::make_unique<D3D11Sampler>(device, "yes");
+
+    D3D11ImGuiRenderer::Init(_device.Get(), _defContexts[IMGUI_CONTEXT].Get());
 }
 
 Engine::Graphics::D3D11Core::~D3D11Core() {
+    D3D11ImGuiRenderer::Shutdown();
 }
 
 void Engine::Graphics::D3D11Core::Update(float const dt, DirectX::XMMATRIX const& view) {
@@ -200,14 +191,17 @@ void Engine::Graphics::D3D11Core::Update(float const dt, DirectX::XMMATRIX const
         DirectX::XMMatrixMultiply(view, DirectX::XMLoadFloat4x4(&_proj))
     };
 
-    //std::ranges::for_each(_scenes, [&view_proj](auto& s) {
-    //    s->Update();  
-    //});
-}
+    D3DCamera::Update();
 
-void Engine::Graphics::D3D11Core::Render() {
-    BeginFrame();
-    EndFrame();
+    D3D11ImGuiRenderer::ImGuiShowSceneEditWindow(_obj);
+    for (auto const& obj : _obj)
+        obj->Update(dt, view, DirectX::XMLoadFloat4x4(&_proj));
+
+    for (auto& gcb : _globalCB)
+        std::visit(UpdateConstantBuffer{}, gcb);
+
+    for (auto& light : _lights)
+        std::visit(UpdateConstantBuffer{}, light);
 }
 
 void Engine::Graphics::D3D11Core::AddScene() {
@@ -219,7 +213,6 @@ DirectX::XMMATRIX Engine::Graphics::D3D11Core::GetProj() {
 
 void Engine::Graphics::D3D11Core::BeginFrame() {
     //GRAPHICS_INFO("Begin Frame");
-    ID3D11DeviceContext& context {*_defContext0.Get()};
 
     //auto r {static_cast<float>(std::rand()) / RAND_MAX};
     //auto g {static_cast<float>(std::rand()) / RAND_MAX};
@@ -227,24 +220,42 @@ void Engine::Graphics::D3D11Core::BeginFrame() {
     //float clear_color[4] {r, g, b, 1.0f};
     static constexpr float clear_color[4] {0.0f, 0.0f, 0.0f, 1.0f};
 
-    context.RSSetViewports(1u, &_viewPort);
-    context.OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _depthStencilView.Get());
-    context.ClearRenderTargetView(_backBufferView.Get(), clear_color);
-    context.ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f , 0u);
+    // first context clears the screen and buffers
+    _defContexts[0]->RSSetViewports(1u, &_viewPort);
+    _defContexts[0]->OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _depthStencilView.Get());
+    _defContexts[0]->ClearRenderTargetView(_backBufferView.Get(), clear_color);
+    _defContexts[0]->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f , 0u);
+
+    for (auto i {1}; i != NUM_DEF_CONTEXTS; ++i) {
+        _defContexts[i]->RSSetViewports(1u, &_viewPort);
+        _defContexts[i]->OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _depthStencilView.Get());
+    }
+
+    auto& context {*_defContexts[0].Get()};
 
     _sampler->Bind(context, 0u);
-    for (auto& obj : _obj)
-        obj->Render(context, D3DCamera::GetView(), GetProj());
+
+    for (auto& gcb : _globalCB)
+        std::visit(BindConstantBuffer{context}, gcb);
+
+    for (auto& light : _lights)
+        std::visit(BindConstantBuffer{context}, light);
+
+    for (auto const& obj : _obj)
+        obj->Render(context);
 }
 
 void Engine::Graphics::D3D11Core::EndFrame() {
     //GRAPHICS_INFO("End Frame");
-    ID3D11CommandList* _cmdList {};
-    _defContext0->FinishCommandList(FALSE, &_cmdList);
+    x_array<ID3D11CommandList*, NUM_DEF_CONTEXTS> cmd_lists {};
+    for (auto i {0}; i != NUM_DEF_CONTEXTS; ++i)
+        _defContexts[i]->FinishCommandList(FALSE, &cmd_lists[i]);
 
-    _immContext->ExecuteCommandList(_cmdList, FALSE);
+    for (auto i {0}; i != NUM_DEF_CONTEXTS; ++i)
+        _immContext->ExecuteCommandList(cmd_lists[i], FALSE);
 
-    _cmdList->Release();
+    for (auto i {0}; i != NUM_DEF_CONTEXTS; ++i)
+        cmd_lists[i]->Release();
 
     _swapChain->Present(1u, 0u);
 }

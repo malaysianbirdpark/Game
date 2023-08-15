@@ -4,6 +4,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "D3D11SceneGraph.h"
 #include "Graphics/D3D11/ShaderResource/D3D11ShaderResource.h"
 #include "Graphics/D3D11/RenderStrategy/D3D11RenderStrategy.h"
 
@@ -13,14 +14,22 @@ namespace Engine::Graphics {
     class D3D11IndexBuffer;
     class D3D11PipelineStateObject;
 
+    struct SceneTransformParameters {
+        float x {};
+        float y {};
+        float z {};
+        float roll {};
+        float pitch {};
+        float yaw {};
+    };
+
+
     class D3D11Material {
         friend class D3D11SceneGraph;
     public:
         void Append(ID3D11Device& device, x_string const& tag, char const* path);
 
         [[nodiscard]] x_vector<std::shared_ptr<D3D11ShaderResource>> const& GetShaderResources() const;
-
-        void Bind(ID3D11DeviceContext& context);
     private:
         DirectX::XMFLOAT4 _emissiveColor;
         DirectX::XMFLOAT4 _albedoColor;
@@ -95,10 +104,18 @@ namespace Engine::Graphics {
     public:
         D3D11SceneGraph(ID3D11Device& device, char const* path);
 
-        int32_t NumOfNodes() const { return _tree.size(); }
+        int32_t    NumOfNodes() const { return _tree.size(); }
 
-        void MarkAsUpdated(int32_t node);
-        void RecalculateGlobalTransforms();
+        void       MarkAsUpdated(int32_t node);
+        void       RecalculateGlobalTransforms();
+
+        int32_t    ImGuiRenderTree(int32_t node);
+
+        D3D11SceneNode&            GetNodeAt(int32_t node);
+        SceneTransformParameters&  GetTransformParamAt(int32_t node);
+        char const*                GetNameAt(int32_t node);
+
+        void                       Update();
     private:
         int32_t                              ParseNode(int32_t parent_id, int32_t level, aiScene const* ai_scene, aiNode const* ai_node);
         [[nodiscard]] static D3D11Mesh       ParseMesh(ID3D11Device& device, aiMesh const* ai_mesh);
@@ -113,9 +130,11 @@ namespace Engine::Graphics {
         x_vector<D3D11SceneNode>             _tree;
         x_vector<x_string>                   _nodeNames {};
     private:
+        int32_t                              _selected {0};
+        x_vector<SceneTransformParameters>   _transforms;
         x_vector<DirectX::XMFLOAT4X4>        _globalTransforms;
         x_vector<DirectX::XMFLOAT4X4>        _localTransforms;
-    private:
+    public:
         x_unordered_map<uint32_t, uint32_t>  _nodeId_to_meshId {};
         x_unordered_map<uint32_t, uint32_t>  _nodeId_to_materialId {};
         x_unordered_map<uint32_t, uint32_t>  _nodeId_to_namesId {};
@@ -124,6 +143,6 @@ namespace Engine::Graphics {
         x_vector<int32_t>                    _updated[MAX_NODE_LEVEL] {};
     };
 
-    std::string process_ai_path(char const* base_path, char const* ai_path);
+    std::string   process_ai_path(char const* base_path, char const* ai_path);
 }
 

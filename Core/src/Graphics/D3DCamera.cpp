@@ -1,11 +1,17 @@
 #include "pch.h"
 #include "D3DCamera.h"
 
+#include <imgui.h>
+
 #define PI (3.141592f)
 
 void Engine::Graphics::D3DCamera::Init() {
     DirectX::XMVECTOR const init_pos{0.0f, 0.0f, 0.0f, 0.0f};
     DirectX::XMStoreFloat3(&_pos, init_pos);
+}
+
+DirectX::XMVECTOR Engine::Graphics::D3DCamera::GetPos() {
+    return DirectX::XMLoadFloat3(&_pos);
 }
 
 DirectX::XMMATRIX Engine::Graphics::D3DCamera::GetView() {
@@ -29,9 +35,32 @@ DirectX::XMMATRIX Engine::Graphics::D3DCamera::GetView() {
     );
 }
 
+void Engine::Graphics::D3DCamera::Update() {
+    if (ImGui::Begin("Camera")) {
+        ImGui::Text("Position");
+        ImGui::SliderFloat("X", &_pos.x, -100.0f, 100.0f);
+        ImGui::SliderFloat("Y", &_pos.y, -100.0f, 100.0f);
+        ImGui::SliderFloat("Z", &_pos.z, -100.0f, 100.0f);
+
+        ImGui::Text("Rotation");
+        ImGui::SliderFloat("Pitch", &_pitch, -89.5f, 89.5f);
+        ImGui::SliderFloat("Yaw", &_yaw, -175.0f, 175.0f);
+
+        if (ImGui::Button("Reset"))
+            Reset();
+    }
+    ImGui::End();
+}
+
+void Engine::Graphics::D3DCamera::Reset() {
+    _pos = DirectX::XMFLOAT3{0.0f, 0.0f, 0.0f};
+    _pitch = 0.0f;
+    _yaw = 0.0f;
+}
+
 void Engine::Graphics::D3DCamera::Rotate(float const dx, float const dy) {
-    _yaw = std::clamp(_yaw + dx * _rotationSpeed, -(PI / 2.0f), PI / 2.0f);
-    _pitch = std::clamp(_pitch + dy * _rotationSpeed, -(PI / 2.0f), PI / 2.0f);
+    _yaw = _yaw + dx * _rotationSpeed;
+    _pitch = std::clamp(_pitch + dy * _rotationSpeed, -(PI / 2.0f) * 0.995f, PI / 2.0f * 0.995f);
 }
 
 void Engine::Graphics::D3DCamera::Translate(DirectX::XMFLOAT3 mat) {

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Input.h"
 
+#include <imgui_impl_win32.h>
+
 void Engine::Input::Init(HWND hWnd) {
     _hWnd = hWnd;
 
@@ -29,7 +31,6 @@ std::optional<std::pair<int, int>> Engine::Input::ReadRawDelta() {
 }
 
 void Engine::Input::ToggleActivation(UINT flag) {
-    PLATFORM_INFO("Ho");
     if (_cursorEnabled) {
         if (flag) {
             ConfineCursor();
@@ -97,14 +98,14 @@ void Engine::Input::EnableCursor() {
     _cursorEnabled = true;
     ShowCursor();
     EnableImGuiMouse();
-    FreeCursor();
+    //FreeCursor();
 }
 
 void Engine::Input::DisableCursor() {
     _cursorEnabled = false;
     HideCursor();
     DisableImGuiMouse();
-    ConfineCursor();
+    //ConfineCursor();
 }
 
 void Engine::Input::ClearKeyboard() {
@@ -137,7 +138,9 @@ void Engine::Input::ShowCursor() {
 }
 
 void Engine::Input::EnableImGuiMouse() {
+    ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 }
 
 void Engine::Input::DisableImGuiMouse() {
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
 }

@@ -10,16 +10,35 @@ Engine::Graphics::D3D11TransformMVP::D3D11TransformMVP(ID3D11Device& device, Dir
     bd.ByteWidth = sizeof(MVP); 
     bd.StructureByteStride = 0u;
 
-    DirectX::XMStoreFloat4x4(&_model, model);
-    DirectX::XMStoreFloat4x4(&_view, view);
-    DirectX::XMStoreFloat4x4(&_proj, proj);
+    using namespace DirectX;
+
+    XMStoreFloat4x4(&_model, model);
+    XMStoreFloat4x4(&_view, view);
+    XMStoreFloat4x4(&_proj, proj);
 
     D3D11_SUBRESOURCE_DATA sd {};
-    DirectX::XMStoreFloat4x4(&_mvp._mv, DirectX::XMMatrixMultiply(model, view));
-    DirectX::XMStoreFloat4x4(&_mvp._mvp, DirectX::XMMatrixMultiply(DirectX::XMLoadFloat4x4(&_mvp._mv), proj));
+    XMStoreFloat4x4(&_mvp._mv, XMMatrixMultiply(model, view));
+    XMStoreFloat4x4(&_mvp._mvit, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&_mvp._mv))));
+    XMStoreFloat4x4(&_mvp._mvp, XMMatrixMultiply(XMLoadFloat4x4(&_mvp._mv), proj));
     sd.pSysMem = &_mvp;
 
     device.CreateBuffer(&bd, &sd, _resource.ReleaseAndGetAddressOf());
+}
+
+void Engine::Graphics::D3D11TransformMVP::Accumulate(DirectX::XMMATRIX const& transform) {
+    DirectX::XMStoreFloat4x4(&_model, DirectX::XMMatrixMultiply(DirectX::XMLoadFloat4x4(&_model), transform));
+}
+
+DirectX::XMMATRIX Engine::Graphics::D3D11TransformMVP::GetModel() const {
+    return DirectX::XMLoadFloat4x4(&_model);
+}
+
+DirectX::XMMATRIX Engine::Graphics::D3D11TransformMVP::GetView() const {
+    return DirectX::XMLoadFloat4x4(&_view);
+}
+
+DirectX::XMMATRIX Engine::Graphics::D3D11TransformMVP::GetProj() const {
+    return DirectX::XMLoadFloat4x4(&_proj);
 }
 
 void Engine::Graphics::D3D11TransformMVP::SetModel(DirectX::XMMATRIX const& model) {
@@ -37,6 +56,7 @@ void Engine::Graphics::D3D11TransformMVP::SetProj(DirectX::XMMATRIX const& proj)
 void Engine::Graphics::D3D11TransformMVP::Update(ID3D11DeviceContext& context) {
     using namespace DirectX;
     XMStoreFloat4x4(&_mvp._mv, XMMatrixMultiply(XMLoadFloat4x4(&_model), XMLoadFloat4x4(&_view)));
+    XMStoreFloat4x4(&_mvp._mvit, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&_mvp._mv))));
     XMStoreFloat4x4(&_mvp._mvp, XMMatrixMultiply(XMLoadFloat4x4(&_mvp._mv), XMLoadFloat4x4(&_proj)));
 
     D3D11_MAPPED_SUBRESOURCE msr {};

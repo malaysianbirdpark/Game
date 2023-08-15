@@ -10,6 +10,7 @@ struct VS_OUT {
 
 cbuffer mvp : register(b0) {
     matrix mv;
+    matrix mvit;
     matrix mvp;
 };
 

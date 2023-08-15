@@ -3,22 +3,23 @@
 namespace Engine::Graphics {
     class D3D11LightDirectional {
         struct LightInfo {
+            DirectX::XMFLOAT3 _diffuseColor;
+            float             _padding0;
             DirectX::XMFLOAT3 _dir;
-            DirectX::XMFLOAT4 _color;
-            float             _att;
+            float             _padding1;
         };
     public:
-        D3D11LightDirectional(ID3D11Device& device, DirectX::XMFLOAT3 const& dir, DirectX::XMFLOAT4 const& color, float att);
+        D3D11LightDirectional(ID3D11Device& device, DirectX::XMFLOAT3&& dir, DirectX::XMFLOAT3&& color);
 
-        void UpdateDir(ID3D11DeviceContext& context, DirectX::XMFLOAT3 const& dir);
-        void UpdateColor(ID3D11DeviceContext& context, DirectX::XMFLOAT4 const& color);
-        void UpdateAttenuation(ID3D11DeviceContext& context, float const att);
-        void Update(ID3D11DeviceContext& context);
+        void ImGuiShowEditWindow();
+        void Update();
 
-        void Bind(ID3D11DeviceContext& context) const;
+        void Upload(ID3D11DeviceContext& context);
+
+        void Bind(ID3D11DeviceContext& context);
     private:
-        LightInfo _info {};
-        Microsoft::WRL::ComPtr<ID3D11Buffer> _resource;
+        LightInfo                             _info {};
+        Microsoft::WRL::ComPtr<ID3D11Buffer>  _resource;
     };
 }
 

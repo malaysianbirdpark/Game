@@ -3,6 +3,7 @@
 
 #include <imgui.h>
 #include <imgui_impl_win32.h>
+#include "Graphics/GUI/D3D11ImGuiRenderer.h"
 
 #include "Input.h"
 
@@ -128,8 +129,9 @@ namespace Engine {
         if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
             return true;
 
-        //if (GUI::ImGuiMan::IsImguiEnabled()) [[likely]] {
-        if (true) [[likely]] {
+        if (Graphics::D3D11ImGuiRenderer::imguiEnabled) [[likely]] {
+            auto const imgui_io {ImGui::GetIO()};
+
             switch (msg) {
                 /* Window Resizing is currently disabled
                 // WINDOW RESIZE
@@ -151,19 +153,20 @@ namespace Engine {
                 case WM_KEYUP:
                 case WM_SYSKEYUP:
                 case WM_CHAR:
+                    if (imgui_io.WantCaptureKeyboard)
+                        break;
                     DirectX::Keyboard::ProcessMessage(msg, wParam, lParam);
                     break;
                 case WM_MENUCHAR:
                     return MAKELRESULT(0, MNC_CLOSE);
                 // MOUSE
                 case WM_ACTIVATE:
-            case WM_ACTIVATEAPP:
+                case WM_ACTIVATEAPP:
                     Input::ToggleActivation(wParam & WA_ACTIVE);
                     DirectX::Mouse::ProcessMessage(msg, wParam, lParam);
                     break; 
                 case WM_LBUTTONDOWN:
                     SetForegroundWindow(hWnd);
-                    Input::KeyboardButtonDown();
                     DirectX::Mouse::ProcessMessage(msg, wParam, lParam);
                     break; 
                 case WM_MOUSEMOVE:
@@ -176,6 +179,8 @@ namespace Engine {
                 case WM_XBUTTONDOWN:
                 case WM_XBUTTONUP:
                 case WM_MOUSEHOVER:
+                    if (imgui_io.WantCaptureMouse)
+                        break;
                     DirectX::Mouse::ProcessMessage(msg, wParam, lParam);
                     break; 
                 case WM_MOUSEACTIVATE:
