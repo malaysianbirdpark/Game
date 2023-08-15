@@ -20,7 +20,6 @@ namespace Engine::Core {
     protected:
         virtual void ProcessInput(float const dt);
         virtual void Update(float const dt);
-        virtual void Render();
     protected:
         inline static int width {};
         inline static int height {};

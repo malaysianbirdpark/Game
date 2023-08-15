@@ -1,26 +1,29 @@
-struct IN {
+struct VS_IN {
     float3 pos      : POSITION;
     float3 normal   : NORMAL;
     float2 texcoord : TEXCOORD;
 };
 
-struct OUT {
+struct VS_OUT {
     float4 view_pos : POSITION;
+    float3 normal   : NORMAL;
     float2 texcoord : TEXCOORD;
     float4 sv_pos   : SV_POSITION;
 };
 
-cbuffer mvp {
+cbuffer mvp : register(b0)
+{
     matrix mv;
     matrix mvit;
     matrix mvp;
 };
 
-OUT main(IN input)
+VS_OUT main(VS_IN input)
 {
-    OUT output;
+    VS_OUT output;
 
     output.view_pos = mul(mv, input.pos);
+    output.normal = normalize(mul((float3x3) mvit, input.normal));
     output.texcoord = input.texcoord;
     output.sv_pos = mul(mvp, float4(input.pos, 1.0f));
 

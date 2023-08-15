@@ -5,7 +5,11 @@ namespace Engine::Graphics {
     public:
         static void Init();
 
+        static DirectX::XMVECTOR GetPos();
         static DirectX::XMMATRIX GetView();
+
+        static void Update();
+        static void Reset();
 
         static void Rotate(float const dx, float const dy);
         static void Translate(DirectX::XMFLOAT3 mat);

@@ -5,6 +5,7 @@ namespace Engine::Graphics {
     class D3D11TransformMVP {
         struct MVP {
             DirectX::XMFLOAT4X4 _mv;     
+            DirectX::XMFLOAT4X4 _mvit;
             DirectX::XMFLOAT4X4 _mvp;     
         };
     public:
@@ -14,6 +15,12 @@ namespace Engine::Graphics {
             DirectX::XMMATRIX const& view, 
             DirectX::XMMATRIX const& proj
         );
+
+        void Accumulate(DirectX::XMMATRIX const& transform);
+
+        DirectX::XMMATRIX GetModel() const;
+        DirectX::XMMATRIX GetView() const;
+        DirectX::XMMATRIX GetProj() const;
 
         void SetModel(DirectX::XMMATRIX const& model);
         void SetView(DirectX::XMMATRIX const& view);

@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "D3D11LightDirectional.h"
-#include "D3D11LightDirectional.h"
 
-Engine::Graphics::D3D11LightDirectional::D3D11LightDirectional(ID3D11Device& device, DirectX::XMFLOAT3 const& dir, DirectX::XMFLOAT4 const& color, float att)
-    : _info{dir, color, att}
+#include <imgui.h>
+
+Engine::Graphics::D3D11LightDirectional::D3D11LightDirectional(ID3D11Device& device, DirectX::XMFLOAT3&& dir, DirectX::XMFLOAT3&& color)
+    : _info{._diffuseColor = std::move(color), ._dir = std::move(dir)}
 {
     D3D11_BUFFER_DESC bd {};
     bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -19,22 +20,22 @@ Engine::Graphics::D3D11LightDirectional::D3D11LightDirectional(ID3D11Device& dev
     device.CreateBuffer(&bd, &sd, _resource.ReleaseAndGetAddressOf());
 }
 
-void Engine::Graphics::D3D11LightDirectional::UpdateDir(ID3D11DeviceContext& context, DirectX::XMFLOAT3 const& dir) {
-    _info._dir = dir;
-    Update(context);
+void Engine::Graphics::D3D11LightDirectional::ImGuiShowEditWindow() {
+    if (ImGui::Begin("Directional Light")) {
+        ImGui::Text("Color");
+        ImGui::ColorPicker3("Color", &_info._diffuseColor.x);
+
+        ImGui::Text("Direction");
+        ImGui::SliderFloat3("XYZ", &_info._dir.x, -1.0f, 1.0f);
+    }
+    ImGui::End();
 }
 
-void Engine::Graphics::D3D11LightDirectional::UpdateColor(ID3D11DeviceContext& context, DirectX::XMFLOAT4 const& color) {
-    _info._color = color;
-    Update(context);
+void Engine::Graphics::D3D11LightDirectional::Update() {
+    ImGuiShowEditWindow();
 }
 
-void Engine::Graphics::D3D11LightDirectional::UpdateAttenuation(ID3D11DeviceContext& context, float const att) {
-    _info._att = att;
-    Update(context);
-}
-
-void Engine::Graphics::D3D11LightDirectional::Update(ID3D11DeviceContext& context) {
+void Engine::Graphics::D3D11LightDirectional::Upload(ID3D11DeviceContext& context) {
     D3D11_MAPPED_SUBRESOURCE msr {};
     context.Map(
         _resource.Get(),
@@ -47,6 +48,7 @@ void Engine::Graphics::D3D11LightDirectional::Update(ID3D11DeviceContext& contex
     context.Unmap(_resource.Get(), 0u);
 }
 
-void Engine::Graphics::D3D11LightDirectional::Bind(ID3D11DeviceContext& context) const {
+void Engine::Graphics::D3D11LightDirectional::Bind(ID3D11DeviceContext& context) {
+    Upload(context);
     context.PSSetConstantBuffers(1u, 1u, _resource.GetAddressOf());
 }

@@ -15,10 +15,11 @@ Engine::Graphics::D3D11RenderObject::D3D11RenderObject(ID3D11Device& device, Dir
     );
 }
 
-void Engine::Graphics::D3D11RenderObject::Render(ID3D11DeviceContext& context, DirectX::FXMMATRIX const& view, DirectX::FXMMATRIX const& proj) {
-    _transform->SetView(view);
-    _transform->SetProj(proj);
+std::shared_ptr<Engine::Graphics::D3D11SceneGraph> Engine::Graphics::D3D11RenderObject::GetScene() {
+    return _scene;
+}
 
+void Engine::Graphics::D3D11RenderObject::Render(ID3D11DeviceContext& context) {
     auto const& tree {_scene->_tree};
     auto const& node_to_mesh {_scene->_nodeId_to_meshId};
     auto const& node_to_material {_scene->_nodeId_to_materialId};
@@ -33,7 +34,7 @@ void Engine::Graphics::D3D11RenderObject::Render(ID3D11DeviceContext& context, D
         if (node_to_mesh.contains(node)) {
             //std::cout << _scene->_nodeNames[_scene->_nodeId_to_namesId[node]] << std::endl;
 
-            _transform->SetModel(DirectX::XMLoadFloat4x4(&global_transforms[node_to_mesh.at(node)]));
+            _transform->SetModel(DirectX::XMLoadFloat4x4(&global_transforms[node]));
             _transform->Update(context);
 
             _transform->Bind(context);
@@ -48,4 +49,11 @@ void Engine::Graphics::D3D11RenderObject::Render(ID3D11DeviceContext& context, D
             stack.push(s);
     }
 
+}
+
+void Engine::Graphics::D3D11RenderObject::Update(float const dt, DirectX::FXMMATRIX& view, DirectX::FXMMATRIX& proj) {
+    _transform->SetView(view);
+    _transform->SetProj(proj);
+
+    _scene->Update();
 }

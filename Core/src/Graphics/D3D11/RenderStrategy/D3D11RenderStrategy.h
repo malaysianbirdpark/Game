@@ -4,27 +4,20 @@
 
 #include "D3D11SolidStrategy.h"
 #include "D3D11TexturedStrategy.h"
+#include "D3D11PhongTexStrategy.h"
 
 namespace Engine::Graphics {
 #define RENDER_STRATEGIES                   \
     F(D3D11SolidStrategy)                   \
-    F(D3D11TexturedStrategy)                
-    //F(D3D11BlinPhongSolidStrategy)          \
-    //F(D3D11BlinPhongTexturedStrategy)       \
-    //F(D3D11BlinPhongNormMapStrategy)        \
-    //F(D3D11BlinPhongNormSpecMapStrategy)      
-
-    // Forward Declarations
-    #define F(x) class x;
-        RENDER_STRATEGIES
-    #undef F
+    F(D3D11TexturedStrategy)                \
+    F(D3D11PhongTexStrategy)
 
     // Initialize Render Strategies
     void InitRenderStrategies();
 
     // Variant Definition
     #define F(x) x##,
-        using D3D11RenderStrategy = std::variant<D3D11SolidStrategy, D3D11TexturedStrategy>;
+        using D3D11RenderStrategy = std::variant<D3D11SolidStrategy, D3D11TexturedStrategy, D3D11PhongTexStrategy>;
     #undef F
 
     // Bind Declarations
@@ -47,7 +40,8 @@ namespace Engine::Graphics {
 
     inline static x_unordered_map<x_string, std::function<D3D11RenderStrategy(void)>> RenderStrategyTable {
         {"solid", &D3D11SolidStrategy::GetInstance},
-        {"textured", &D3D11TexturedStrategy::GetInstance}
+        {"textured", &D3D11TexturedStrategy::GetInstance},
+        {"phong_tex", &D3D11PhongTexStrategy::GetInstance}
     };
 }
 

@@ -7,13 +7,9 @@
 #include "D3D11VertexBuffer.h"
 #include "D3D11IndexBuffer.h"
 
-#include "D3D11ModelQuery.h"
-
-#include "Graphics/D3D11/ShaderResource/D3D11ShaderResourcesInclude.h"
-#include "Graphics/D3D11/RenderStrategy/D3D11RenderStrategyInclude.h"
-
 #include <variant>
 #include <filesystem>
+#include <imgui.h>
 
 #include "D3D11MeshDataHolder.h"
 
@@ -135,7 +131,14 @@ void Engine::Graphics::D3D11SceneGraph::RecalculateGlobalTransforms() {
     if (!_updated[0].empty()) {
         auto const cur {_updated[0][0]};
 
-        _globalTransforms[cur] = _localTransforms[cur];
+        DirectX::XMStoreFloat4x4(
+            &_globalTransforms[cur],
+            DirectX::XMLoadFloat4x4(&_localTransforms[cur]) *
+            DirectX::XMMatrixMultiply(
+                DirectX::XMMatrixTranslation(_transforms[cur].x, _transforms[cur].y, _transforms[cur].z),
+                DirectX::XMMatrixRotationRollPitchYaw(_transforms[cur].pitch, _transforms[cur].yaw, _transforms[cur].roll)
+            )
+        );
 
         _updated[0].clear();
     }
@@ -151,13 +154,85 @@ void Engine::Graphics::D3D11SceneGraph::RecalculateGlobalTransforms() {
             XMStoreFloat4x4(&_globalTransforms[cur],
                 XMMatrixMultiply(
                     XMLoadFloat4x4(&_globalTransforms[parent]),
-                    XMLoadFloat4x4(&_localTransforms[cur])
+                    DirectX::XMLoadFloat4x4(&_localTransforms[cur]) *
+                    DirectX::XMMatrixMultiply(
+                        DirectX::XMMatrixTranslation(_transforms[cur].x, _transforms[cur].y, _transforms[cur].z),
+                        DirectX::XMMatrixRotationRollPitchYaw(_transforms[cur].pitch, _transforms[cur].yaw, _transforms[cur].roll)
+                    )
                 )
             );
         }
 
         _updated[i].clear();
     }
+}
+
+//void Engine::Graphics::D3D11SceneGraph::ImGuiEditSelectedNode() {
+//    auto& transform {_transforms[_selected]};
+//    ImGui::Text(_nodeNames[_nodeId_to_namesId[_selected]].c_str());
+//
+//    ImGui::Text("Position");
+//    ImGui::SliderFloat("X", &transform.x, -20.0f, 20.0f);
+//    ImGui::SliderFloat("Y", &transform.y, -20.0f, 20.0f);
+//    ImGui::SliderFloat("Z", &transform.z, -20.0f, 20.0f);
+//
+//    ImGui::Text("Rotation");
+//    ImGui::SliderAngle("Roll", &transform.roll, -180.0f, 180.0f);
+//    ImGui::SliderAngle("Pitch", &transform.pitch, -180.0f, 180.0f);
+//    ImGui::SliderAngle("Yaw", &transform.yaw, -180.0f, 180.0f);
+//
+//    MarkAsUpdated(_selected);
+//}
+
+int32_t Engine::Graphics::D3D11SceneGraph::ImGuiRenderTree(int32_t node) {
+    std::string const name = {_nodeNames[_nodeId_to_namesId[node]].c_str()};
+	std::string const label = name.empty() ? (std::string("Node") + std::to_string(node)) : name;
+
+	const int flags = (_tree[node]._firstChild < 0) ? ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet : 0;
+
+	const bool opened = ImGui::TreeNodeEx(&_tree[node], flags, "%s", label.c_str());
+
+	ImGui::PushID(node);
+
+	if (ImGui::IsItemClicked(0))
+	{
+		printf("Selected node: %d (%s)\n", node, label.c_str());
+		_selected = node;
+	}
+
+	if (opened)
+	{
+		for (int ch = _tree[node]._firstChild; ch != -1; ch = _tree[ch]._nextSibling)
+		{
+			auto const subNode = ImGuiRenderTree(ch);
+			if (subNode > -1)
+				_selected = subNode;
+		}
+		ImGui::TreePop();
+	}
+
+	ImGui::PopID();
+
+	return _selected;
+}
+
+Engine::Graphics::D3D11SceneNode& Engine::Graphics::D3D11SceneGraph::GetNodeAt(int32_t node) {
+    CORE_ASSERT(node < _tree.size() && node >= 0, "invalid node index");
+    return _tree[node];
+}
+
+Engine::Graphics::SceneTransformParameters& Engine::Graphics::D3D11SceneGraph::GetTransformParamAt(int32_t node) {
+    CORE_ASSERT(node < _transforms.size() && node >= 0, "invalid node index");
+    return _transforms[node];
+}
+
+char const* Engine::Graphics::D3D11SceneGraph::GetNameAt(int32_t node) {
+    CORE_ASSERT(_nodeId_to_namesId.contains(node) && node >= 0, "invalid node index");
+    return _nodeNames[_nodeId_to_namesId.at(node)].c_str();
+}
+
+void Engine::Graphics::D3D11SceneGraph::Update() {
+    RecalculateGlobalTransforms();
 }
 
 int32_t Engine::Graphics::D3D11SceneGraph::ParseNode(int32_t parent_id, int32_t level, aiScene const* ai_scene, aiNode const* ai_node) {
@@ -194,8 +269,9 @@ int32_t Engine::Graphics::D3D11SceneGraph::ParseNode(int32_t parent_id, int32_t 
 int32_t Engine::Graphics::D3D11SceneGraph::AddNode(int32_t parent_id, int32_t level, DirectX::XMMATRIX const& local_transform) {
     int32_t const id {static_cast<int32_t>(_tree.size())};
     {
-        _globalTransforms.push_back({});
-        _localTransforms.push_back({});
+        _transforms.emplace_back();
+        _globalTransforms.emplace_back();
+        _localTransforms.emplace_back();
         DirectX::XMStoreFloat4x4(&_globalTransforms.back(), DirectX::XMMatrixIdentity());
         DirectX::XMStoreFloat4x4(&_localTransforms.back(), local_transform);
     }
@@ -237,6 +313,11 @@ std::string Engine::Graphics::process_ai_path(char const* base_path, char const*
         temp = std::filesystem::path{s};
     }
 
+    if (!temp.has_parent_path())
+        temp = std::filesystem::path{std::string{"Textures/"} + temp.string()};
+    else if (temp.parent_path().string() != "Textures")
+        temp = std::filesystem::path {std::string{"Textures/"} + temp.filename().string()};
+
     temp.replace_extension("dds");
 
     std::filesystem::path result {base_path};
@@ -264,7 +345,7 @@ Engine::Graphics::D3D11Mesh Engine::Graphics::D3D11SceneGraph::ParseMesh(ID3D11D
         vertex_buffer, 
         index_buffer, 
         D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-        ResolveRenderStrategy("textured")
+        ResolveRenderStrategy("phong_tex")
     };
 }
 
