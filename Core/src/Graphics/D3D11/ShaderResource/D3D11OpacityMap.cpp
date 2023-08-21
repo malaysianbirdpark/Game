@@ -28,8 +28,8 @@ Engine::Graphics::D3D11OpacityMap::D3D11OpacityMap(ID3D11Device& device, char co
     );
 }
 
-Engine::Graphics::D3D11OpacityMap Engine::Graphics::D3D11OpacityMap::CreateOpacityMap(ID3D11Device& device, char const* path) {
-    return D3D11OpacityMap{device, path};
+std::shared_ptr<Engine::Graphics::D3D11OpacityMap> Engine::Graphics::D3D11OpacityMap::CreateOpacityMap(ID3D11Device& device, char const* path) {
+    return std::move(MakeShared<D3D11OpacityMap>(device, path));
 }
 
 void Engine::Graphics::D3D11OpacityMap::Bind(ID3D11DeviceContext& context) const {

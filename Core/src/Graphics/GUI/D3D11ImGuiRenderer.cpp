@@ -6,6 +6,7 @@
 
 #include "Graphics/D3D11/D3D11RenderObject.h"
 #include "Graphics/D3D11/SceneGraph/D3D11SceneGraph.h"
+#include "Graphics/D3D11/D3D11CubeMap.h"
 #include "Platform/Platform.h"
 
 void Engine::Graphics::D3D11ImGuiRenderer::Init(ID3D11Device* device, ID3D11DeviceContext* context) {
@@ -56,12 +57,13 @@ void Engine::Graphics::D3D11ImGuiRenderer::EndFrame() {
     io.DisplaySize = ImVec2(static_cast<float>(Platform::GetWidth()), 
                             static_cast<float>(Platform::GetHeight()));
 
-    bool showDemoWindow {false};
-    if (showDemoWindow) [[unlikely]] {
+    bool showDemoWindow {true};
+    if (showDemoWindow) [[likely]] {
         ImGui::ShowDemoWindow(&showDemoWindow);
     }
 
     ShowMenu();
+    ImGuiShowCubemapEditWindow();
 
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -71,37 +73,72 @@ void Engine::Graphics::D3D11ImGuiRenderer::EndFrame() {
     }
 }
 
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowCubemapEditWindow() {
+    auto& index {D3D11CubeMap::TextureIndex()};
+
+    if (ImGui::Begin("Cubemap Edit Window")) {
+        ImGui::RadioButton("Santa Maria (No IBL)", &index, 0);
+        ImGui::RadioButton("Fort Point (No IBL)", &index, 1);
+        ImGui::RadioButton("Atrium", &index, 2);
+        ImGui::RadioButton("Garage", &index, 3);
+    }
+    ImGui::End();
+}
+
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSceneEditWindow(x_vector<std::shared_ptr<D3D11RenderObject>>& objs) {
     if (ImGui::Begin("Scene Edit Window")) {
-        ImGui::Columns(2, nullptr, true);
+        ImGui::Columns(3, nullptr, true);
         for (auto& obj : objs)
             ImGuiRenderSceneTree(*obj->GetScene(), 0);
 
         ImGui::NextColumn();
-        if (_selected.first != nullptr)
+        if (_selected.first != nullptr) {
             ImGuiShowNodeEditWindow();
+
+            ImGui::NextColumn();
+            ImGuiShowRenderConfigureWindow();
+            ImGuiShowMaterialEditWindow();
+        }
     }
     ImGui::End();
-
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowNodeEditWindow() {
     auto& [scene, node] {_selected};
+    int interacted {};
 
     auto& transform {scene->GetTransformParamAt(node)};
 
     ImGui::Text(scene->GetNameAt(node));
     ImGui::Text("Position");
-    ImGui::SliderFloat("X", &transform.x, -20.0f, 20.0f);
-    ImGui::SliderFloat("Y", &transform.y, -20.0f, 20.0f);
-    ImGui::SliderFloat("Z", &transform.z, -20.0f, 20.0f);
+    interacted += ImGui::SliderFloat("X", &transform.x, -20.0f, 20.0f);
+    interacted += ImGui::SliderFloat("Y", &transform.y, -20.0f, 20.0f);
+    interacted += ImGui::SliderFloat("Z", &transform.z, -20.0f, 20.0f);
 
     ImGui::Text("Rotation");
-    ImGui::SliderAngle("Roll", &transform.roll, -180.0f, 180.0f);
-    ImGui::SliderAngle("Pitch", &transform.pitch, -180.0f, 180.0f);
-    ImGui::SliderAngle("Yaw", &transform.yaw, -180.0f, 180.0f);
+    interacted += ImGui::SliderAngle("Roll", &transform.roll, -180.0f, 180.0f);
+    interacted += ImGui::SliderAngle("Pitch", &transform.pitch, -180.0f, 180.0f);
+    interacted += ImGui::SliderAngle("Yaw", &transform.yaw, -180.0f, 180.0f);
 
-    scene->MarkAsUpdated(node);
+    ImGui::Text("Scaling");
+    interacted += ImGui::SliderFloat("Scale X", &transform.scale_x, 0.0f, 10.0f);
+    interacted += ImGui::SliderFloat("Scale Y", &transform.scale_y, 0.0f, 10.0f);
+    interacted += ImGui::SliderFloat("Scale Z", &transform.scale_z, 0.0f, 10.0f);
+
+    if (interacted > 0)
+        scene->MarkAsUpdated(node);
+}
+
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowRenderConfigureWindow() {
+    static char const* methods[] {"Solid", "Phong", "Environment Mapping", "Basic Image Based Rendering"};
+    static int selected_method {};
+    ImGui::Text("Rendering Configuration");
+    ImGui::Combo("Shading", &selected_method, methods, std::size(methods));
+    _renderConfigureTable[selected_method]();
+}
+
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowMaterialEditWindow() {
+    ImGui::Text("Material Editor");
 }
 
 int32_t Engine::Graphics::D3D11ImGuiRenderer::ImGuiRenderSceneTree(D3D11SceneGraph& scene, int32_t node) {
@@ -137,21 +174,57 @@ int32_t Engine::Graphics::D3D11ImGuiRenderer::ImGuiRenderSceneTree(D3D11SceneGra
 	return _selected.second;
 }
 
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSolidConfigureWindow() {
+    auto& [scene, node] {_selected};
+    auto& render_strategy {scene->GetRenderStrategyAt(node)};
+    auto const previous_value {render_strategy};
+
+    ImGui::RadioButton("Use Position As Color", &render_strategy, 0);
+    ImGui::RadioButton("Use Texture", &render_strategy, 1);
+
+    if (previous_value != render_strategy)
+        scene->SetRenderStrategies(node, render_strategy);
+}
+
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowPhongConfigureWindow() {
+    auto& [scene, node] {_selected};
+    auto& render_strategy {scene->GetRenderStrategyAt(node)};
+    auto const previous_value {render_strategy};
+
+    ImGui::RadioButton("Use Position As Color", &render_strategy, 2);
+    ImGui::RadioButton("Use Texture", &render_strategy, 3);
+
+    if (previous_value != render_strategy)
+        scene->SetRenderStrategies(node, render_strategy);
+}
+
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowEMConfigureWindow() {
+    auto& [scene, node] {_selected};
+    auto& render_strategy {scene->GetRenderStrategyAt(node)};
+    auto const previous_value {render_strategy};
+
+    ImGui::RadioButton("Use Normal Direction", &render_strategy, 4);
+    ImGui::RadioButton("Use Total Reflection", &render_strategy, 5);
+
+    if (previous_value != render_strategy)
+        scene->SetRenderStrategies(node, render_strategy);
+}
+
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowBasicIBLConfigureWindow() {
+    auto& [scene, node] {_selected};
+    auto& render_strategy {scene->GetRenderStrategyAt(node)};
+    auto const previous_value {render_strategy};
+
+    ImGui::RadioButton("Default", &render_strategy, 6);
+    ImGui::RadioButton("Textured", &render_strategy, 7);
+
+    if (previous_value != render_strategy)
+        scene->SetRenderStrategies(node, render_strategy);
+}
+
 void Engine::Graphics::D3D11ImGuiRenderer::ShowMenu() {
-    static float f = 0.0f;
-    static int counter = 0;
-
-    ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-    ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-
-    ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-
-    if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-        counter++;
-    ImGui::SameLine();
-    ImGui::Text("counter = %d", counter);
-
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    if (ImGui::Begin("Menu")) {
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    }
     ImGui::End();
 }

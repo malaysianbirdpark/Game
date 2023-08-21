@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "D3D11RenderObject.h"
 
-#include "ConstantBuffer/D3D11TransformMVP.h"
 #include "SceneGraph/D3D11SceneGraph.h"
 
 Engine::Graphics::D3D11RenderObject::D3D11RenderObject(ID3D11Device& device, DirectX::XMMATRIX const& view, DirectX::XMMATRIX const& proj, std::shared_ptr<D3D11SceneGraph>&& scene)
@@ -32,15 +31,15 @@ void Engine::Graphics::D3D11RenderObject::Render(ID3D11DeviceContext& context) {
         stack.pop();
 
         if (node_to_mesh.contains(node)) {
-            //std::cout << _scene->_nodeNames[_scene->_nodeId_to_namesId[node]] << std::endl;
-
             _transform->SetModel(DirectX::XMLoadFloat4x4(&global_transforms[node]));
             _transform->Update(context);
 
             _transform->Bind(context);
 
             auto const material_idx {node_to_material.contains(node) ? node_to_material.at(node) : 0};
-            _scene->_mesh[node_to_mesh.at(node)].Render(context, &_scene->_material[material_idx]);
+            //_scene->_mesh[node_to_mesh.at(node)].Render(context, &_scene->_material[material_idx]);
+            //D3D11PhongTexStrategy::Render(context, _scene->_mesh[node_to_mesh.at(node)], _scene->_material[material_idx]);
+            renderStrategyTable[_scene->_renderStrategies[node]](context, _scene->_mesh[node_to_mesh.at(node)], _scene->_material[material_idx]);
         }
 
         if (tree[node]._firstChild != -1)

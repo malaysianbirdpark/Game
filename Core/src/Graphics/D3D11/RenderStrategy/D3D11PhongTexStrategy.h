@@ -7,11 +7,8 @@ namespace Engine::Graphics {
 
     class D3D11PhongTexStrategy {
     public:
-        static D3D11PhongTexStrategy GetInstance();
-
         static void Init();
-
-        void Render(ID3D11DeviceContext& context, D3D11Mesh const& mesh, D3D11Material const& material) const;
+        static void Render(ID3D11DeviceContext& context, D3D11Mesh const& mesh, D3D11Material const& material);
     private:
         inline static std::shared_ptr<D3D11PipelineStateObject> _pso {nullptr};
     };

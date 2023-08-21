@@ -3,7 +3,7 @@
 namespace Engine::Graphics {
     class D3D11IndexBuffer {
     public:
-        D3D11IndexBuffer(ID3D11Device& device, x_vector<unsigned short> const& indices, char const* tag);
+        D3D11IndexBuffer(ID3D11Device& device, void const* data, UINT count, char const* tag);
 
         void Bind(ID3D11DeviceContext& context) noexcept;
         [[nodiscard]] UINT GetCount() const noexcept;

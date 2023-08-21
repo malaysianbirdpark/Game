@@ -39,6 +39,7 @@ namespace Engine::Graphics {
         Microsoft::WRL::ComPtr<ID3D11Resource>           _backBuffers;
         Microsoft::WRL::ComPtr<ID3D11RenderTargetView>   _backBufferView;
 
+        Microsoft::WRL::ComPtr<ID3D11RasterizerState>    _rasterizerState;
         Microsoft::WRL::ComPtr<ID3D11DepthStencilView>   _depthStencilView;
 
         D3D11_VIEWPORT                                   _viewPort {};

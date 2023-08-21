@@ -5,15 +5,12 @@
 #include "Graphics/D3D11/PipelineState/D3D11PSOLibrary.h"
 #include "Graphics/D3D11/PipelineState/D3D11PipelineStateObject.h"
 
-Engine::Graphics::D3D11SolidStrategy Engine::Graphics::D3D11SolidStrategy::GetInstance() {
-    return D3D11SolidStrategy{};
-}
-
 void Engine::Graphics::D3D11SolidStrategy::Init() {
     _pso = D3D11PSOLibrary::ResolvePSO("solid");
 }
 
-void Engine::Graphics::D3D11SolidStrategy::Render(ID3D11DeviceContext& context, D3D11Mesh const& mesh, D3D11Material const& material) const {
+void Engine::Graphics::D3D11SolidStrategy::Render(ID3D11DeviceContext& context, D3D11Mesh const& mesh, D3D11Material const& material) {
+    mesh.Bind(context);
     _pso->Bind(context);
     context.DrawIndexed(mesh.GetIndexCount(), 0u, 0u);
 }

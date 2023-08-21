@@ -21,24 +21,25 @@ namespace Engine::Graphics {
         float roll {};
         float pitch {};
         float yaw {};
+        float scale_x {1.0f};
+        float scale_y {1.0f};
+        float scale_z {1.0f};
     };
 
 
     class D3D11Material {
         friend class D3D11SceneGraph;
     public:
-        void Append(ID3D11Device& device, x_string const& tag, char const* path);
-
-        [[nodiscard]] x_vector<std::shared_ptr<D3D11ShaderResource>> const& GetShaderResources() const;
+        [[nodiscard]] x_vector<D3D11ShaderResource> const& GetShaderResources() const;
     private:
-        DirectX::XMFLOAT4 _emissiveColor;
-        DirectX::XMFLOAT4 _albedoColor;
-        DirectX::XMFLOAT4 _roughness;
-        float             _transparencyFactor;
-        float             _alphaTest;
-        float             _metallicFactor;
+        DirectX::XMFLOAT4  _emissiveColor;
+        DirectX::XMFLOAT4  _albedoColor;
+        DirectX::XMFLOAT4  _roughness;
+        float              _transparencyFactor;
+        float              _alphaTest;
+        float              _metallicFactor;
 
-        x_vector<std::shared_ptr<D3D11ShaderResource>>  _srs;
+        x_vector<D3D11ShaderResource>  _srs;
     };
 
     class D3D11Mesh {
@@ -49,13 +50,10 @@ namespace Engine::Graphics {
         D3D11Mesh(
             std::shared_ptr<D3D11VertexBuffer>& vertex_buffer,
             std::shared_ptr<D3D11IndexBuffer>& index_buffer,
-            D3D11_PRIMITIVE_TOPOLOGY topology,
-            D3D11RenderStrategy strategy
+            D3D11_PRIMITIVE_TOPOLOGY topology
         );
 
-        //template <typename RenderStrategy>
-        //void Render(ID3D11DeviceContext& context, RenderStrategy&& strategy);
-        void Render(ID3D11DeviceContext& context, D3D11Material* material);
+        void Bind(ID3D11DeviceContext& context) const;
 
         [[nodiscard]] uint32_t GetIndexCount() const;
     private:
@@ -63,28 +61,7 @@ namespace Engine::Graphics {
         std::shared_ptr<D3D11VertexBuffer>            _vertexBuffer;
         std::shared_ptr<D3D11IndexBuffer>             _indexBuffer; 
         D3D11_PRIMITIVE_TOPOLOGY                      _topology;
-        D3D11RenderStrategy                           _strategy;
     };
-
-    //class D3D11SceneNode {
-    //    friend class D3D11SceneGraph;
-    //public:
-    //    D3D11SceneNode(int32_t id, int32_t parent_id, x_string& name, x_vector<std::shared_ptr<D3D11Mesh>>& meshes, DirectX::XMMATRIX const& transform);
-
-    //    void Render(ID3D11DeviceContext& context);
-
-    //    [[nodiscard]] int32_t GetId() const { return _id; }
-    //    [[nodiscard]] x_vector<int32_t> const& GetChildrenIds() const { return _childrenId; }
-    //private:
-    //    int32_t                                    _id {};
-    //    int32_t                                    _parentId {};
-    //    x_vector<int32_t>                          _childrenId {};
-    //private:
-    //    x_string                                   _name {};
-    //    // Scene holds all the meshes and each node points to them
-    //    x_vector<std::shared_ptr<D3D11Mesh>>       _pMesh {};
-    //    DirectX::XMFLOAT4X4                        _transform {};
-    //};
 
     struct D3D11SceneNode {
          int32_t _parent;
@@ -109,11 +86,12 @@ namespace Engine::Graphics {
         void       MarkAsUpdated(int32_t node);
         void       RecalculateGlobalTransforms();
 
-        int32_t    ImGuiRenderTree(int32_t node);
+        void       SetRenderStrategies(int32_t node, int strategy);
 
         D3D11SceneNode&            GetNodeAt(int32_t node);
         SceneTransformParameters&  GetTransformParamAt(int32_t node);
         char const*                GetNameAt(int32_t node);
+        int&                       GetRenderStrategyAt(int32_t node);
 
         void                       Update();
     private:
@@ -130,7 +108,7 @@ namespace Engine::Graphics {
         x_vector<D3D11SceneNode>             _tree;
         x_vector<x_string>                   _nodeNames {};
     private:
-        int32_t                              _selected {0};
+        x_vector<int>                        _renderStrategies;
         x_vector<SceneTransformParameters>   _transforms;
         x_vector<DirectX::XMFLOAT4X4>        _globalTransforms;
         x_vector<DirectX::XMFLOAT4X4>        _localTransforms;

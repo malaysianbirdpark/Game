@@ -13,54 +13,25 @@
 
 #include "D3D11MeshDataHolder.h"
 
-// Use this version when you want to render this mesh using other strategy
-//template <typename RenderStrategy>
-//void Engine::Graphics::D3D11Mesh::Render(ID3D11DeviceContext& context, RenderStrategy&& strategy) {
-//    context.IASetPrimitiveTopology(_topology);
-//    _vertexBuffer->Bind(context);
-//    _indexBuffer->Bind(context);
-//
-//    strategy->Render(context, _indexBuffer->GetCount(), *this);
-//}
-
-void Engine::Graphics::D3D11Material::Append(ID3D11Device& device, x_string const& tag, char const* path) {
-    _srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, tag, path)));
-}
-
-Engine::x_vector<std::shared_ptr<Engine::Graphics::D3D11ShaderResource>> const& Engine::Graphics::D3D11Material::GetShaderResources() const {
+Engine::x_vector<Engine::Graphics::D3D11ShaderResource> const& Engine::Graphics::D3D11Material::GetShaderResources() const {
     return _srs;
 }
 
 Engine::Graphics::D3D11Mesh::D3D11Mesh(std::shared_ptr<D3D11VertexBuffer>& vertex_buffer,
-                                       std::shared_ptr<D3D11IndexBuffer>& index_buffer, D3D11_PRIMITIVE_TOPOLOGY topology,
-                                       D3D11RenderStrategy strategy)
-        : _vertexBuffer{std::move(vertex_buffer)}, _indexBuffer{std::move(index_buffer)}, _topology{topology}, _strategy{strategy}
+                                       std::shared_ptr<D3D11IndexBuffer>& index_buffer, D3D11_PRIMITIVE_TOPOLOGY topology)
+        : _vertexBuffer{std::move(vertex_buffer)}, _indexBuffer{std::move(index_buffer)}, _topology{topology}
 {
 }
 
-void Engine::Graphics::D3D11Mesh::Render(ID3D11DeviceContext& context, D3D11Material* material) {
-    // Bind Mesh Data
+void Engine::Graphics::D3D11Mesh::Bind(ID3D11DeviceContext& context) const {
     context.IASetPrimitiveTopology(_topology);
     _vertexBuffer->Bind(context);
     _indexBuffer->Bind(context);
-
-    std::visit(StrategicRender{context, this, material}, _strategy);
 }
 
 uint32_t Engine::Graphics::D3D11Mesh::GetIndexCount() const {
     return _indexBuffer->GetCount();
 }
-
-//Engine::Graphics::D3D11SceneNode::D3D11SceneNode(int32_t id, int32_t parent_id, x_string& name, x_vector<std::shared_ptr<D3D11Mesh>>& meshes, DirectX::XMMATRIX const& transform)
-//    : _id{id}, _parentId{parent_id}, _name{std::move(name)}, _pMesh{std::move(meshes)}
-//{
-//    DirectX::XMStoreFloat4x4(&_transform, transform);
-//}
-//
-//void Engine::Graphics::D3D11SceneNode::Render(ID3D11DeviceContext& context) {
-//    for (auto const& m : _pMesh)
-//        m->Render(context);
-//}
 
 Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, char const* path) {
     auto const ai_scene {
@@ -135,8 +106,11 @@ void Engine::Graphics::D3D11SceneGraph::RecalculateGlobalTransforms() {
             &_globalTransforms[cur],
             DirectX::XMLoadFloat4x4(&_localTransforms[cur]) *
             DirectX::XMMatrixMultiply(
-                DirectX::XMMatrixTranslation(_transforms[cur].x, _transforms[cur].y, _transforms[cur].z),
-                DirectX::XMMatrixRotationRollPitchYaw(_transforms[cur].pitch, _transforms[cur].yaw, _transforms[cur].roll)
+                DirectX::XMMatrixMultiply(
+                    DirectX::XMMatrixTranslation(_transforms[cur].x, _transforms[cur].y, _transforms[cur].z),
+                    DirectX::XMMatrixRotationRollPitchYaw(_transforms[cur].pitch, _transforms[cur].yaw, _transforms[cur].roll)
+                ),
+                DirectX::XMMatrixScaling(_transforms[cur].scale_x, _transforms[cur].scale_y, _transforms[cur].scale_z)
             )
         );
 
@@ -156,8 +130,11 @@ void Engine::Graphics::D3D11SceneGraph::RecalculateGlobalTransforms() {
                     XMLoadFloat4x4(&_globalTransforms[parent]),
                     DirectX::XMLoadFloat4x4(&_localTransforms[cur]) *
                     DirectX::XMMatrixMultiply(
-                        DirectX::XMMatrixTranslation(_transforms[cur].x, _transforms[cur].y, _transforms[cur].z),
-                        DirectX::XMMatrixRotationRollPitchYaw(_transforms[cur].pitch, _transforms[cur].yaw, _transforms[cur].roll)
+                        DirectX::XMMatrixMultiply(
+                            DirectX::XMMatrixTranslation(_transforms[cur].x, _transforms[cur].y, _transforms[cur].z),
+                            DirectX::XMMatrixRotationRollPitchYaw(_transforms[cur].pitch, _transforms[cur].yaw, _transforms[cur].roll)
+                        ),
+                        DirectX::XMMatrixScaling(_transforms[cur].scale_x, _transforms[cur].scale_y, _transforms[cur].scale_z)
                     )
                 )
             );
@@ -167,53 +144,11 @@ void Engine::Graphics::D3D11SceneGraph::RecalculateGlobalTransforms() {
     }
 }
 
-//void Engine::Graphics::D3D11SceneGraph::ImGuiEditSelectedNode() {
-//    auto& transform {_transforms[_selected]};
-//    ImGui::Text(_nodeNames[_nodeId_to_namesId[_selected]].c_str());
-//
-//    ImGui::Text("Position");
-//    ImGui::SliderFloat("X", &transform.x, -20.0f, 20.0f);
-//    ImGui::SliderFloat("Y", &transform.y, -20.0f, 20.0f);
-//    ImGui::SliderFloat("Z", &transform.z, -20.0f, 20.0f);
-//
-//    ImGui::Text("Rotation");
-//    ImGui::SliderAngle("Roll", &transform.roll, -180.0f, 180.0f);
-//    ImGui::SliderAngle("Pitch", &transform.pitch, -180.0f, 180.0f);
-//    ImGui::SliderAngle("Yaw", &transform.yaw, -180.0f, 180.0f);
-//
-//    MarkAsUpdated(_selected);
-//}
+void Engine::Graphics::D3D11SceneGraph::SetRenderStrategies(int32_t node, int strategy) {
+    _renderStrategies[node] = strategy;
 
-int32_t Engine::Graphics::D3D11SceneGraph::ImGuiRenderTree(int32_t node) {
-    std::string const name = {_nodeNames[_nodeId_to_namesId[node]].c_str()};
-	std::string const label = name.empty() ? (std::string("Node") + std::to_string(node)) : name;
-
-	const int flags = (_tree[node]._firstChild < 0) ? ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet : 0;
-
-	const bool opened = ImGui::TreeNodeEx(&_tree[node], flags, "%s", label.c_str());
-
-	ImGui::PushID(node);
-
-	if (ImGui::IsItemClicked(0))
-	{
-		printf("Selected node: %d (%s)\n", node, label.c_str());
-		_selected = node;
-	}
-
-	if (opened)
-	{
-		for (int ch = _tree[node]._firstChild; ch != -1; ch = _tree[ch]._nextSibling)
-		{
-			auto const subNode = ImGuiRenderTree(ch);
-			if (subNode > -1)
-				_selected = subNode;
-		}
-		ImGui::TreePop();
-	}
-
-	ImGui::PopID();
-
-	return _selected;
+    for (int32_t s {_tree[node]._firstChild}; s != -1; s = _tree[s]._nextSibling)
+        SetRenderStrategies(s, strategy);
 }
 
 Engine::Graphics::D3D11SceneNode& Engine::Graphics::D3D11SceneGraph::GetNodeAt(int32_t node) {
@@ -229,6 +164,11 @@ Engine::Graphics::SceneTransformParameters& Engine::Graphics::D3D11SceneGraph::G
 char const* Engine::Graphics::D3D11SceneGraph::GetNameAt(int32_t node) {
     CORE_ASSERT(_nodeId_to_namesId.contains(node) && node >= 0, "invalid node index");
     return _nodeNames[_nodeId_to_namesId.at(node)].c_str();
+}
+
+int& Engine::Graphics::D3D11SceneGraph::GetRenderStrategyAt(int32_t node) {
+    CORE_ASSERT(node < _renderStrategies.size() && node >= 0, "invalid node index");
+    return _renderStrategies[node];
 }
 
 void Engine::Graphics::D3D11SceneGraph::Update() {
@@ -269,6 +209,7 @@ int32_t Engine::Graphics::D3D11SceneGraph::ParseNode(int32_t parent_id, int32_t 
 int32_t Engine::Graphics::D3D11SceneGraph::AddNode(int32_t parent_id, int32_t level, DirectX::XMMATRIX const& local_transform) {
     int32_t const id {static_cast<int32_t>(_tree.size())};
     {
+        _renderStrategies.emplace_back();
         _transforms.emplace_back();
         _globalTransforms.emplace_back();
         _localTransforms.emplace_back();
@@ -313,10 +254,7 @@ std::string Engine::Graphics::process_ai_path(char const* base_path, char const*
         temp = std::filesystem::path{s};
     }
 
-    if (!temp.has_parent_path())
-        temp = std::filesystem::path{std::string{"Textures/"} + temp.string()};
-    else if (temp.parent_path().string() != "Textures")
-        temp = std::filesystem::path {std::string{"Textures/"} + temp.filename().string()};
+    temp = std::filesystem::path {std::string{"Textures/"} + temp.filename().string()};
 
     temp.replace_extension("dds");
 
@@ -345,7 +283,6 @@ Engine::Graphics::D3D11Mesh Engine::Graphics::D3D11SceneGraph::ParseMesh(ID3D11D
         vertex_buffer, 
         index_buffer, 
         D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-        ResolveRenderStrategy("phong_tex")
     };
 }
 
@@ -420,7 +357,7 @@ Engine::Graphics::D3D11Material Engine::Graphics::D3D11SceneGraph::ParseMaterial
     if (aiGetMaterialTexture(ai_material, aiTextureType_EMISSIVE, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
         auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
-        result._srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, "emissive_map", final_path.c_str())));
+        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11EmissiveMap, final_path.c_str()));
     }
 
     // Diffuse Map
@@ -429,35 +366,35 @@ Engine::Graphics::D3D11Material Engine::Graphics::D3D11SceneGraph::ParseMaterial
 
         std::cout << final_path << std::endl;
 
-        result._srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, "diffuse_map", final_path.c_str())));
+        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11DiffuseMap, final_path.c_str()));
     }
 
     // Specular Map
     if (aiGetMaterialTexture(ai_material, aiTextureType_SPECULAR, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
         auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
-        result._srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, "specular_map", final_path.c_str())));
+        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11SpecularMap, final_path.c_str()));
     }
 
     // Normal Map
     if (aiGetMaterialTexture(ai_material, aiTextureType_NORMALS, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
         auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
-        result._srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, "normal_map", final_path.c_str())));
+        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11NormalMap, final_path.c_str()));
     }
 
     // Height Map
     if (aiGetMaterialTexture(ai_material, aiTextureType_HEIGHT, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
         auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
-        result._srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, "height_map", final_path.c_str())));
+        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11HeightMap, final_path.c_str()));
     }
 
     // Opacity Map
     if (aiGetMaterialTexture(ai_material, aiTextureType_OPACITY, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
         auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
-        result._srs.push_back(MakeShared<D3D11ShaderResource>(ResolveShaderResource(device, "opacity_map", final_path.c_str())));
+        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11OpacityMap, final_path.c_str()));
     }
 
     // TODO: patch materials..
@@ -479,7 +416,7 @@ Engine::Graphics::D3D11SceneGraph::ParseVertexData(ID3D11Device& device, aiMesh 
     }
 
     auto vertex_buffer {D3D11MeshDataHolder::ResolveVertexBuffer(device, D3D11VertexAttribute::GetStride(vertex_format), buffer.size(), buffer.data(), ai_mesh->mName.C_Str())};
-    auto index_buffer {D3D11MeshDataHolder::ResolveIndexBuffer(device, indices, ai_mesh->mName.C_Str())};
+    auto index_buffer {D3D11MeshDataHolder::ResolveIndexBuffer(device, indices.data(), indices.size(), ai_mesh->mName.C_Str())};
 
     return {vertex_buffer, index_buffer};
 }

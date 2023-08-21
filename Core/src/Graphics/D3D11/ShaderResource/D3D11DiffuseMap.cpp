@@ -28,8 +28,8 @@ Engine::Graphics::D3D11DiffuseMap::D3D11DiffuseMap(ID3D11Device& device, char co
     );
 }
 
-Engine::Graphics::D3D11DiffuseMap Engine::Graphics::D3D11DiffuseMap::CreateDiffuseMap(ID3D11Device& device, char const* path) {
-    return D3D11DiffuseMap{device, path};
+std::shared_ptr<Engine::Graphics::D3D11DiffuseMap> Engine::Graphics::D3D11DiffuseMap::CreateDiffuseMap(ID3D11Device& device, char const* path) {
+    return std::move(MakeShared<D3D11DiffuseMap>(device, path));
 }
 
 void Engine::Graphics::D3D11DiffuseMap::Bind(ID3D11DeviceContext& context) const {

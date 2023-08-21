@@ -15,6 +15,8 @@
 #include "PipelineState/D3D11PipelineStateObject.h"
 
 #include <imgui.h>
+
+#include "D3D11CubeMap.h"
 #include "Graphics/GUI/D3D11ImGuiRenderer.h"
 
 #include "Graphics/D3D11/ConstantBuffer/D3D11CamPosition.h"
@@ -77,8 +79,17 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
     _viewPort.TopLeftX = 0.0f;
     _viewPort.TopLeftY = 0.0f;
     _immContext->RSSetViewports(1u, &_viewPort);
-    //_defContext0->RSSetViewports(1u, &_viewPort);
-    //_imguiContext->RSSetViewports(1u, &_viewPort);
+
+    // Rasterizer State
+    {
+        D3D11_RASTERIZER_DESC rd {};
+        rd.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+        rd.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+        rd.FrontCounterClockwise = false;
+        rd.DepthClipEnable = true;
+
+        _device->CreateRasterizerState(&rd, _rasterizerState.ReleaseAndGetAddressOf());
+    }
 
     {
         D3D11_DEPTH_STENCIL_DESC desc {};
@@ -115,10 +126,10 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
     }
 
     DirectX::XMStoreFloat4x4(&_proj, DirectX::XMMatrixPerspectiveFovLH(
-        1.0f,
-        static_cast<float>(height) / width,
-        0.5f,
-        40.0f
+        70.0f,
+        static_cast<float>(width) / height,
+        0.1f,
+        250.0f
     ));
 
     auto& device {*_device.Get()};
@@ -147,17 +158,16 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
         )
     );
 
-    _obj.push_back(
-        std::move(
-            MakeShared<D3D11RenderObject>(
-                device,
-                D3DCamera::GetView(),
-                GetProj(),
-                D3D11SceneMan::ResolveScene("Cube")
-            )
-        )
-    );
-
+    //_obj.push_back(
+    //    std::move(
+    //        MakeShared<D3D11RenderObject>(
+    //            device,
+    //            D3DCamera::GetView(),
+    //            GetProj(),
+    //            D3D11SceneMan::ResolveScene("Cube")
+    //        )
+    //    )
+    //);
 
     //_obj.push_back(
     //    std::move(
@@ -171,6 +181,12 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
     //);
 
     D3D11PSOLibrary::Init(device);
+
+    D3D11CubeMap::Init(device, GetProj());
+    D3D11CubeMap::AddTexture(device, "Assets/CubeMapTextures/SantaMaria.dds");
+    D3D11CubeMap::AddTexture(device, "Assets/CubeMapTextures/FortPoint.dds"); 
+    D3D11CubeMap::AddTexture(device, "Assets/CubeMapTextures/Atrium_diffuseIBL.dds", "Assets/CubeMapTextures/Atrium_specularIBL.dds");
+    D3D11CubeMap::AddTexture(device, "Assets/CubeMapTextures/Garage_diffuseIBL.dds", "Assets/CubeMapTextures/Garage_specularIBL.dds");
 
     _globalCB.push_back(D3D11CamPosition{device, D3DCamera::GetPos()});
     _lights.push_back(D3D11LightDirectional{device, {0.0f, -0.5f, 1.0f}, {1.0f, 1.0f, 1.0f}});
@@ -187,10 +203,6 @@ Engine::Graphics::D3D11Core::~D3D11Core() {
 }
 
 void Engine::Graphics::D3D11Core::Update(float const dt, DirectX::XMMATRIX const& view) {
-    auto const view_proj {
-        DirectX::XMMatrixMultiply(view, DirectX::XMLoadFloat4x4(&_proj))
-    };
-
     D3DCamera::Update();
 
     D3D11ImGuiRenderer::ImGuiShowSceneEditWindow(_obj);
@@ -202,6 +214,8 @@ void Engine::Graphics::D3D11Core::Update(float const dt, DirectX::XMMATRIX const
 
     for (auto& light : _lights)
         std::visit(UpdateConstantBuffer{}, light);
+
+    D3D11CubeMap::Update(dt, view, GetProj());
 }
 
 void Engine::Graphics::D3D11Core::AddScene() {
@@ -221,12 +235,14 @@ void Engine::Graphics::D3D11Core::BeginFrame() {
     static constexpr float clear_color[4] {0.0f, 0.0f, 0.0f, 1.0f};
 
     // first context clears the screen and buffers
+    _defContexts[0]->RSSetState(_rasterizerState.Get());
     _defContexts[0]->RSSetViewports(1u, &_viewPort);
     _defContexts[0]->OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _depthStencilView.Get());
     _defContexts[0]->ClearRenderTargetView(_backBufferView.Get(), clear_color);
     _defContexts[0]->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f , 0u);
 
     for (auto i {1}; i != NUM_DEF_CONTEXTS; ++i) {
+        _defContexts[i]->RSSetState(_rasterizerState.Get());
         _defContexts[i]->RSSetViewports(1u, &_viewPort);
         _defContexts[i]->OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _depthStencilView.Get());
     }
@@ -243,6 +259,8 @@ void Engine::Graphics::D3D11Core::BeginFrame() {
 
     for (auto const& obj : _obj)
         obj->Render(context);
+
+    D3D11CubeMap::Render(context);
 }
 
 void Engine::Graphics::D3D11Core::EndFrame() {

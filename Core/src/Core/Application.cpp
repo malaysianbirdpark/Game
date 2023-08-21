@@ -34,9 +34,9 @@ int Engine::Core::Application::Run() {
 
         auto const dt {Clk::Mark()};
 
-        ProcessInput(dt);
 
         _gfx->BeginFrame();
+        ProcessInput(dt);
         Update(dt);
         _gfx->EndFrame();
     }
@@ -50,18 +50,18 @@ void Engine::Core::Application::ProcessInput(float const dt) {
         Input::ToggleRaw();
 
     if (!Input::_cursorEnabled) {
-        DirectX::XMFLOAT3 translate {};
-
-        translate.x -= kbd.IsKeyDown(DirectX::Keyboard::Keys::A) * dt;
-        translate.x += kbd.IsKeyDown(DirectX::Keyboard::Keys::D) * dt;
-
-        translate.y += kbd.IsKeyDown(DirectX::Keyboard::Keys::R) * dt;
-        translate.y -= kbd.IsKeyDown(DirectX::Keyboard::Keys::F) * dt;
-
-        translate.z += kbd.IsKeyDown(DirectX::Keyboard::Keys::W) * dt;
-        translate.z -= kbd.IsKeyDown(DirectX::Keyboard::Keys::S) * dt;
-
-        Graphics::D3DCamera::Translate(translate);
+        if (kbd.D)
+            Graphics::D3DCamera::Translate({dt, 0.0f, 0.0f});
+        if (kbd.A)
+            Graphics::D3DCamera::Translate({-dt, 0.0f, 0.0f});
+        if (kbd.R)
+            Graphics::D3DCamera::Translate({0.0f, dt, 0.0f});
+        if (kbd.F)
+            Graphics::D3DCamera::Translate({0.0f, -dt, 0.0f});
+        if (kbd.W)
+            Graphics::D3DCamera::Translate({0.0f, 0.0f, dt});
+        if (kbd.S)
+            Graphics::D3DCamera::Translate({0.0f, 0.0f, -dt});
     }
 
     while (auto const raw_delta {Input::ReadRawDelta()}) {

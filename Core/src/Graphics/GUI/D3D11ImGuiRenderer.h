@@ -15,9 +15,25 @@ namespace Engine::Graphics {
 
         inline static bool imguiEnabled {false};
 
+        static void     ImGuiShowCubemapEditWindow();
+
         static void     ImGuiShowSceneEditWindow(x_vector<std::shared_ptr<D3D11RenderObject>>& objs);
         static void     ImGuiShowNodeEditWindow();
+        static void     ImGuiShowRenderConfigureWindow();
+        static void     ImGuiShowMaterialEditWindow();
         static int32_t  ImGuiRenderSceneTree(D3D11SceneGraph& scene, int32_t node);
+    private:
+        static void     ImGuiShowSolidConfigureWindow();
+        static void     ImGuiShowPhongConfigureWindow();
+        static void     ImGuiShowEMConfigureWindow();
+        static void     ImGuiShowBasicIBLConfigureWindow();
+
+        inline static   x_vector<std::function<void(void)>> _renderConfigureTable {
+           &ImGuiShowSolidConfigureWindow,
+           &ImGuiShowPhongConfigureWindow,
+           &ImGuiShowEMConfigureWindow,
+           &ImGuiShowBasicIBLConfigureWindow
+        };
     private:
         static void ShowMenu();
         inline static std::pair<D3D11SceneGraph*, int32_t> _selected {};

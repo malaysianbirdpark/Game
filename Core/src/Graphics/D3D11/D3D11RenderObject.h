@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ConstantBuffer/D3D11TransformMVP.h"
+#include "Graphics/D3D11/RenderStrategy/D3D11RenderStrategy.h"
 
 namespace Engine::Graphics {
     class D3D11TransformMVP;

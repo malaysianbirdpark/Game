@@ -4,8 +4,8 @@ namespace Engine::Graphics {
     // MV + MVP
     class D3D11TransformMVP {
         struct MVP {
-            DirectX::XMFLOAT4X4 _mv;     
-            DirectX::XMFLOAT4X4 _mvit;
+            DirectX::XMFLOAT4X4 _m;
+            DirectX::XMFLOAT4X4 _mit;
             DirectX::XMFLOAT4X4 _mvp;     
         };
     public:

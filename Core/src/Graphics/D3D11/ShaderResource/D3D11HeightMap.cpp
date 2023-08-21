@@ -28,8 +28,8 @@ Engine::Graphics::D3D11HeightMap::D3D11HeightMap(ID3D11Device& device, char cons
     );
 }
 
-Engine::Graphics::D3D11HeightMap Engine::Graphics::D3D11HeightMap::CreateHeightMap(ID3D11Device& device, char const* path) {
-    return D3D11HeightMap{device, path};
+std::shared_ptr<Engine::Graphics::D3D11HeightMap> Engine::Graphics::D3D11HeightMap::CreateHeightMap(ID3D11Device& device, char const* path) {
+    return std::move(MakeShared<D3D11HeightMap>(device, path));
 }
 
 void Engine::Graphics::D3D11HeightMap::Bind(ID3D11DeviceContext& context) const {

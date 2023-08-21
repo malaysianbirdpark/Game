@@ -9,8 +9,8 @@ struct VS_OUT {
 };
 
 cbuffer mvp : register(b0) {
-    matrix mv;
-    matrix mvit;
+    matrix m;
+    matrix mit;
     matrix mvp;
 };
 
@@ -18,7 +18,7 @@ VS_OUT main(VS_IN input)
 {
     VS_OUT output;
 
-    output.color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    output.color = float4(input.pos, 1.0f);
     output.pos = mul(mvp, float4(input.pos, 1.0f));
 
 	return output;

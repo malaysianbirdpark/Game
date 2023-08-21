@@ -5,7 +5,7 @@ namespace Engine::Graphics {
     public:
         D3D11EmissiveMap(ID3D11Device& device, char const* path);
 
-        static D3D11EmissiveMap CreateEmissiveMap(ID3D11Device& device, char const* path);
+        static std::shared_ptr<D3D11EmissiveMap> CreateEmissiveMap(ID3D11Device& device, char const* path);
 
         void Bind(ID3D11DeviceContext& context) const;
 

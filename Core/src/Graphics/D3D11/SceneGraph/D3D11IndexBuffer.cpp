@@ -2,8 +2,8 @@
 #include "D3D11IndexBuffer.h"
 
 namespace Engine::Graphics {
-    D3D11IndexBuffer::D3D11IndexBuffer(ID3D11Device& device, x_vector<unsigned short> const& indices, char const* tag)
-        : _tag{tag}, _count{static_cast<UINT>(indices.size())}
+    D3D11IndexBuffer::D3D11IndexBuffer(ID3D11Device& device, void const* data, UINT count, char const* tag)
+        : _tag{tag}, _count{count}
     {
         D3D11_BUFFER_DESC bd {};
         bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -14,7 +14,7 @@ namespace Engine::Graphics {
         bd.StructureByteStride = sizeof(unsigned short);
 
         D3D11_SUBRESOURCE_DATA sd {};
-        sd.pSysMem = indices.data();
+        sd.pSysMem = data;
 
         device.CreateBuffer(&bd, &sd, _indexBuffer.ReleaseAndGetAddressOf());
     }

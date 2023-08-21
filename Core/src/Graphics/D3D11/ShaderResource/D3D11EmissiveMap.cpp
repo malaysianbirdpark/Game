@@ -28,8 +28,8 @@ Engine::Graphics::D3D11EmissiveMap::D3D11EmissiveMap(ID3D11Device& device, char 
     );
 }
 
-Engine::Graphics::D3D11EmissiveMap Engine::Graphics::D3D11EmissiveMap::CreateEmissiveMap(ID3D11Device& device, char const* path) {
-    return D3D11EmissiveMap{device, path};
+std::shared_ptr<Engine::Graphics::D3D11EmissiveMap> Engine::Graphics::D3D11EmissiveMap::CreateEmissiveMap(ID3D11Device& device, char const* path) {
+    return std::move(MakeShared<D3D11EmissiveMap>(device, path));
 }
 
 void Engine::Graphics::D3D11EmissiveMap::Bind(ID3D11DeviceContext& context) const {
