@@ -6,9 +6,9 @@ struct VS_IN {
 
 struct VS_OUT {
     float4 world_pos : POSITION;
-    float3 normal   : NORMAL;
-    float2 texcoord : TEXCOORD;
-    float4 sv_pos   : SV_POSITION;
+    float3 normal    : NORMAL;
+    float2 texcoord  : TEXCOORD;
+    float4 sv_pos    : SV_POSITION;
 };
 
 cbuffer mvp : register(b0)
@@ -23,7 +23,7 @@ VS_OUT main(VS_IN input)
     VS_OUT output;
 
     output.world_pos = mul(m, float4(input.pos, 1.0f));
-    output.normal = normalize(mul((float3x3) mit, input.normal));
+    output.normal = normalize(mul(mit, float4(input.normal, 1.0f)));
     output.texcoord = input.texcoord;
     output.sv_pos = mul(mvp, float4(input.pos, 1.0f));
 

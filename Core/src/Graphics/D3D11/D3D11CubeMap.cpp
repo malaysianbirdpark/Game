@@ -22,24 +22,29 @@ void Engine::Graphics::D3D11CubeMap::Init(ID3D11Device& device, DirectX::XMMATRI
     sd.MaxLOD = D3D11_FLOAT32_MAX;
 
     device.CreateSamplerState(&sd, _sampler.ReleaseAndGetAddressOf());
+
+    AddTexture(device, "Assets/CubeMapTextures/SantaMaria.dds");
+    AddTexture(device, "Assets/CubeMapTextures/FortPoint.dds"); 
+    AddTexture(device, "Assets/CubeMapTextures/Atrium_diffuseIBL.dds", "Assets/CubeMapTextures/Atrium_specularIBL.dds");
+    AddTexture(device, "Assets/CubeMapTextures/Garage_diffuseIBL.dds", "Assets/CubeMapTextures/Garage_specularIBL.dds");
 }
 
 void Engine::Graphics::D3D11CubeMap::AddTexture(ID3D11Device& device, char const* path) {
-    _textures.push_back(
-        {
-            D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11SpecularCubemapTexture, path),
-            D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11SpecularCubemapTexture, path)
-        }
-    );
+    //_textures.push_back(
+    //    {
+    //        D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11SpecularCubemapTexture, path),
+    //        D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11SpecularCubemapTexture, path)
+    //    }
+    //);
 }
 
 void Engine::Graphics::D3D11CubeMap::AddTexture(ID3D11Device& device, char const* diffuse_path, char const* specular_path) {
-    _textures.push_back(
-        {
-            D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11DiffuseCubemapTexture, diffuse_path),
-            D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11SpecularCubemapTexture, specular_path)
-        }
-    );
+    //_textures.push_back(
+    //    {
+    //        D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11DiffuseCubemapTexture, diffuse_path),
+    //        D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11SpecularCubemapTexture, specular_path)
+    //    }
+    //);
 }
 
 void Engine::Graphics::D3D11CubeMap::SetTexture(uint8_t idx) {
@@ -65,16 +70,16 @@ void Engine::Graphics::D3D11CubeMap::BindSpecular(ID3D11DeviceContext& context) 
 }
 
 void Engine::Graphics::D3D11CubeMap::Render(ID3D11DeviceContext& context) {
-    context.IASetPrimitiveTopology(_topology);
-    _vertex->Bind(context);
-    _index->Bind(context);
+    //context.IASetPrimitiveTopology(_topology);
+    //_vertex->Bind(context);
+    //_index->Bind(context);
 
-    _pso->Bind(context);
-    std::visit(BindShaderResource{context}, _textures[_selectedTexture].second);
-    context.PSSetSamplers(1u, 1u, _sampler.GetAddressOf());
+    //_pso->Bind(context);
+    //std::visit(BindShaderResource{context}, _textures[_selectedTexture].second);
+    //context.PSSetSamplers(1u, 1u, _sampler.GetAddressOf());
 
-    _transform->Update(context);
-    _transform->Bind(context);
+    //_transform->Update(context);
+    //_transform->Bind(context);
 
-    context.DrawIndexed(cube_indices.size(), 0u, 0u);
+    //context.DrawIndexed(cube_indices.size(), 0u, 0u);
 }

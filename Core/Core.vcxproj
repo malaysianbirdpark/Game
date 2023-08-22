@@ -126,6 +126,7 @@
     <ClInclude Include="src\Graphics\D3D11\D3D11PostProcessing.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11RenderObject.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11Sampler.h" />
+    <ClInclude Include="src\Graphics\D3D11\Effect\D3D11Effect.h" />
     <ClInclude Include="src\Graphics\D3D11\GeometryPipeline\D3D11BillBoard.h" />
     <ClInclude Include="src\Graphics\D3D11\GeometryPipeline\D3D11Tessellation.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.h" />
@@ -140,6 +141,7 @@
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11EnvironmentMappingNormalStrategy.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11EnvironmentMappingReflectStrategy.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.h" />
+    <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongTexNormStrategy.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongTexStrategy.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11RenderStrategy.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11SolidStrategy.h" />
@@ -159,7 +161,6 @@
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11ShaderResource.h" />
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularCubemapTexture.h" />
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularMap.h" />
-    <ClInclude Include="src\Graphics\D3D11\TEMP\Triangle.h" />
     <ClInclude Include="src\Graphics\D3DCamera.h" />
     <ClInclude Include="src\Graphics\GUI\D3D11ImGuiRenderer.h" />
     <ClInclude Include="src\Graphics\GraphicsContext.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="src\Graphics\D3D11\D3D11PostProcessing.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11RenderObject.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11Sampler.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\Effect\D3D11Effect.cpp" />
     <ClCompile Include="src\Graphics\D3D11\GeometryPipeline\D3D11BillBoard.cpp" />
     <ClCompile Include="src\Graphics\D3D11\GeometryPipeline\D3D11Tessellation.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.cpp" />
@@ -207,6 +209,7 @@
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11EnvironmentMappingNormalStrategy.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11EnvironmentMappingReflectStrategy.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongTexNormStrategy.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongTexStrategy.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11RenderStrategy.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11SolidStrategy.cpp" />
@@ -226,7 +229,6 @@
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11ShaderResource.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularCubemapTexture.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularMap.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\TEMP\Triangle.cpp" />
     <ClCompile Include="src\Graphics\D3DCamera.cpp" />
     <ClCompile Include="src\Graphics\GUI\D3D11ImGuiRenderer.cpp" />
     <ClCompile Include="src\Graphics\GraphicsContext.cpp" />
@@ -306,53 +308,81 @@
       <EntryPointName>main</EntryPointName>
       <ObjectFileOutput>../Game/ShaderLib/environmapping_reflect_VS.cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\phong_PS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL_PS\phong_PS.hlsl">
       <ShaderType>Pixel</ShaderType>
       <ShaderModel>5.0</ShaderModel>
       <EntryPointName>main</EntryPointName>
       <ObjectFileOutput>../Game/ShaderLib/phong_PS.cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\phong_VS.hlsl">
-      <ShaderType>Vertex</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-      <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/phong_VS.cso</ObjectFileOutput>
+    <FxCompile Include="src\Graphics\HLSL_PS\phong_tex_norm_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\phong_tex_PS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL_PS\phong_tex_PS.hlsl">
       <ShaderType>Pixel</ShaderType>
       <ShaderModel>5.0</ShaderModel>
       <EntryPointName>main</EntryPointName>
       <ObjectFileOutput>../Game/ShaderLib/phong_tex_PS.cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\phong_tex_VS.hlsl">
-      <ShaderType>Vertex</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-      <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/phong_tex_VS.cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\solid_PS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL_PS\solid_PS.hlsl">
       <ShaderType>Pixel</ShaderType>
       <ShaderModel>5.0</ShaderModel>
       <EntryPointName>main</EntryPointName>
       <ObjectFileOutput>../Game/ShaderLib/solid_PS.cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\solid_VS.hlsl">
-      <ShaderType>Vertex</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-      <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/solid_VS.cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\solid_tex_PS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL_PS\solid_tex_PS.hlsl">
       <ShaderType>Pixel</ShaderType>
       <ShaderModel>5.0</ShaderModel>
       <EntryPointName>main</EntryPointName>
       <ObjectFileOutput>../Game/ShaderLib/solid_tex_PS.cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\solid_tex_VS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_VS.hlsl">
       <ShaderType>Vertex</ShaderType>
       <ShaderModel>5.0</ShaderModel>
       <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/solid_tex_VS.cso</ObjectFileOutput>
+      <ObjectFileOutput>../Game/ShaderLib/pos_VS.cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_VS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/pos_norm_VS.cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tan_VS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/pos_norm_tan_VS.cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tan_tex_VS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/pos_norm_tan_tex_VS.cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tan_tex_height_VS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/pos_norm_tan_tex_height_VS.cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tex_VS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/pos_norm_tex_VS.cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tex_height_VS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/pos_norm_tex_height_VS.cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_tex_VS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/pos_tex_VS.cso</ObjectFileOutput>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

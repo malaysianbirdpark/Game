@@ -2,9 +2,10 @@
 
 #include <variant>
 
-namespace Engine::Graphics {
-    class DummyEnd;
+#include "D3D11CamPosition.h"
+#include "D3D11LightDirectional.h"
 
+namespace Engine::Graphics {
 #define CONSTANT_BUFFER_TYPES \
     F(D3D11CamPosition)       \
     F(D3D11LightDirectional)  
@@ -26,7 +27,7 @@ namespace Engine::Graphics {
 
     struct BindConstantBuffer {
         BindConstantBuffer(ID3D11DeviceContext& context) : _context{context} {}
-    #define F(x) void operator() (x& target) { Bind##x(_context, target); } 
+    #define F(x) void operator() (x& target) { target.Bind(_context); } 
         CONSTANT_BUFFER_TYPES
     #undef F
     private:
@@ -39,7 +40,7 @@ namespace Engine::Graphics {
     #undef F
 
     struct UpdateConstantBuffer {
-    #define F(x) void operator() (x& target) { Update##x(target); } 
+    #define F(x) void operator() (x& target) { target.Update(); } 
         CONSTANT_BUFFER_TYPES
     #undef F
     private:

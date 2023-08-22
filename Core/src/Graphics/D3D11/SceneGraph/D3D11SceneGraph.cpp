@@ -39,8 +39,10 @@ Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, char co
         path,
         aiProcess_ConvertToLeftHanded |
         aiProcess_JoinIdenticalVertices |
-        aiProcess_Triangulate |
-        aiProcess_GenSmoothNormals |
+        aiProcess_Triangulate           |
+        aiProcess_GenSmoothNormals      |
+        aiProcess_GenUVCoords           |
+        aiProcess_CalcTangentSpace      |
         aiProcess_ImproveCacheLocality
     )};
 
@@ -166,7 +168,7 @@ char const* Engine::Graphics::D3D11SceneGraph::GetNameAt(int32_t node) {
     return _nodeNames[_nodeId_to_namesId.at(node)].c_str();
 }
 
-int& Engine::Graphics::D3D11SceneGraph::GetRenderStrategyAt(int32_t node) {
+uint32_t& Engine::Graphics::D3D11SceneGraph::GetRenderStrategyAt(int32_t node) {
     CORE_ASSERT(node < _renderStrategies.size() && node >= 0, "invalid node index");
     return _renderStrategies[node];
 }
@@ -276,7 +278,6 @@ Engine::Graphics::D3D11Mesh Engine::Graphics::D3D11SceneGraph::ParseMesh(ID3D11D
     if (ai_mesh->HasTextureCoords(0u))
         vertex_attribute += "1uv";
 
-
     auto [vertex_buffer, index_buffer] {ParseVertexData(device, ai_mesh, vertex_attribute)};
 
     return {
@@ -357,7 +358,7 @@ Engine::Graphics::D3D11Material Engine::Graphics::D3D11SceneGraph::ParseMaterial
     if (aiGetMaterialTexture(ai_material, aiTextureType_EMISSIVE, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
         auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
-        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11EmissiveMap, final_path.c_str()));
+        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::EmissiveMap, final_path.c_str()));
     }
 
     // Diffuse Map
@@ -366,35 +367,35 @@ Engine::Graphics::D3D11Material Engine::Graphics::D3D11SceneGraph::ParseMaterial
 
         std::cout << final_path << std::endl;
 
-        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11DiffuseMap, final_path.c_str()));
+        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::DiffuseMap, final_path.c_str()));
     }
 
     // Specular Map
     if (aiGetMaterialTexture(ai_material, aiTextureType_SPECULAR, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
         auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
-        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11SpecularMap, final_path.c_str()));
+        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::SpecularMap, final_path.c_str()));
     }
 
     // Normal Map
     if (aiGetMaterialTexture(ai_material, aiTextureType_NORMALS, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
         auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
-        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11NormalMap, final_path.c_str()));
+        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::NormalMap, final_path.c_str()));
     }
 
     // Height Map
     if (aiGetMaterialTexture(ai_material, aiTextureType_HEIGHT, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
         auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
-        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11HeightMap, final_path.c_str()));
+        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::HeightMap, final_path.c_str()));
     }
 
     // Opacity Map
     if (aiGetMaterialTexture(ai_material, aiTextureType_OPACITY, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
         auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
-        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::D3D11OpacityMap, final_path.c_str()));
+        result._srs.push_back(D3D11ShaderResourceHolder::Resolve(device, ShaderResourceTypes::OpacityMap, final_path.c_str()));
     }
 
     // TODO: patch materials..

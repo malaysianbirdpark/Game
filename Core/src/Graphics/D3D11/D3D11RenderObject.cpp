@@ -37,8 +37,6 @@ void Engine::Graphics::D3D11RenderObject::Render(ID3D11DeviceContext& context) {
             _transform->Bind(context);
 
             auto const material_idx {node_to_material.contains(node) ? node_to_material.at(node) : 0};
-            //_scene->_mesh[node_to_mesh.at(node)].Render(context, &_scene->_material[material_idx]);
-            //D3D11PhongTexStrategy::Render(context, _scene->_mesh[node_to_mesh.at(node)], _scene->_material[material_idx]);
             renderStrategyTable[_scene->_renderStrategies[node]](context, _scene->_mesh[node_to_mesh.at(node)], _scene->_material[material_idx]);
         }
 

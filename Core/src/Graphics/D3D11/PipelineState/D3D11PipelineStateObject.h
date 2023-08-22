@@ -16,7 +16,7 @@ namespace Engine::Graphics {
 
         void Bind(ID3D11DeviceContext& context);
     private:
-        std::shared_ptr<class D3D11InputLayout>  _inputLayout {};
+        std::unique_ptr<class D3D11InputLayout>  _inputLayout {};
         std::shared_ptr<class D3D11PixelShader>  _pixelShader {};
         std::shared_ptr<class D3D11VertexShader> _vertexShader {};
     };

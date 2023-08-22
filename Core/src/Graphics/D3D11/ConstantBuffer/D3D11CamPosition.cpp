@@ -39,5 +39,5 @@ void Engine::Graphics::D3D11CamPosition::Upload(ID3D11DeviceContext& context) {
 
 void Engine::Graphics::D3D11CamPosition::Bind(ID3D11DeviceContext& context) {
     Upload(context);
-    context.PSSetConstantBuffers(0u, 1u, _resource.GetAddressOf());
+    context.PSSetConstantBuffers(1u, 1u, _resource.GetAddressOf());
 }

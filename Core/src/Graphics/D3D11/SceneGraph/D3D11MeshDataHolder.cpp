@@ -9,7 +9,7 @@ std::shared_ptr<Engine::Graphics::D3D11IndexBuffer> Engine::Graphics::D3D11MeshD
 
     if (_indexBuffer.contains(uid))
         return _indexBuffer[uid];
-    return _indexBuffer[uid] = MakeShared<D3D11IndexBuffer>(device, data, count, tag);
+    return _indexBuffer[uid] = std::move(MakeShared<D3D11IndexBuffer>(device, data, count, tag));
 }
 
 std::shared_ptr<Engine::Graphics::D3D11VertexBuffer> Engine::Graphics::D3D11MeshDataHolder::ResolveVertexBuffer(ID3D11Device& device, UINT stride, UINT byte_width, void const* data, char const* tag) {
@@ -17,5 +17,5 @@ std::shared_ptr<Engine::Graphics::D3D11VertexBuffer> Engine::Graphics::D3D11Mesh
 
     if (_vertexBuffer.contains(uid))
         return _vertexBuffer[uid];
-    return _vertexBuffer[uid] = MakeShared<D3D11VertexBuffer>(device, stride, byte_width, data, tag);
+    return _vertexBuffer[uid] = std::move(MakeShared<D3D11VertexBuffer>(device, stride, byte_width, data, tag));
 }

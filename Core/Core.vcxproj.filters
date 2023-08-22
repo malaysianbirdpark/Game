@@ -19,6 +19,9 @@
     <Filter Include="src\Graphics\D3D11\ConstantBuffer">
       <UniqueIdentifier>{ECF69173-5865-E7F2-A14E-A2F20DFCDC8E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Graphics\D3D11\Effect">
+      <UniqueIdentifier>{55200535-C1E2-38BF-0A93-C74B7694119D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Graphics\D3D11\GeometryPipeline">
       <UniqueIdentifier>{2A2D5794-96E6-C13E-1F46-DC188BFE77AE}</UniqueIdentifier>
     </Filter>
@@ -34,14 +37,14 @@
     <Filter Include="src\Graphics\D3D11\ShaderResource">
       <UniqueIdentifier>{27BAE246-9328-38C6-DC11-F3C548BF2D62}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Graphics\D3D11\TEMP">
-      <UniqueIdentifier>{9E5DD11B-0A95-19B3-139F-7DD67F5540AC}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Graphics\GUI">
       <UniqueIdentifier>{A193895D-8D8C-A8AF-B6BE-8D34A21688BB}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Graphics\HLSL">
       <UniqueIdentifier>{6F6FBC0E-DB85-BAA4-24FD-45C690528B2C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Graphics\HLSL_VS">
+      <UniqueIdentifier>{978C58A2-831B-E26B-2C3A-F66618A8F211}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Memory">
       <UniqueIdentifier>{F56D3C20-E125-7E6D-4A2D-57C93604195E}</UniqueIdentifier>
@@ -111,6 +114,9 @@
     <ClInclude Include="src\Graphics\D3D11\D3D11Sampler.h">
       <Filter>src\Graphics\D3D11</Filter>
     </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\Effect\D3D11Effect.h">
+      <Filter>src\Graphics\D3D11\Effect</Filter>
+    </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\GeometryPipeline\D3D11BillBoard.h">
       <Filter>src\Graphics\D3D11\GeometryPipeline</Filter>
     </ClInclude>
@@ -151,6 +157,9 @@
       <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.h">
+      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongTexNormStrategy.h">
       <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongTexStrategy.h">
@@ -209,9 +218,6 @@
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularMap.h">
       <Filter>src\Graphics\D3D11\ShaderResource</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\TEMP\Triangle.h">
-      <Filter>src\Graphics\D3D11\TEMP</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3DCamera.h">
       <Filter>src\Graphics</Filter>
@@ -311,6 +317,9 @@
     <ClCompile Include="src\Graphics\D3D11\D3D11Sampler.cpp">
       <Filter>src\Graphics\D3D11</Filter>
     </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\Effect\D3D11Effect.cpp">
+      <Filter>src\Graphics\D3D11\Effect</Filter>
+    </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\GeometryPipeline\D3D11BillBoard.cpp">
       <Filter>src\Graphics\D3D11\GeometryPipeline</Filter>
     </ClCompile>
@@ -348,6 +357,9 @@
       <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.cpp">
+      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongTexNormStrategy.cpp">
       <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongTexStrategy.cpp">
@@ -406,9 +418,6 @@
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularMap.cpp">
       <Filter>src\Graphics\D3D11\ShaderResource</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\TEMP\Triangle.cpp">
-      <Filter>src\Graphics\D3D11\TEMP</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3DCamera.cpp">
       <Filter>src\Graphics</Filter>
@@ -487,30 +496,43 @@
     <FxCompile Include="src\Graphics\HLSL\environmapping_reflect_VS.hlsl">
       <Filter>src\Graphics\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\phong_PS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL_PS\phong_PS.hlsl">
       <Filter>src\Graphics\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\phong_VS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL_PS\phong_tex_PS.hlsl">
       <Filter>src\Graphics\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\phong_tex_PS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL_PS\solid_PS.hlsl">
       <Filter>src\Graphics\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\phong_tex_VS.hlsl">
+    <FxCompile Include="src\Graphics\HLSL_PS\solid_tex_PS.hlsl">
       <Filter>src\Graphics\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\solid_PS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_VS.hlsl">
+      <Filter>src\Graphics\HLSL_VS</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\solid_VS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_VS.hlsl">
+      <Filter>src\Graphics\HLSL_VS</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\solid_tex_PS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tan_VS.hlsl">
+      <Filter>src\Graphics\HLSL_VS</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\solid_tex_VS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tan_tex_VS.hlsl">
+      <Filter>src\Graphics\HLSL_VS</Filter>
     </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tan_tex_height_VS.hlsl">
+      <Filter>src\Graphics\HLSL_VS</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tex_VS.hlsl">
+      <Filter>src\Graphics\HLSL_VS</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tex_height_VS.hlsl">
+      <Filter>src\Graphics\HLSL_VS</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_tex_VS.hlsl">
+      <Filter>src\Graphics\HLSL_VS</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_PS\phong_tex_norm_PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

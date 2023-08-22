@@ -21,18 +21,19 @@ namespace Engine::Graphics {
         static void     ImGuiShowNodeEditWindow();
         static void     ImGuiShowRenderConfigureWindow();
         static void     ImGuiShowMaterialEditWindow();
+        static void     ImGuiShowPostProcessEditWindow();
         static int32_t  ImGuiRenderSceneTree(D3D11SceneGraph& scene, int32_t node);
     private:
         static void     ImGuiShowSolidConfigureWindow();
         static void     ImGuiShowPhongConfigureWindow();
+        static void     ImGuiShowPBRConfigureWindow();
         static void     ImGuiShowEMConfigureWindow();
         static void     ImGuiShowBasicIBLConfigureWindow();
 
         inline static   x_vector<std::function<void(void)>> _renderConfigureTable {
            &ImGuiShowSolidConfigureWindow,
            &ImGuiShowPhongConfigureWindow,
-           &ImGuiShowEMConfigureWindow,
-           &ImGuiShowBasicIBLConfigureWindow
+           &ImGuiShowPBRConfigureWindow,
         };
     private:
         static void ShowMenu();

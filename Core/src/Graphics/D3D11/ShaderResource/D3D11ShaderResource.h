@@ -50,9 +50,14 @@ namespace Engine::Graphics {
     };
 
     enum class ShaderResourceTypes {
-        #define F(x) x##,
-        SHADER_RESOURCE_TYPES
-        #undef F
+        EmissiveMap = 3,
+        DiffuseMap,
+        SpecularMap,             
+        NormalMap,             
+        HeightMap,               
+        OpacityMap,              
+        DiffuseCubemapTexture,
+        SpecularCubemapTexture,
     };
 
     class D3D11ShaderResourceHolder {
@@ -69,7 +74,6 @@ namespace Engine::Graphics {
             &D3D11DiffuseCubemapTexture::GenUID,
             &D3D11SpecularCubemapTexture::GenUID
         };
-
         inline static x_vector<std::function<D3D11ShaderResource(ID3D11Device&, char const*)>> ConstructorTable {
             &D3D11EmissiveMap::CreateEmissiveMap,
             &D3D11DiffuseMap::CreateDiffuseMap,

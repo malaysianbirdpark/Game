@@ -1,17 +1,18 @@
 struct PS_IN {
     float4 pos      : POSITION;
     float3 normal   : NORMAL;
+    float2 texcoord : TEXCOORD;
 };
 
 struct PS_OUT {
     float4 color    : SV_TARGET;
 };
 
-cbuffer cam_position : register (b0) {
+cbuffer cam_position : register (b1) {
     float4 cam_pos;
 }
 
-cbuffer directional_light : register(b1)
+cbuffer directional_light : register(b2)
 {
     float3 dl_color;
     float padding0;
@@ -31,12 +32,11 @@ PS_OUT main(PS_IN input)
     const float dl_strength = max(0.0f, dot(to_light, input.normal));
 
     // diffuse
-    output.color = (input.pos + float4(dl_color, 1.0f)) * dl_strength;
+    output.color = (diffuse_map.Sample(sampler0, input.texcoord) + float4(dl_color, 1.0f)) * dl_strength;
 
     // specular
     const float3 r = -reflect(to_light, input.normal);
     output.color += pow(max(dot(to_camera, r), 0.0f), 10000.0f) * dl_strength;
-
 
     return output;
 }

@@ -182,11 +182,7 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
 
     D3D11PSOLibrary::Init(device);
 
-    D3D11CubeMap::Init(device, GetProj());
-    D3D11CubeMap::AddTexture(device, "Assets/CubeMapTextures/SantaMaria.dds");
-    D3D11CubeMap::AddTexture(device, "Assets/CubeMapTextures/FortPoint.dds"); 
-    D3D11CubeMap::AddTexture(device, "Assets/CubeMapTextures/Atrium_diffuseIBL.dds", "Assets/CubeMapTextures/Atrium_specularIBL.dds");
-    D3D11CubeMap::AddTexture(device, "Assets/CubeMapTextures/Garage_diffuseIBL.dds", "Assets/CubeMapTextures/Garage_specularIBL.dds");
+    //D3D11CubeMap::Init(device, GetProj());
 
     _globalCB.push_back(D3D11CamPosition{device, D3DCamera::GetPos()});
     _lights.push_back(D3D11LightDirectional{device, {0.0f, -0.5f, 1.0f}, {1.0f, 1.0f, 1.0f}});
@@ -215,7 +211,7 @@ void Engine::Graphics::D3D11Core::Update(float const dt, DirectX::XMMATRIX const
     for (auto& light : _lights)
         std::visit(UpdateConstantBuffer{}, light);
 
-    D3D11CubeMap::Update(dt, view, GetProj());
+    //D3D11CubeMap::Update(dt, view, GetProj());
 }
 
 void Engine::Graphics::D3D11Core::AddScene() {
@@ -260,7 +256,7 @@ void Engine::Graphics::D3D11Core::BeginFrame() {
     for (auto const& obj : _obj)
         obj->Render(context);
 
-    D3D11CubeMap::Render(context);
+    //D3D11CubeMap::Render(context);
 }
 
 void Engine::Graphics::D3D11Core::EndFrame() {

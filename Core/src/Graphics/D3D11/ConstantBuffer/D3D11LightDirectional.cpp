@@ -50,5 +50,5 @@ void Engine::Graphics::D3D11LightDirectional::Upload(ID3D11DeviceContext& contex
 
 void Engine::Graphics::D3D11LightDirectional::Bind(ID3D11DeviceContext& context) {
     Upload(context);
-    context.PSSetConstantBuffers(1u, 1u, _resource.GetAddressOf());
+    context.PSSetConstantBuffers(2u, 1u, _resource.GetAddressOf());
 }

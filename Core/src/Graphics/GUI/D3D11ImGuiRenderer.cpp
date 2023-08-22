@@ -6,6 +6,7 @@
 
 #include "Graphics/D3D11/D3D11RenderObject.h"
 #include "Graphics/D3D11/SceneGraph/D3D11SceneGraph.h"
+#include "Graphics/D3D11/Effect/D3D11Effect.h"
 #include "Graphics/D3D11/D3D11CubeMap.h"
 #include "Platform/Platform.h"
 
@@ -64,6 +65,7 @@ void Engine::Graphics::D3D11ImGuiRenderer::EndFrame() {
 
     ShowMenu();
     ImGuiShowCubemapEditWindow();
+    ImGuiShowPostProcessEditWindow();
 
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -130,7 +132,7 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowNodeEditWindow() {
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowRenderConfigureWindow() {
-    static char const* methods[] {"Solid", "Phong", "Environment Mapping", "Basic Image Based Rendering"};
+    static char const* methods[] {"Solid", "Phong", "PBR"};
     static int selected_method {};
     ImGui::Text("Rendering Configuration");
     ImGui::Combo("Shading", &selected_method, methods, std::size(methods));
@@ -138,7 +140,11 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowRenderConfigureWindow() {
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowMaterialEditWindow() {
-    ImGui::Text("Material Editor");
+    ImGui::Text("Material Constants Configuration");
+}
+
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowPostProcessEditWindow() {
+    ImGui::Text("Post Process");
 }
 
 int32_t Engine::Graphics::D3D11ImGuiRenderer::ImGuiRenderSceneTree(D3D11SceneGraph& scene, int32_t node) {
@@ -177,25 +183,72 @@ int32_t Engine::Graphics::D3D11ImGuiRenderer::ImGuiRenderSceneTree(D3D11SceneGra
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSolidConfigureWindow() {
     auto& [scene, node] {_selected};
     auto& render_strategy {scene->GetRenderStrategyAt(node)};
-    auto const previous_value {render_strategy};
 
-    ImGui::RadioButton("Use Position As Color", &render_strategy, 0);
-    ImGui::RadioButton("Use Texture", &render_strategy, 1);
+    int temp {};
+    bool use_diffusemap {(render_strategy & (0b1 << static_cast<int>(ShaderResourceTypes::DiffuseMap))) != false};
+    bool use_heightmap {(render_strategy & (0b1 << static_cast<int>(ShaderResourceTypes::HeightMap))) != false};
 
-    if (previous_value != render_strategy)
+    ImGui::Checkbox("Diffuse Map", &use_diffusemap);
+    ImGui::Checkbox("Height Map", &use_heightmap);
+    ImGui::RadioButton("Environment Mapping", &temp, 0);
+    ImGui::RadioButton("Basic IBL", &temp, 1);
+
+    uint64_t current_value {0b0};
+    current_value |= (0b1 << static_cast<int>(ShaderResourceTypes::DiffuseMap)) * use_diffusemap;
+    current_value |= (0b1 << static_cast<int>(ShaderResourceTypes::HeightMap)) * use_heightmap;
+    if (render_strategy != current_value) {
+        render_strategy = current_value; 
         scene->SetRenderStrategies(node, render_strategy);
+    }
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowPhongConfigureWindow() {
     auto& [scene, node] {_selected};
     auto& render_strategy {scene->GetRenderStrategyAt(node)};
-    auto const previous_value {render_strategy};
 
-    ImGui::RadioButton("Use Position As Color", &render_strategy, 2);
-    ImGui::RadioButton("Use Texture", &render_strategy, 3);
+    bool use_diffusemap {(render_strategy & (0b1 << static_cast<int>(ShaderResourceTypes::DiffuseMap))) != false};
+    bool use_specularmap {(render_strategy & (0b1 << static_cast<int>(ShaderResourceTypes::SpecularMap))) != false};
+    bool use_normalmap {(render_strategy & (0b1 << static_cast<int>(ShaderResourceTypes::NormalMap))) != false};
+    bool use_heightmap {(render_strategy & (0b1 << static_cast<int>(ShaderResourceTypes::HeightMap))) != false};
+    bool use_rim_effect {(render_strategy & (0b1 << static_cast<int>(EffectTypes::RimEffect))) != false};
+    bool use_fresnel_effect {(render_strategy & (0b1 << static_cast<int>(EffectTypes::FresnelEffect))) != false};
 
-    if (previous_value != render_strategy)
+    ImGui::Text("Textures");
+    ImGui::Checkbox("Diffuse Map", &use_diffusemap);
+    ImGui::Checkbox("Specular Map", &use_specularmap);
+    ImGui::Checkbox("Normal Map", &use_normalmap);
+    ImGui::Checkbox("Height Map", &use_heightmap);
+
+    ImGui::Text("Effects");
+    ImGui::Checkbox("Rim Effect", &use_rim_effect);
+    ImGui::Checkbox("Fresnel Effect", &use_fresnel_effect);
+
+    uint64_t current_value {0b1};
+    current_value |= (0b1 << static_cast<int>(ShaderResourceTypes::DiffuseMap))  * use_diffusemap;
+    current_value |= (0b1 << static_cast<int>(ShaderResourceTypes::SpecularMap)) * use_specularmap;
+    current_value |= (0b1 << static_cast<int>(ShaderResourceTypes::NormalMap))   * use_normalmap;
+    current_value |= (0b1 << static_cast<int>(ShaderResourceTypes::HeightMap))   * use_heightmap;
+    current_value |= (0b1 << static_cast<int>(EffectTypes::RimEffect))           * use_rim_effect;
+    current_value |= (0b1 << static_cast<int>(EffectTypes::FresnelEffect))       * use_fresnel_effect;
+    if (render_strategy != current_value) {
+        render_strategy = current_value; 
         scene->SetRenderStrategies(node, render_strategy);
+    }
+
+    //static bool use_cubemap {false};
+    //ImGui::Checkbox("use Cubemap Texture", &use_cubemap);
+    //if (use_cubemap) {
+    //    if (ImGui::RadioButton("Environment Mapping", &render_strategy, 0))
+    //        ImGuiShowEMConfigureWindow();        
+    //    else if (ImGui::RadioButton("Basic IBL", &render_strategy, 1))
+    //        ImGuiShowBasicIBLConfigureWindow(); 
+    //}
+}
+
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowPBRConfigureWindow() {
+    auto& [scene, node] {_selected};
+    auto& render_strategy {scene->GetRenderStrategyAt(node)};
+    ImGui::Text("To be implemented");
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowEMConfigureWindow() {
@@ -203,8 +256,8 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowEMConfigureWindow() {
     auto& render_strategy {scene->GetRenderStrategyAt(node)};
     auto const previous_value {render_strategy};
 
-    ImGui::RadioButton("Use Normal Direction", &render_strategy, 4);
-    ImGui::RadioButton("Use Total Reflection", &render_strategy, 5);
+    //ImGui::RadioButton("Use Normal Direction", &render_strategy, 4);
+    //ImGui::RadioButton("Use Total Reflection", &render_strategy, 5);
 
     if (previous_value != render_strategy)
         scene->SetRenderStrategies(node, render_strategy);
@@ -215,8 +268,8 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowBasicIBLConfigureWindow() {
     auto& render_strategy {scene->GetRenderStrategyAt(node)};
     auto const previous_value {render_strategy};
 
-    ImGui::RadioButton("Default", &render_strategy, 6);
-    ImGui::RadioButton("Textured", &render_strategy, 7);
+    //ImGui::RadioButton("Default", &render_strategy, 6);
+    //ImGui::RadioButton("Textured", &render_strategy, 7);
 
     if (previous_value != render_strategy)
         scene->SetRenderStrategies(node, render_strategy);

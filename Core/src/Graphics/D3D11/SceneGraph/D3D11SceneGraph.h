@@ -91,7 +91,7 @@ namespace Engine::Graphics {
         D3D11SceneNode&            GetNodeAt(int32_t node);
         SceneTransformParameters&  GetTransformParamAt(int32_t node);
         char const*                GetNameAt(int32_t node);
-        int&                       GetRenderStrategyAt(int32_t node);
+        uint32_t&                  GetRenderStrategyAt(int32_t node);
 
         void                       Update();
     private:
@@ -108,7 +108,7 @@ namespace Engine::Graphics {
         x_vector<D3D11SceneNode>             _tree;
         x_vector<x_string>                   _nodeNames {};
     private:
-        x_vector<int>                        _renderStrategies;
+        x_vector<uint32_t>                   _renderStrategies;
         x_vector<SceneTransformParameters>   _transforms;
         x_vector<DirectX::XMFLOAT4X4>        _globalTransforms;
         x_vector<DirectX::XMFLOAT4X4>        _localTransforms;

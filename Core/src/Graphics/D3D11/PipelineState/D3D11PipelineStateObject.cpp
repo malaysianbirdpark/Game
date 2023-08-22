@@ -5,12 +5,8 @@
 #include "D3D11PipelineStateCommon.h"
 
 void Engine::Graphics::D3D11PipelineStateObject::SetInputLayout(ID3D11Device& device, x_vector<D3D11_INPUT_ELEMENT_DESC> const& layout) {
-    if (_vertexShader == nullptr) {
-        GRAPHICS_ERROR("Set SetVertexShader First!!!!!!!");
-        CRASH();
-    }
-
-    _inputLayout = D3D11PipelineStateHolder::ResolveInputLayout(device, layout, _vertexShader->GetByteCode());
+    CORE_ASSERT(_vertexShader, "Set VertexShader First!");
+    _inputLayout = MakeUnique<D3D11InputLayout>(device, layout, _vertexShader->GetByteCode());
 }
 
 void Engine::Graphics::D3D11PipelineStateObject::SetPixelShader(ID3D11Device& device, char const* path) {
