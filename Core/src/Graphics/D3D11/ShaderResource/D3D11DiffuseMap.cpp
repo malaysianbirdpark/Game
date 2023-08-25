@@ -36,6 +36,14 @@ void Engine::Graphics::D3D11DiffuseMap::Bind(ID3D11DeviceContext& context) const
     context.PSSetShaderResources(1u, 1u, _srv.GetAddressOf());
 }
 
+Engine::x_string Engine::Graphics::D3D11DiffuseMap::GetDescription() const {
+    return {"Diffuse Map"};
+}
+
+int32_t Engine::Graphics::D3D11DiffuseMap::GetTypeID() const {
+    return 4;
+}
+
 Engine::x_string Engine::Graphics::D3D11DiffuseMap::GenUID(char const* path) {
     return x_string{typeid(D3D11DiffuseMap).name()} + "#" + path;
 }

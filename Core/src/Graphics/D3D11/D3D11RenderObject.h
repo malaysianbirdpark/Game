@@ -19,9 +19,10 @@ namespace Engine::Graphics {
         std::shared_ptr<D3D11SceneGraph> GetScene();
 
         void Render(ID3D11DeviceContext& context);
+        void RenderTest(ID3D11DeviceContext& context, ID3D11ShaderResourceView* const* srv);
         void Update(float const dt, DirectX::FXMMATRIX const& view, DirectX::FXMMATRIX const& proj);
     private:
-        std::unique_ptr<D3D11TransformMVP>   _transform;
+        D3D11TransformMVP                    _transform;
         std::shared_ptr<D3D11SceneGraph>     _scene;
     };
 }

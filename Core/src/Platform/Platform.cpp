@@ -153,8 +153,8 @@ namespace Engine {
                 case WM_KEYUP:
                 case WM_SYSKEYUP:
                 case WM_CHAR:
-                    if (imgui_io.WantCaptureKeyboard)
-                        break;
+                    //if (imgui_io.WantCaptureKeyboard)
+                    //    break;
                     DirectX::Keyboard::ProcessMessage(msg, wParam, lParam);
                     break;
                 case WM_MENUCHAR:

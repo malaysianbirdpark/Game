@@ -98,14 +98,14 @@ void Engine::Input::EnableCursor() {
     _cursorEnabled = true;
     ShowCursor();
     EnableImGuiMouse();
-    //FreeCursor();
+    FreeCursor();
 }
 
 void Engine::Input::DisableCursor() {
     _cursorEnabled = false;
     HideCursor();
     DisableImGuiMouse();
-    //ConfineCursor();
+    ConfineCursor();
 }
 
 void Engine::Input::ClearKeyboard() {

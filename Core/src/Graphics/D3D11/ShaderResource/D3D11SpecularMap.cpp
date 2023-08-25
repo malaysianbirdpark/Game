@@ -36,6 +36,14 @@ void Engine::Graphics::D3D11SpecularMap::Bind(ID3D11DeviceContext& context) cons
     context.PSSetShaderResources(2u, 1u, _srv.GetAddressOf());
 }
 
+Engine::x_string Engine::Graphics::D3D11SpecularMap::GetDescription() const {
+    return {"Specular Map"};
+}
+
+int32_t Engine::Graphics::D3D11SpecularMap::GetTypeID() const {
+    return 5;
+}
+
 Engine::x_string Engine::Graphics::D3D11SpecularMap::GenUID(char const* path) {
     return x_string{typeid(D3D11SpecularMap).name()} + "#" + path;
 }

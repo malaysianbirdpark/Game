@@ -3,11 +3,10 @@
 #include "ConstantBuffer/D3D11TransformMVP.h"
 #include "Graphics/D3D11/SceneGraph/D3D11VertexBuffer.h"
 #include "Graphics/D3D11/SceneGraph/D3D11IndexBuffer.h"
-#include "ShaderResource/D3D11DiffuseCubemapTexture.h"
-#include "ShaderResource/D3D11ShaderResource.h"
+#include "Graphics/D3D11/ShaderResource/D3D11CubemapTexture.h"
 
 namespace Engine::Graphics {
-    class D3D11CubeMap {
+    class D3D11Cubemap {
         enum {
             edge = 60,
         };
@@ -15,16 +14,17 @@ namespace Engine::Graphics {
             DirectX::XMFLOAT3 pos;
         };
     public:
-        static void Init(ID3D11Device& device, DirectX::XMMATRIX proj);
-        static void AddTexture(ID3D11Device& device, char const* path);
-        static void AddTexture(ID3D11Device& device, char const* diffuse_path, char const* specular_path);
+        D3D11Cubemap(ID3D11Device& device, DirectX::XMMATRIX proj);
+
+        static void AddSDRTexture(ID3D11Device& device, char const* specular_path);
+        static void AddSDRTexture(ID3D11Device& device, char const* specular_path, char const* diffuse_path);
+        static void AddHDRTexture(ID3D11Device& device, char const* env_path, char const* specular_path, char const* diffuse_path);
         static void SetTexture(uint8_t idx);
         static int& TextureIndex();
 
-        static void Update(float const dt, DirectX::XMMATRIX view, DirectX::XMMATRIX proj);
-        static void BindDiffuse(ID3D11DeviceContext& context);
-        static void BindSpecular(ID3D11DeviceContext& context);
-        static void Render(ID3D11DeviceContext& context);
+        void Update(float const dt, DirectX::XMMATRIX view, DirectX::XMMATRIX proj);
+        static void Bind(ID3D11DeviceContext& context);
+        void Render(ID3D11DeviceContext& context);
     private:
         inline static x_array<CubeMapVertex, 24> cube_vertices {{
             {.pos = {-edge, edge, -edge}},
@@ -66,22 +66,16 @@ namespace Engine::Graphics {
              3,  2,  0,  2,  1,  0
         };
     private:
-        inline static D3D11_PRIMITIVE_TOPOLOGY                          _topology {D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST};
-        inline static std::unique_ptr<class D3D11VertexBuffer>          _vertex;
-        inline static std::unique_ptr<class D3D11IndexBuffer>           _index;
+        D3D11_PRIMITIVE_TOPOLOGY                          _topology {D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST};
+        D3D11VertexBuffer                                 _vertex;
+        D3D11IndexBuffer                                  _index;
 
-        inline static std::shared_ptr<class D3D11PipelineStateObject>   _pso;
-        inline static int                                               _selectedTexture {};
-        inline static Microsoft::WRL::ComPtr<ID3D11SamplerState>        _sampler {};
+        std::shared_ptr<class D3D11PipelineStateObject>   _pso;
+        inline static int                                 _selectedTexture {};
 
-        inline static std::unique_ptr<D3D11TransformMVP>                _transform;
+        D3D11TransformMVP                                 _transform;
 
-        inline static x_vector<
-            std::pair<
-                D3D11ShaderResource,
-                D3D11ShaderResource
-            >
-        > _textures;
+        inline static x_vector<D3D11CubemapTexture>       _textures;
     };
 }
 

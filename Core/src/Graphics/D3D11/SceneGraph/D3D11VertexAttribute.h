@@ -45,7 +45,7 @@ namespace Engine::Graphics {
             DirectX::XMFLOAT2 _uv2d;
         };
     private:
-        inline static x_unordered_map<x_string, size_t> _strideTable {
+        inline static x_unordered_map<x_string, UINT> _strideTable {
             {"1p", sizeof(_1P)},
             {"1p1n", sizeof(_1P1N)},
             {"1p1n1uv", sizeof(_1P1N1UV)},

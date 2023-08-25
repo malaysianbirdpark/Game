@@ -11,11 +11,8 @@ namespace Engine::Graphics {
     public:
         D3D11LightDirectional(ID3D11Device& device, DirectX::XMFLOAT3&& dir, DirectX::XMFLOAT3&& color);
 
-        void ImGuiShowEditWindow();
         void Update();
-
         void Upload(ID3D11DeviceContext& context);
-
         void Bind(ID3D11DeviceContext& context);
     private:
         LightInfo                             _info {};

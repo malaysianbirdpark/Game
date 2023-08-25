@@ -1,5 +1,7 @@
 #pragma once
 
+#include <bitset>
+
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -7,6 +9,9 @@
 #include "D3D11SceneGraph.h"
 #include "Graphics/D3D11/ShaderResource/D3D11ShaderResource.h"
 #include "Graphics/D3D11/RenderStrategy/D3D11RenderStrategy.h"
+
+#include "Graphics/D3D11/ConstantBuffer/D3D11PhongMaterialConstants.h"
+#include "Graphics/D3D11/ConstantBuffer/D3D11VertexShaderConstants.h"
 
 namespace Engine::Graphics {
     class D3D11InputLayout;
@@ -26,11 +31,22 @@ namespace Engine::Graphics {
         float scale_z {1.0f};
     };
 
-
     class D3D11Material {
         friend class D3D11SceneGraph;
     public:
-        [[nodiscard]] x_vector<D3D11ShaderResource> const& GetShaderResources() const;
+        D3D11Material(ID3D11Device& device);
+        [[nodiscard]] x_vector<D3D11ShaderResource> const&  GetShaderResources() const;
+        [[nodiscard]] D3D11PhongMaterialConstants* const    GetPhongConstants();
+        [[nodiscard]] D3D11VertexShaderConstants* const     GetVSConstants();
+        void                                                BindVertexShaderConstants(ID3D11DeviceContext& context);
+        void                                                BindPhong(ID3D11DeviceContext& context);
+
+        void                                                CopyPhongConstants(D3D11Material const& source);
+        void                                                CopyVSConstants(D3D11Material const& source);
+
+        x_string                                            GetTextureInfo() const;
+
+        void                                                AddOrRelplaceTexture(ID3D11Device& device, ShaderResourceTypes type, char const* path);
     private:
         DirectX::XMFLOAT4  _emissiveColor;
         DirectX::XMFLOAT4  _albedoColor;
@@ -39,12 +55,15 @@ namespace Engine::Graphics {
         float              _alphaTest;
         float              _metallicFactor;
 
-        x_vector<D3D11ShaderResource>  _srs;
+        D3D11VertexShaderConstants      _vertexShaderConstants;
+        D3D11PhongMaterialConstants     _phongConstants;
+        x_vector<D3D11ShaderResource>   _srs;
+        std::bitset<16>                 _textureTypes;
     };
 
     class D3D11Mesh {
         friend class D3D11SceneGraph;
-        friend class D3D11SceneMan;
+        friend class D3D11SceneHolder;
     public:
         D3D11Mesh() = default;
         D3D11Mesh(
@@ -55,7 +74,7 @@ namespace Engine::Graphics {
 
         void Bind(ID3D11DeviceContext& context) const;
 
-        [[nodiscard]] uint32_t GetIndexCount() const;
+        [[nodiscard]] UINT GetIndexCount() const;
     private:
         x_string                                      _vertexFormat;
         std::shared_ptr<D3D11VertexBuffer>            _vertexBuffer;
@@ -76,24 +95,31 @@ namespace Engine::Graphics {
     class D3D11SceneGraph {
         friend class D3D11RenderObject;
         friend class D3D11Mesh;
+        friend class D3D11ImGuiRenderer;
 
         static constexpr int MAX_NODE_LEVEL {20};
     public:
         D3D11SceneGraph(ID3D11Device& device, char const* path);
 
-        int32_t    NumOfNodes() const { return _tree.size(); }
-
-        void       MarkAsUpdated(int32_t node);
-        void       RecalculateGlobalTransforms();
+        void       MarkAsTransformed(int32_t node);
+        void       MarkAsPhongMaterialEdited(int32_t node);
+        void       MarkAsVSConstantEdited(int32_t node);
 
         void       SetRenderStrategies(int32_t node, int strategy);
 
-        D3D11SceneNode&            GetNodeAt(int32_t node);
-        SceneTransformParameters&  GetTransformParamAt(int32_t node);
-        char const*                GetNameAt(int32_t node);
-        uint32_t&                  GetRenderStrategyAt(int32_t node);
+        D3D11SceneNode&                     GetNodeAt(int32_t node);
+        SceneTransformParameters&           GetTransformParamAt(int32_t node);
+        char const*                         GetNameAt(int32_t node);
+        D3D11Material&                      GetMaterialAt(int32_t node);
+        uint64_t&                           GetRenderStrategyAt(int32_t node);
+        int32_t                             GetClosestMaterialConstant(int32_t node);
 
-        void                       Update();
+        void                                Update();
+        void                                AddMaterial(ID3D11Device& device);
+    private:
+        void                                RecalculateGlobalTransforms();
+        void                                UpdatePhongMaterialConstants();
+        void                                UpdateVertexShaderConstants();
     private:
         int32_t                              ParseNode(int32_t parent_id, int32_t level, aiScene const* ai_scene, aiNode const* ai_node);
         [[nodiscard]] static D3D11Mesh       ParseMesh(ID3D11Device& device, aiMesh const* ai_mesh);
@@ -108,7 +134,7 @@ namespace Engine::Graphics {
         x_vector<D3D11SceneNode>             _tree;
         x_vector<x_string>                   _nodeNames {};
     private:
-        x_vector<uint32_t>                   _renderStrategies;
+        x_vector<uint64_t>                   _renderStrategies;
         x_vector<SceneTransformParameters>   _transforms;
         x_vector<DirectX::XMFLOAT4X4>        _globalTransforms;
         x_vector<DirectX::XMFLOAT4X4>        _localTransforms;
@@ -116,9 +142,13 @@ namespace Engine::Graphics {
         x_unordered_map<uint32_t, uint32_t>  _nodeId_to_meshId {};
         x_unordered_map<uint32_t, uint32_t>  _nodeId_to_materialId {};
         x_unordered_map<uint32_t, uint32_t>  _nodeId_to_namesId {};
+        int32_t                              _recentlyUpdatedPhongMaterial {-1};
+        int32_t                              _recentlyUpdatedVSConstants   {-1};
     private:
         // For the Update
-        x_vector<int32_t>                    _updated[MAX_NODE_LEVEL] {};
+        x_vector<int32_t>                    _transformed[MAX_NODE_LEVEL] {};
+        x_vector<int32_t>                    _materialEdited[MAX_NODE_LEVEL] {};
+        x_vector<int32_t>                    _VSCEdited[MAX_NODE_LEVEL] {};
     };
 
     std::string   process_ai_path(char const* base_path, char const* ai_path);

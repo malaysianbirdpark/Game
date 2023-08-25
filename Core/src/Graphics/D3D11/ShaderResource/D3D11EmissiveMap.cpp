@@ -36,6 +36,14 @@ void Engine::Graphics::D3D11EmissiveMap::Bind(ID3D11DeviceContext& context) cons
     context.PSSetShaderResources(0u, 1u, _srv.GetAddressOf());
 }
 
+Engine::x_string Engine::Graphics::D3D11EmissiveMap::GetDescription() const {
+    return {"Emissive Map"};
+}
+
+int32_t Engine::Graphics::D3D11EmissiveMap::GetTypeID() const {
+    return 3;
+}
+
 Engine::x_string Engine::Graphics::D3D11EmissiveMap::GenUID(char const* path) {
     return x_string{typeid(D3D11EmissiveMap).name()} + "#" + path;
 }

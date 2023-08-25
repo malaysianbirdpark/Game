@@ -36,6 +36,14 @@ void Engine::Graphics::D3D11OpacityMap::Bind(ID3D11DeviceContext& context) const
     context.PSSetShaderResources(5u, 1u, _srv.GetAddressOf());
 }
 
+Engine::x_string Engine::Graphics::D3D11OpacityMap::GetDescription() const {
+    return {"Opacity Map"};
+}
+
+int32_t Engine::Graphics::D3D11OpacityMap::GetTypeID() const {
+    return 8;
+}
+
 Engine::x_string Engine::Graphics::D3D11OpacityMap::GenUID(char const* path) {
     return x_string{typeid(D3D11OpacityMap).name()} + "#" + path;
 }

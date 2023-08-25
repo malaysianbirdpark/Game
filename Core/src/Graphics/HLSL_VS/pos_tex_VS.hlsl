@@ -4,7 +4,7 @@ struct VS_IN {
 };
 
 struct VS_OUT {
-    float4 world_pos : POSITION;
+    float3 world_pos : POSITION;
     float2 texcoord  : TEXCOORD;
     float4 sv_pos    : SV_POSITION;
 };
@@ -20,7 +20,7 @@ VS_OUT main(VS_IN input)
 {
     VS_OUT output;
 
-    output.world_pos = mul(m, float4(input.pos, 1.0f));
+    output.world_pos = mul(m, float4(input.pos, 1.0f)).xyz;
     output.texcoord = input.texcoord;
     output.sv_pos = mul(mvp, float4(input.pos, 1.0f));
 

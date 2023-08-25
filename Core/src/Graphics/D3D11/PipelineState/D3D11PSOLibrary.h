@@ -12,6 +12,7 @@ namespace Engine::Graphics {
         inline static void InitSolid(ID3D11Device& device);
         inline static void InitPhong(ID3D11Device& device);
         inline static void InitCubemap(ID3D11Device& device);
+        inline static void InitFilters(ID3D11Device& device);
         inline static void InitEnvironmentMapping(ID3D11Device& device);
         inline static void InitBasicIBL(ID3D11Device& device);
     private:

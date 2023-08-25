@@ -33,8 +33,17 @@ std::shared_ptr<Engine::Graphics::D3D11HeightMap> Engine::Graphics::D3D11HeightM
 }
 
 void Engine::Graphics::D3D11HeightMap::Bind(ID3D11DeviceContext& context) const {
-    context.PSSetShaderResources(4u, 1u, _srv.GetAddressOf());
+    context.VSSetShaderResources(4u, 1u, _srv.GetAddressOf());
 }
+
+Engine::x_string Engine::Graphics::D3D11HeightMap::GetDescription() const {
+    return {"Height Map"};
+}
+
+int32_t Engine::Graphics::D3D11HeightMap::GetTypeID() const {
+    return 7;
+}
+
 
 Engine::x_string Engine::Graphics::D3D11HeightMap::GenUID(char const* path) {
     return x_string{typeid(D3D11HeightMap).name()} + "#" + path;

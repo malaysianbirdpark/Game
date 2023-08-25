@@ -6,7 +6,7 @@
 
 #include "D3D11Sampler.h"
 #include "Graphics/D3D11/SceneGraph/D3D11SceneGraph.h"
-#include "Graphics/D3D11/SceneGraph/D3D11SceneMan.h"
+#include "Graphics/D3D11/SceneGraph/D3D11SceneHolder.h"
 #include "Graphics/D3D11/RenderStrategy/D3D11RenderStrategy.h"
 #include "Graphics/D3D11/D3D11RenderObject.h"
 
@@ -16,7 +16,8 @@
 
 #include <imgui.h>
 
-#include "D3D11CubeMap.h"
+#include "D3D11Cubemap.h"
+#include "D3D11FullScreenFilter.h"
 #include "Graphics/GUI/D3D11ImGuiRenderer.h"
 
 #include "Graphics/D3D11/ConstantBuffer/D3D11CamPosition.h"
@@ -47,13 +48,14 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
     swap_chain_flag |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
+    D3D_FEATURE_LEVEL feature_level[] {D3D_FEATURE_LEVEL_11_1};
     ::D3D11CreateDeviceAndSwapChain(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
         nullptr,
         swap_chain_flag,
-        nullptr,
-        0,
+        feature_level,
+        1,
         D3D11_SDK_VERSION,
         &sd,
         _swapChain.ReleaseAndGetAddressOf(),
@@ -72,6 +74,40 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
     _swapChain->GetBuffer(0u, IID_PPV_ARGS(_backBuffers.ReleaseAndGetAddressOf()));
     _device->CreateRenderTargetView(_backBuffers.Get(), nullptr, _backBufferView.ReleaseAndGetAddressOf());
 
+    UINT quality_level {};
+    _device->CheckMultisampleQualityLevels(DXGI_FORMAT_R16G16B16A16_FLOAT, 8, &quality_level);
+
+    D3D11_TEXTURE2D_DESC desc;
+    static_cast<ID3D11Texture2D*>(_backBuffers.Get())->GetDesc(&desc);
+    desc.MipLevels = desc.ArraySize = 1;
+    desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.MiscFlags = 0;
+    desc.CPUAccessFlags = 0;
+    desc.SampleDesc.Count = 8;
+    desc.SampleDesc.Quality = quality_level - 1;
+
+    _device->CreateTexture2D(&desc, nullptr, _renderBuffer.ReleaseAndGetAddressOf());
+    _device->CreateShaderResourceView(_renderBuffer.Get(), nullptr, _renderSRV.ReleaseAndGetAddressOf());
+    _device->CreateRenderTargetView(_renderBuffer.Get(), nullptr, _renderRTV.ReleaseAndGetAddressOf());
+
+    desc.SampleDesc.Count = 1;
+    desc.SampleDesc.Quality = 0;
+    _device->CreateTexture2D(&desc, nullptr, _resolvedBuffer.ReleaseAndGetAddressOf());
+    _device->CreateShaderResourceView(_resolvedBuffer.Get(), nullptr, _resolvedSRV.ReleaseAndGetAddressOf());
+    _device->CreateRenderTargetView(_resolvedBuffer.Get(), nullptr, _resolvedRTV.ReleaseAndGetAddressOf());
+
+    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    _device->CreateTexture2D(&desc, nullptr, _imguiBuffer.ReleaseAndGetAddressOf());
+    _device->CreateShaderResourceView(_imguiBuffer.Get(), nullptr, _imguiSRV.ReleaseAndGetAddressOf());
+    _device->CreateRenderTargetView(_imguiBuffer.Get(), nullptr, _imguiRTV.ReleaseAndGetAddressOf());
+
+    _device->CreateTexture2D(&desc, nullptr, _finalBuffer.ReleaseAndGetAddressOf());
+    _device->CreateShaderResourceView(_finalBuffer.Get(), nullptr, _finalSRV.ReleaseAndGetAddressOf());
+    _device->CreateRenderTargetView(_finalBuffer.Get(), nullptr, _finalRTV.ReleaseAndGetAddressOf());
+
+
     _viewPort.Width = static_cast<float>(width);
     _viewPort.Height = static_cast<float>(height);
     _viewPort.MinDepth = 0.0f;
@@ -82,13 +118,29 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
 
     // Rasterizer State
     {
+        _rasterizerState.resize(3);
+
         D3D11_RASTERIZER_DESC rd {};
         rd.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
         rd.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
         rd.FrontCounterClockwise = false;
         rd.DepthClipEnable = true;
 
-        _device->CreateRasterizerState(&rd, _rasterizerState.ReleaseAndGetAddressOf());
+        _device->CreateRasterizerState(&rd, _rasterizerState[0].ReleaseAndGetAddressOf());
+
+        rd.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
+        rd.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+        rd.FrontCounterClockwise = false;
+        rd.DepthClipEnable = true;
+
+        _device->CreateRasterizerState(&rd, _rasterizerState[1].ReleaseAndGetAddressOf());
+
+        rd.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+        rd.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+        rd.FrontCounterClockwise = false;
+        rd.DepthClipEnable = false;
+
+        _device->CreateRasterizerState(&rd, _rasterizerState[2].ReleaseAndGetAddressOf());
     }
 
     {
@@ -103,7 +155,6 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
         for (auto& context : _defContexts)
             context->OMSetDepthStencilState(ds_state.Get(), 1u);
 
-
         D3D11_TEXTURE2D_DESC descDepth {};
         descDepth.Usage = D3D11_USAGE_DEFAULT;
         descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
@@ -111,16 +162,16 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
         descDepth.Height = height;
         descDepth.MipLevels = 1u;
         descDepth.ArraySize = 1u;
-        descDepth.Format = DXGI_FORMAT_D32_FLOAT;
-        descDepth.SampleDesc.Count = 1u;
-        descDepth.SampleDesc.Quality = 0u;
+        descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        descDepth.SampleDesc.Count = 8;
+        descDepth.SampleDesc.Quality = quality_level - 1;
 
         Microsoft::WRL::ComPtr<ID3D11Texture2D> _ds;
         _device->CreateTexture2D(&descDepth, nullptr, _ds.ReleaseAndGetAddressOf());
 
         D3D11_DEPTH_STENCIL_VIEW_DESC desc_dsv {};
-        desc_dsv.Format = DXGI_FORMAT_D32_FLOAT;
-        desc_dsv.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+        desc_dsv.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        desc_dsv.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
         desc_dsv.Texture2D.MipSlice = 0u;
         _device->CreateDepthStencilView(_ds.Get(), &desc_dsv, _depthStencilView.ReleaseAndGetAddressOf());
     }
@@ -128,13 +179,13 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
     DirectX::XMStoreFloat4x4(&_proj, DirectX::XMMatrixPerspectiveFovLH(
         70.0f,
         static_cast<float>(width) / height,
-        0.1f,
+        0.01f,
         250.0f
     ));
 
     auto& device {*_device.Get()};
 
-    D3D11SceneMan::Load(device);
+    D3D11SceneHolder::Load(device);
 
     //_obj.push_back(
     //    std::move(
@@ -142,7 +193,51 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
     //            device,
     //            D3DCamera::GetView(),
     //            GetProj(),
-    //            D3D11SceneMan::ResolveScene("Zelda")
+    //            D3D11SceneHolder::ResolveScene("Zelda")
+    //        )
+    //    )
+    //);
+
+    //_obj.push_back(
+    //    std::move(
+    //        MakeShared<D3D11RenderObject>(
+    //            device,
+    //            D3DCamera::GetView(),
+    //            GetProj(),
+    //            D3D11SceneHolder::ResolveScene("Goblin")
+    //        )
+    //    )
+    //);
+
+    //_obj.push_back(
+    //    std::move(
+    //        MakeShared<D3D11RenderObject>(
+    //            device,
+    //            D3DCamera::GetView(),
+    //            GetProj(),
+    //            D3D11SceneHolder::ResolveScene("Cube")
+    //        )
+    //    )
+    //);
+
+    //_obj.push_back(
+    //    std::move(
+    //        MakeShared<D3D11RenderObject>(
+    //            device,
+    //            D3DCamera::GetView(),
+    //            GetProj(),
+    //            D3D11SceneHolder::ResolveScene("IridescenceLamp")
+    //        )
+    //    )
+    //);
+
+    //_obj.push_back(
+    //    std::move(
+    //        MakeShared<D3D11RenderObject>(
+    //            device,
+    //            D3DCamera::GetView(),
+    //            GetProj(),
+    //            D3D11SceneHolder::ResolveScene("Sphere")
     //        )
     //    )
     //);
@@ -153,43 +248,22 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
                 device,
                 D3DCamera::GetView(),
                 GetProj(),
-                D3D11SceneMan::ResolveScene("Goblin")
+                D3D11SceneHolder::ResolveScene("DamagedHelmet")
             )
         )
     );
 
-    //_obj.push_back(
-    //    std::move(
-    //        MakeShared<D3D11RenderObject>(
-    //            device,
-    //            D3DCamera::GetView(),
-    //            GetProj(),
-    //            D3D11SceneMan::ResolveScene("Cube")
-    //        )
-    //    )
-    //);
-
-    //_obj.push_back(
-    //    std::move(
-    //        MakeShared<D3D11RenderObject>(
-    //            device,
-    //            D3DCamera::GetView(),
-    //            GetProj(),
-    //            D3D11SceneMan::ResolveScene("IridescenceLamp")
-    //        )
-    //    )
-    //);
-
     D3D11PSOLibrary::Init(device);
 
-    //D3D11CubeMap::Init(device, GetProj());
+    _cubemap = MakeUnique<D3D11Cubemap>(device, GetProj());
+    _fullscreenFilter = MakeUnique<D3D11FullScreenFilter>(device);
 
     _globalCB.push_back(D3D11CamPosition{device, D3DCamera::GetPos()});
     _lights.push_back(D3D11LightDirectional{device, {0.0f, -0.5f, 1.0f}, {1.0f, 1.0f, 1.0f}});
 
     InitRenderStrategies();
 
-    _sampler = std::make_unique<D3D11Sampler>(device, "yes");
+    _sampler = MakeUnique<D3D11Sampler>(device, "global");
 
     D3D11ImGuiRenderer::Init(_device.Get(), _defContexts[IMGUI_CONTEXT].Get());
 }
@@ -211,10 +285,14 @@ void Engine::Graphics::D3D11Core::Update(float const dt, DirectX::XMMATRIX const
     for (auto& light : _lights)
         std::visit(UpdateConstantBuffer{}, light);
 
-    //D3D11CubeMap::Update(dt, view, GetProj());
+    _cubemap->Update(dt, view, GetProj());
 }
 
 void Engine::Graphics::D3D11Core::AddScene() {
+}
+
+void* Engine::Graphics::D3D11Core::GetFinalSRV() {
+    return _finalSRV.Get();
 }
 
 DirectX::XMMATRIX Engine::Graphics::D3D11Core::GetProj() {
@@ -231,16 +309,16 @@ void Engine::Graphics::D3D11Core::BeginFrame() {
     static constexpr float clear_color[4] {0.0f, 0.0f, 0.0f, 1.0f};
 
     // first context clears the screen and buffers
-    _defContexts[0]->RSSetState(_rasterizerState.Get());
+    _defContexts[0]->RSSetState(_rasterizerState[_selectedRS].Get());
     _defContexts[0]->RSSetViewports(1u, &_viewPort);
-    _defContexts[0]->OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _depthStencilView.Get());
-    _defContexts[0]->ClearRenderTargetView(_backBufferView.Get(), clear_color);
+    _defContexts[0]->OMSetRenderTargets(1u, _renderRTV.GetAddressOf(), _depthStencilView.Get());
+    _defContexts[0]->ClearRenderTargetView(_renderRTV.Get(), clear_color);
     _defContexts[0]->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f , 0u);
 
     for (auto i {1}; i != NUM_DEF_CONTEXTS; ++i) {
-        _defContexts[i]->RSSetState(_rasterizerState.Get());
+        _defContexts[i]->RSSetState(_rasterizerState[0].Get());
         _defContexts[i]->RSSetViewports(1u, &_viewPort);
-        _defContexts[i]->OMSetRenderTargets(1u, _backBufferView.GetAddressOf(), _depthStencilView.Get());
+        _defContexts[i]->OMSetRenderTargets(1u, _imguiRTV.GetAddressOf(), nullptr);
     }
 
     auto& context {*_defContexts[0].Get()};
@@ -256,7 +334,17 @@ void Engine::Graphics::D3D11Core::BeginFrame() {
     for (auto const& obj : _obj)
         obj->Render(context);
 
-    //D3D11CubeMap::Render(context);
+    //_cubemap->Render(context);
+
+    _defContexts[0]->ResolveSubresource(_resolvedBuffer.Get(), 0, _renderBuffer.Get(), 0, DXGI_FORMAT_R16G16B16A16_FLOAT);
+    context.OMSetRenderTargets(1u, _finalRTV.GetAddressOf(), nullptr);
+    _defContexts[0]->ClearRenderTargetView(_finalRTV.Get(), clear_color);
+    for (auto const& obj : _obj)
+        obj->RenderTest(context, _resolvedSRV.GetAddressOf());
+
+    //_fullscreenFilter->Render(context, _resolvedSRV.GetAddressOf(), _finalRTV.GetAddressOf());
+
+    _defContexts[1]->ResolveSubresource(_backBuffers.Get(), 0, _imguiBuffer.Get(), 0, DXGI_FORMAT_R8G8B8A8_UNORM);
 }
 
 void Engine::Graphics::D3D11Core::EndFrame() {

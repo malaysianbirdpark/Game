@@ -1,5 +1,5 @@
 struct PS_IN {
-    float4 world_pos : POSITION;
+    float3 world_pos : POSITION;
     float2 texcoord  : TEXCOORD;
 };
 

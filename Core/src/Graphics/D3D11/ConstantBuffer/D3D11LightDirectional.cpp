@@ -20,19 +20,16 @@ Engine::Graphics::D3D11LightDirectional::D3D11LightDirectional(ID3D11Device& dev
     device.CreateBuffer(&bd, &sd, _resource.ReleaseAndGetAddressOf());
 }
 
-void Engine::Graphics::D3D11LightDirectional::ImGuiShowEditWindow() {
+void Engine::Graphics::D3D11LightDirectional::Update() {
+    int interacted {};
     if (ImGui::Begin("Directional Light")) {
         ImGui::Text("Color");
-        ImGui::ColorPicker3("Color", &_info._diffuseColor.x);
+        interacted += ImGui::ColorPicker3("Color", &_info._diffuseColor.x);
 
         ImGui::Text("Direction");
-        ImGui::SliderFloat3("XYZ", &_info._dir.x, -1.0f, 1.0f);
+        interacted += ImGui::SliderFloat3("XYZ", &_info._dir.x, -1.0f, 1.0f);
     }
     ImGui::End();
-}
-
-void Engine::Graphics::D3D11LightDirectional::Update() {
-    ImGuiShowEditWindow();
 }
 
 void Engine::Graphics::D3D11LightDirectional::Upload(ID3D11DeviceContext& context) {

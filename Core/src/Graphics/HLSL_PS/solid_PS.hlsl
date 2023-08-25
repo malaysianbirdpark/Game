@@ -1,5 +1,5 @@
 struct PS_IN {
-    float4 world_pos : POSITION;
+    float3 world_pos : POSITION;
 };
 
 struct PS_OUT {
@@ -10,7 +10,7 @@ PS_OUT main(PS_IN input)
 {
     PS_OUT output;
 
-    output.color = input.world_pos;
+    output.color = float4(input.world_pos, 1.0f);
 
     return output;
 }
