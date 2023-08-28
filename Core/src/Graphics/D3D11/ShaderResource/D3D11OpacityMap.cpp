@@ -28,12 +28,20 @@ Engine::Graphics::D3D11OpacityMap::D3D11OpacityMap(ID3D11Device& device, char co
     );
 }
 
-std::shared_ptr<Engine::Graphics::D3D11OpacityMap> Engine::Graphics::D3D11OpacityMap::CreateOpacityMap(ID3D11Device& device, char const* path) {
+std::shared_ptr<Engine::Graphics::D3D11OpacityMap> Engine::Graphics::D3D11OpacityMap::Create(ID3D11Device& device, char const* path) {
     return std::move(MakeShared<D3D11OpacityMap>(device, path));
 }
 
 void Engine::Graphics::D3D11OpacityMap::Bind(ID3D11DeviceContext& context) const {
     context.PSSetShaderResources(5u, 1u, _srv.GetAddressOf());
+}
+
+Engine::x_string Engine::Graphics::D3D11OpacityMap::GetDescription() const {
+    return {"Opacity Map"};
+}
+
+int32_t Engine::Graphics::D3D11OpacityMap::GetTypeID() const {
+    return 5;
 }
 
 Engine::x_string Engine::Graphics::D3D11OpacityMap::GenUID(char const* path) {

@@ -45,7 +45,7 @@ namespace Engine::Graphics {
             DirectX::XMFLOAT2 _uv2d;
         };
     private:
-        inline static x_unordered_map<x_string, size_t> _strideTable {
+        inline static x_unordered_map<x_string, UINT> _strideTable {
             {"1p", sizeof(_1P)},
             {"1p1n", sizeof(_1P1N)},
             {"1p1n1uv", sizeof(_1P1N1UV)},
@@ -60,7 +60,7 @@ namespace Engine::Graphics {
             {"1p1n1t", &D3D11VertexAttribute::ParseVertex_1P1N1T},
             {"1p1n1t1uv", &D3D11VertexAttribute::ParseVertex_1P1N1T1UV},
         };
-    private:
+    public:
         inline static x_vector<D3D11_INPUT_ELEMENT_DESC> _1pLayout {
             {"POSITION", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, 0u, D3D11_INPUT_PER_VERTEX_DATA, 0u}
         };

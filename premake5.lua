@@ -26,7 +26,6 @@ project "Core"
     }
     includedirs {
         "%{prj.name}/src/",
-        "%{prj.name}/vendor/spdlog/include",
     }
 
     links {
@@ -35,8 +34,6 @@ project "Core"
         "dxguid",
         "D3DCompiler",
     }
-
-    nuget { "Microsoft.Direct3D.D3D12:1.610.3" }
 
     optimize "Speed"
 

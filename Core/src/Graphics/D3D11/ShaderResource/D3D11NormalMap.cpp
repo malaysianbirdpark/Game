@@ -28,12 +28,20 @@ Engine::Graphics::D3D11NormalMap::D3D11NormalMap(ID3D11Device& device, char cons
     );
 }
 
-std::shared_ptr<Engine::Graphics::D3D11NormalMap> Engine::Graphics::D3D11NormalMap::CreateNormalMap(ID3D11Device& device, char const* path) {
+std::shared_ptr<Engine::Graphics::D3D11NormalMap> Engine::Graphics::D3D11NormalMap::Create(ID3D11Device& device, char const* path) {
     return std::move(MakeShared<D3D11NormalMap>(device, path));
 }
 
 void Engine::Graphics::D3D11NormalMap::Bind(ID3D11DeviceContext& context) const {
     context.PSSetShaderResources(3u, 1u, _srv.GetAddressOf());
+}
+
+Engine::x_string Engine::Graphics::D3D11NormalMap::GetDescription() const {
+    return {"Normal Map"};
+}
+
+int32_t Engine::Graphics::D3D11NormalMap::GetTypeID() const {
+    return 3;
 }
 
 Engine::x_string Engine::Graphics::D3D11NormalMap::GenUID(char const* path) {

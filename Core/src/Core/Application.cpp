@@ -3,20 +3,21 @@
 
 #include "Platform/Platform.h"
 #include "Platform/Input.h"
-#include "Graphics/GraphicsContext.h"
 #include "Graphics/D3DCamera.h"
 #include "Graphics/GUI/D3D11ImGuiRenderer.h"
 
 #include "Utils/Clk.h"
 
+#include "Graphics/D3D11/D3D11Core.h"
+
 Engine::Core::Application::Application() {
-    width = 800;
-    height = 450;
+    width = 1600;
+    height = 900;
     Platform::Init(width, height);
-    _gfx = MakeUnique<Graphics::GraphicsContext>(width, height, Platform::GetNativeWnd(), true);
 
     // camera
     Graphics::D3DCamera::Init();
+    _gfx = std::make_unique<Graphics::D3D11Core>(width, height, Platform::GetNativeWnd(), true);
 
     Clk::Init();
 
@@ -33,7 +34,6 @@ int Engine::Core::Application::Run() {
             return *ecode;
 
         auto const dt {Clk::Mark()};
-
 
         _gfx->BeginFrame();
         ProcessInput(dt);

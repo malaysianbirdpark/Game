@@ -2,8 +2,7 @@
 
 namespace Engine {
     namespace Graphics {
-        class GraphicsContext;
-        class D3D11SceneGraph;
+        class D3D11Core;
     }
 }
 
@@ -24,7 +23,8 @@ namespace Engine::Core {
         inline static int width {};
         inline static int height {};
     private:
-        std::unique_ptr<Graphics::GraphicsContext>  _gfx;
+        //Graphics::GraphicsCore  _gfx;
+        std::unique_ptr<Graphics::D3D11Core> _gfx;
     };
 
     [[nodiscard]] Application* CreateApp();

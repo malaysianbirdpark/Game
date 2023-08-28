@@ -1,55 +1,38 @@
 #pragma once
 
-#include "Graphics/D3D11/ConstantBuffer/D3D11ConstantBuffer.h"
-
 namespace Engine::Graphics {
     class D3D11PipelineStateObject;
     class D3D11RootSignature;
     class D3D11RenderObject;
 
     class D3D11Core {
-        enum {
-            NUM_DEF_CONTEXTS = 2,
-            IMGUI_CONTEXT = NUM_DEF_CONTEXTS - 1
-        };
     public:
         D3D11Core(int width, int height, HWND native_wnd, bool windowed);
         ~D3D11Core();
 
-        void Update(float const dt, DirectX::XMMATRIX const& view);
+        void Update(float const dt);
 
         void BeginFrame();
         void EndFrame();
 
         void AddScene();
 
-        [[nodiscard]] DirectX::XMMATRIX GetProj();
+        [[nodiscard]] static DirectX::XMMATRIX GetProj();
 
-        ID3D11Device& Device() { return *_device.Get(); }
+        static ID3D11Device& Device() { return *_device.Get(); }
+        //static int32_t&      RasterizerState() { return _selectedRS; }
     private:
-        WindowInfo          _windowInfo;
-        DirectX::XMFLOAT4X4 _proj;
+        void InitData();
     private:
-        Microsoft::WRL::ComPtr<ID3D11Device>             _device;
-        Microsoft::WRL::ComPtr<ID3D11DeviceContext>      _immContext;
-        x_array<Microsoft::WRL::ComPtr<ID3D11DeviceContext>, NUM_DEF_CONTEXTS>
-                                                         _defContexts;
+        WindowInfo                        _windowInfo;
+        inline static DirectX::XMFLOAT4X4 _proj;
+    private:
+        inline static Microsoft::WRL::ComPtr<ID3D11Device>     _device;
+        Microsoft::WRL::ComPtr<ID3D11DeviceContext>            _immContext;
 
-        Microsoft::WRL::ComPtr<IDXGISwapChain>           _swapChain;
-        Microsoft::WRL::ComPtr<ID3D11Resource>           _backBuffers;
-        Microsoft::WRL::ComPtr<ID3D11RenderTargetView>   _backBufferView;
-
-        Microsoft::WRL::ComPtr<ID3D11RasterizerState>    _rasterizerState;
-        Microsoft::WRL::ComPtr<ID3D11DepthStencilView>   _depthStencilView;
-
-        D3D11_VIEWPORT                                   _viewPort {};
-
-        x_vector<std::shared_ptr<D3D11RenderObject>>     _obj; 
-
-        std::unique_ptr<class D3D11Sampler>              _sampler;
-
-        x_vector<D3D11ConstantBuffer>                    _lights;
-        x_vector<D3D11ConstantBuffer>                    _globalCB;
+        Microsoft::WRL::ComPtr<IDXGISwapChain>                 _swapChain;
+    private:
+        std::unique_ptr<struct D3D11RenderData>                _data;
     };
 }
 

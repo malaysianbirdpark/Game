@@ -1,518 +1,600 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="src">
-      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    <Filter Include="Core">
+      <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Core">
-      <UniqueIdentifier>{A5D31CCF-91A0-77DA-BAB9-6582A6E5AC68}</UniqueIdentifier>
+    <Filter Include="DSAL">
+      <UniqueIdentifier>{09C3837C-F5F9-840D-9EE6-6A108AFC000F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\DSAL">
-      <UniqueIdentifier>{80E21CCF-6CAF-77DA-95C8-658281F4AC68}</UniqueIdentifier>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{1653CE33-0220-293F-2B39-17E717655ECD}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Graphics">
-      <UniqueIdentifier>{0D564864-F9B8-D708-A23E-10BF8E80A38B}</UniqueIdentifier>
+    <Filter Include="Graphics\D3D11">
+      <UniqueIdentifier>{82E20F88-6EB0-038E-5744-74B443B1DFF2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Graphics\D3D11">
-      <UniqueIdentifier>{B902F4E5-A5E6-B43B-0E47-AF8EFA499FBD}</UniqueIdentifier>
+    <Filter Include="Graphics\D3D11\ConstantBuffer">
+      <UniqueIdentifier>{95B306B6-01CC-EDDF-CA78-7D7936508279}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Graphics\D3D11\ConstantBuffer">
-      <UniqueIdentifier>{ECF69173-5865-E7F2-A14E-A2F20DFCDC8E}</UniqueIdentifier>
+    <Filter Include="Graphics\D3D11\Effect">
+      <UniqueIdentifier>{FE43E0E2-6AB0-9BDD-33A4-333B9FCFBD45}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Graphics\D3D11\GeometryPipeline">
-      <UniqueIdentifier>{2A2D5794-96E6-C13E-1F46-DC188BFE77AE}</UniqueIdentifier>
+    <Filter Include="Graphics\D3D11\GeometryPipeline">
+      <UniqueIdentifier>{13B8ED46-7F9B-FC86-889E-2AC3F400C3D7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Graphics\D3D11\PipelineState">
-      <UniqueIdentifier>{7F933592-6BE4-20D4-9448-0F9680F8B33D}</UniqueIdentifier>
+    <Filter Include="Graphics\D3D11\PipelineState">
+      <UniqueIdentifier>{08DF40B3-F499-305F-9D51-A9A989EB7AEF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Graphics\D3D11\RenderStrategy">
-      <UniqueIdentifier>{5B437905-C7B1-CE84-109B-89847C48C420}</UniqueIdentifier>
+    <Filter Include="Graphics\D3D11\RenderObject">
+      <UniqueIdentifier>{88E1E509-F4EE-13F0-7DD5-0FDBE9E1DFA6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Graphics\D3D11\SceneGraph">
-      <UniqueIdentifier>{C85EFC1D-3477-E347-FD23-73E169FB77E1}</UniqueIdentifier>
+    <Filter Include="Graphics\D3D11\RenderPass">
+      <UniqueIdentifier>{681513FB-D4D7-4685-1D88-D51189891F63}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Graphics\D3D11\ShaderResource">
-      <UniqueIdentifier>{27BAE246-9328-38C6-DC11-F3C548BF2D62}</UniqueIdentifier>
+    <Filter Include="Graphics\D3D11\RenderStrategy">
+      <UniqueIdentifier>{0400EE47-7018-D571-39C5-640BA59C690B}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Graphics\D3D11\TEMP">
-      <UniqueIdentifier>{9E5DD11B-0A95-19B3-139F-7DD67F5540AC}</UniqueIdentifier>
+    <Filter Include="Graphics\D3D11\SceneGraph">
+      <UniqueIdentifier>{F12EA3C6-5DF1-D650-A6A1-65DD12A3AF2E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Graphics\GUI">
-      <UniqueIdentifier>{A193895D-8D8C-A8AF-B6BE-8D34A21688BB}</UniqueIdentifier>
+    <Filter Include="Graphics\D3D11\ShaderResource">
+      <UniqueIdentifier>{D0765789-3C8F-3EB3-053C-CE4C7113D34C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Graphics\HLSL">
-      <UniqueIdentifier>{6F6FBC0E-DB85-BAA4-24FD-45C690528B2C}</UniqueIdentifier>
+    <Filter Include="Graphics\GUI">
+      <UniqueIdentifier>{2AED684A-1650-F8EE-BFD5-30A5AB17C471}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Memory">
-      <UniqueIdentifier>{F56D3C20-E125-7E6D-4A2D-57C93604195E}</UniqueIdentifier>
+    <Filter Include="Graphics\HLSL">
+      <UniqueIdentifier>{18FA8697-84BA-02CE-4DF5-4B4BB97447AA}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Platform">
-      <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
+    <Filter Include="Graphics\HLSL_PS">
+      <UniqueIdentifier>{DA81EB3A-C67A-0A8D-EFAC-EF11DB04EA98}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Thread">
-      <UniqueIdentifier>{F464C930-E01C-0B7E-4924-E4D935FBA56E}</UniqueIdentifier>
+    <Filter Include="Graphics\HLSL_VS">
+      <UniqueIdentifier>{A082EB3A-8C7B-0A8D-B5AD-EF11A105EA98}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Utils">
-      <UniqueIdentifier>{4D9AFFB3-B904-B42A-0243-65D06EEC917F}</UniqueIdentifier>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{BE94DDC2-AA36-0899-93F1-1BED7F328FE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{BD8B6AD3-A92D-95A9-92E8-A8FD7E291CFA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{F68B420E-62A0-6ABF-2B22-0E1F97F566F0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Application.h">
-      <Filter>src\Core</Filter>
+      <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Core.h">
-      <Filter>src\Core</Filter>
+      <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Log.h">
-      <Filter>src\Core</Filter>
+      <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="src\DSAL\x_circular_queue.h">
-      <Filter>src\DSAL</Filter>
+      <Filter>DSAL</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EntryPoint.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11CamPosition.h">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
-    </ClInclude>
+    <ClInclude Include="src\Engine.h" />
+    <ClInclude Include="src\EntryPoint.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11ConstantBuffer.h">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightDirectional.h">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11DirectionalLight.h">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightPoint.h">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11GlobalConstants.h">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11HemisphericAmbientLight.h">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightSpot.h">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11PhongConstant.h">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11PhongConstants.h">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11PointLight.h">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11SolidConstant.h">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformMVP.h">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11UnrealPBRConstants.h">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11VertexShaderConstants.h">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\D3D11Core.h">
-      <Filter>src\Graphics\D3D11</Filter>
+      <Filter>Graphics\D3D11</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\D3D11CubeMap.h">
-      <Filter>src\Graphics\D3D11</Filter>
+    <ClInclude Include="src\Graphics\D3D11\D3D11Cubemap.h">
+      <Filter>Graphics\D3D11</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\D3D11PostProcessing.h">
-      <Filter>src\Graphics\D3D11</Filter>
+    <ClInclude Include="src\Graphics\D3D11\D3D11FullScreenFilter.h">
+      <Filter>Graphics\D3D11</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\D3D11RenderObject.h">
-      <Filter>src\Graphics\D3D11</Filter>
+    <ClInclude Include="src\Graphics\D3D11\D3D11RenderCommand.h">
+      <Filter>Graphics\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\D3D11RenderData.h">
+      <Filter>Graphics\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\D3D11RenderTarget.h">
+      <Filter>Graphics\D3D11</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\D3D11Sampler.h">
-      <Filter>src\Graphics\D3D11</Filter>
+      <Filter>Graphics\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\Effect\D3D11Effect.h">
+      <Filter>Graphics\D3D11\Effect</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\GeometryPipeline\D3D11BillBoard.h">
-      <Filter>src\Graphics\D3D11\GeometryPipeline</Filter>
+      <Filter>Graphics\D3D11\GeometryPipeline</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\GeometryPipeline\D3D11Tessellation.h">
-      <Filter>src\Graphics\D3D11\GeometryPipeline</Filter>
+      <Filter>Graphics\D3D11\GeometryPipeline</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.h">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+      <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.h">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+      <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateCommon.h">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+      <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateHolder.h">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+      <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateObject.h">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+      <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.h">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+      <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.h">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+      <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11BasicIBLStrategy.h">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11ConcreteLight.h">
+      <Filter>Graphics\D3D11\RenderObject</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11BasicIBLTexturedStrategy.h">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11RenderObject.h">
+      <Filter>Graphics\D3D11\RenderObject</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11EnvironmentMappingNormalStrategy.h">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11EnvironmentMappingReflectStrategy.h">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+    <ClInclude Include="src\Graphics\D3D11\RenderPass\D3D11RenderPass.h">
+      <Filter>Graphics\D3D11\RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.h">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongTexStrategy.h">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+      <Filter>Graphics\D3D11\RenderStrategy</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11RenderStrategy.h">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+      <Filter>Graphics\D3D11\RenderStrategy</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11SolidStrategy.h">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+      <Filter>Graphics\D3D11\RenderStrategy</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11SolidTexturedStrategy.h">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+    <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11UnrealPBRStrategy.h">
+      <Filter>Graphics\D3D11\RenderStrategy</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11IndexBuffer.h">
-      <Filter>src\Graphics\D3D11\SceneGraph</Filter>
+      <Filter>Graphics\D3D11\SceneGraph</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11MeshDataHolder.h">
-      <Filter>src\Graphics\D3D11\SceneGraph</Filter>
+      <Filter>Graphics\D3D11\SceneGraph</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11SceneGraph.h">
-      <Filter>src\Graphics\D3D11\SceneGraph</Filter>
+      <Filter>Graphics\D3D11\SceneGraph</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11SceneMan.h">
-      <Filter>src\Graphics\D3D11\SceneGraph</Filter>
+    <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11SceneHolder.h">
+      <Filter>Graphics\D3D11\SceneGraph</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11VertexAttribute.h">
-      <Filter>src\Graphics\D3D11\SceneGraph</Filter>
+      <Filter>Graphics\D3D11\SceneGraph</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\SceneGraph\D3D11VertexBuffer.h">
-      <Filter>src\Graphics\D3D11\SceneGraph</Filter>
+      <Filter>Graphics\D3D11\SceneGraph</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseCubemapTexture.h">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11AmbientOcclusionMap.h">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11BRDFLut.h">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11CubemapTexture.h">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseMap.h">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11EmissiveMap.h">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11GlossinessMap.h">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11HeightMap.h">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11MetallicMap.h">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11NormalMap.h">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11OpacityMap.h">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11ReflectionMap.h">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11RoughnessMap.h">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11ShaderResource.h">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularCubemapTexture.h">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularMap.h">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\TEMP\Triangle.h">
-      <Filter>src\Graphics\D3D11\TEMP</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3DCamera.h">
-      <Filter>src\Graphics</Filter>
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\GUI\D3D11ImGuiFileBrowser.h">
+      <Filter>Graphics\GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\GUI\D3D11ImGuiRenderer.h">
-      <Filter>src\Graphics\GUI</Filter>
+      <Filter>Graphics\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\GraphicsContext.h">
-      <Filter>src\Graphics</Filter>
+    <ClInclude Include="src\Graphics\GraphicsCore.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Memory\MemoryAllocator.h">
-      <Filter>src\Memory</Filter>
+      <Filter>Memory</Filter>
     </ClInclude>
     <ClInclude Include="src\Memory\MemoryLib.h">
-      <Filter>src\Memory</Filter>
+      <Filter>Memory</Filter>
     </ClInclude>
     <ClInclude Include="src\Memory\MemoryPool.h">
-      <Filter>src\Memory</Filter>
+      <Filter>Memory</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Input.h">
-      <Filter>src\Platform</Filter>
+      <Filter>Platform</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Platform.h">
-      <Filter>src\Platform</Filter>
+      <Filter>Platform</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\WindowsInclude.h">
-      <Filter>src\Platform</Filter>
+      <Filter>Platform</Filter>
     </ClInclude>
     <ClInclude Include="src\Thread\DeadLockProfiler.h">
-      <Filter>src\Thread</Filter>
+      <Filter>Thread</Filter>
     </ClInclude>
     <ClInclude Include="src\Thread\GlobalQueue.h">
-      <Filter>src\Thread</Filter>
+      <Filter>Thread</Filter>
     </ClInclude>
     <ClInclude Include="src\Thread\Job.h">
-      <Filter>src\Thread</Filter>
+      <Filter>Thread</Filter>
     </ClInclude>
     <ClInclude Include="src\Thread\JobQueue.h">
-      <Filter>src\Thread</Filter>
+      <Filter>Thread</Filter>
     </ClInclude>
     <ClInclude Include="src\Thread\Lock.h">
-      <Filter>src\Thread</Filter>
+      <Filter>Thread</Filter>
     </ClInclude>
     <ClInclude Include="src\Thread\LockQueue.h">
-      <Filter>src\Thread</Filter>
+      <Filter>Thread</Filter>
     </ClInclude>
     <ClInclude Include="src\Thread\ThreadMan.h">
-      <Filter>src\Thread</Filter>
+      <Filter>Thread</Filter>
     </ClInclude>
     <ClInclude Include="src\Utils\Clk.h">
-      <Filter>src\Utils</Filter>
+      <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="src\pch.h">
-      <Filter>src</Filter>
-    </ClInclude>
+    <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
-      <Filter>src\Core</Filter>
+      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Log.cpp">
-      <Filter>src\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11CamPosition.cpp">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
+      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11ConstantBuffer.cpp">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightDirectional.cpp">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11DirectionalLight.cpp">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightPoint.cpp">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11GlobalConstants.cpp">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11HemisphericAmbientLight.cpp">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightSpot.cpp">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11PhongConstant.cpp">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11PhongConstants.cpp">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11PointLight.cpp">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11SolidConstant.cpp">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformMVP.cpp">
-      <Filter>src\Graphics\D3D11\ConstantBuffer</Filter>
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11UnrealPBRConstants.cpp">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11VertexShaderConstants.cpp">
+      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\D3D11Core.cpp">
-      <Filter>src\Graphics\D3D11</Filter>
+      <Filter>Graphics\D3D11</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\D3D11CubeMap.cpp">
-      <Filter>src\Graphics\D3D11</Filter>
+    <ClCompile Include="src\Graphics\D3D11\D3D11Cubemap.cpp">
+      <Filter>Graphics\D3D11</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\D3D11PostProcessing.cpp">
-      <Filter>src\Graphics\D3D11</Filter>
+    <ClCompile Include="src\Graphics\D3D11\D3D11FullScreenFilter.cpp">
+      <Filter>Graphics\D3D11</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\D3D11RenderObject.cpp">
-      <Filter>src\Graphics\D3D11</Filter>
+    <ClCompile Include="src\Graphics\D3D11\D3D11RenderCommand.cpp">
+      <Filter>Graphics\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\D3D11RenderData.cpp">
+      <Filter>Graphics\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\D3D11RenderTarget.cpp">
+      <Filter>Graphics\D3D11</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\D3D11Sampler.cpp">
-      <Filter>src\Graphics\D3D11</Filter>
+      <Filter>Graphics\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\Effect\D3D11Effect.cpp">
+      <Filter>Graphics\D3D11\Effect</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\GeometryPipeline\D3D11BillBoard.cpp">
-      <Filter>src\Graphics\D3D11\GeometryPipeline</Filter>
+      <Filter>Graphics\D3D11\GeometryPipeline</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\GeometryPipeline\D3D11Tessellation.cpp">
-      <Filter>src\Graphics\D3D11\GeometryPipeline</Filter>
+      <Filter>Graphics\D3D11\GeometryPipeline</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.cpp">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+      <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.cpp">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+      <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateHolder.cpp">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+      <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateObject.cpp">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+      <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.cpp">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+      <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.cpp">
-      <Filter>src\Graphics\D3D11\PipelineState</Filter>
+      <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11BasicIBLStrategy.cpp">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11ConcreteLight.cpp">
+      <Filter>Graphics\D3D11\RenderObject</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11BasicIBLTexturedStrategy.cpp">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11RenderObject.cpp">
+      <Filter>Graphics\D3D11\RenderObject</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11EnvironmentMappingNormalStrategy.cpp">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11EnvironmentMappingReflectStrategy.cpp">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+    <ClCompile Include="src\Graphics\D3D11\RenderPass\D3D11RenderPass.cpp">
+      <Filter>Graphics\D3D11\RenderPass</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.cpp">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongTexStrategy.cpp">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+      <Filter>Graphics\D3D11\RenderStrategy</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11RenderStrategy.cpp">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+      <Filter>Graphics\D3D11\RenderStrategy</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11SolidStrategy.cpp">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+      <Filter>Graphics\D3D11\RenderStrategy</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11SolidTexturedStrategy.cpp">
-      <Filter>src\Graphics\D3D11\RenderStrategy</Filter>
+    <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11UnrealPBRStrategy.cpp">
+      <Filter>Graphics\D3D11\RenderStrategy</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11IndexBuffer.cpp">
-      <Filter>src\Graphics\D3D11\SceneGraph</Filter>
+      <Filter>Graphics\D3D11\SceneGraph</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11MeshDataHolder.cpp">
-      <Filter>src\Graphics\D3D11\SceneGraph</Filter>
+      <Filter>Graphics\D3D11\SceneGraph</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11SceneGraph.cpp">
-      <Filter>src\Graphics\D3D11\SceneGraph</Filter>
+      <Filter>Graphics\D3D11\SceneGraph</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11SceneMan.cpp">
-      <Filter>src\Graphics\D3D11\SceneGraph</Filter>
+    <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11SceneHolder.cpp">
+      <Filter>Graphics\D3D11\SceneGraph</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11VertexAttribute.cpp">
-      <Filter>src\Graphics\D3D11\SceneGraph</Filter>
+      <Filter>Graphics\D3D11\SceneGraph</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\SceneGraph\D3D11VertexBuffer.cpp">
-      <Filter>src\Graphics\D3D11\SceneGraph</Filter>
+      <Filter>Graphics\D3D11\SceneGraph</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseCubemapTexture.cpp">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11AmbientOcclusionMap.cpp">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11BRDFLut.cpp">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11CubemapTexture.cpp">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseMap.cpp">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11EmissiveMap.cpp">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11GlossinessMap.cpp">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11HeightMap.cpp">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11MetallicMap.cpp">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11NormalMap.cpp">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11OpacityMap.cpp">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11ReflectionMap.cpp">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11RoughnessMap.cpp">
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11ShaderResource.cpp">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularCubemapTexture.cpp">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11SpecularMap.cpp">
-      <Filter>src\Graphics\D3D11\ShaderResource</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\TEMP\Triangle.cpp">
-      <Filter>src\Graphics\D3D11\TEMP</Filter>
+      <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3DCamera.cpp">
-      <Filter>src\Graphics</Filter>
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\GUI\D3D11ImGuiFileBrowser.cpp">
+      <Filter>Graphics\GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\GUI\D3D11ImGuiRenderer.cpp">
-      <Filter>src\Graphics\GUI</Filter>
+      <Filter>Graphics\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\GraphicsContext.cpp">
-      <Filter>src\Graphics</Filter>
+    <ClCompile Include="src\Graphics\GraphicsCore.cpp">
+      <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Memory\MemoryAllocator.cpp">
-      <Filter>src\Memory</Filter>
+      <Filter>Memory</Filter>
     </ClCompile>
     <ClCompile Include="src\Memory\MemoryLib.cpp">
-      <Filter>src\Memory</Filter>
+      <Filter>Memory</Filter>
     </ClCompile>
     <ClCompile Include="src\Memory\MemoryPool.cpp">
-      <Filter>src\Memory</Filter>
+      <Filter>Memory</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Input.cpp">
-      <Filter>src\Platform</Filter>
+      <Filter>Platform</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Platform.cpp">
-      <Filter>src\Platform</Filter>
+      <Filter>Platform</Filter>
     </ClCompile>
     <ClCompile Include="src\Thread\DeadLockProfiler.cpp">
-      <Filter>src\Thread</Filter>
+      <Filter>Thread</Filter>
     </ClCompile>
     <ClCompile Include="src\Thread\GlobalQueue.cpp">
-      <Filter>src\Thread</Filter>
+      <Filter>Thread</Filter>
     </ClCompile>
     <ClCompile Include="src\Thread\JobQueue.cpp">
-      <Filter>src\Thread</Filter>
+      <Filter>Thread</Filter>
     </ClCompile>
     <ClCompile Include="src\Thread\Lock.cpp">
-      <Filter>src\Thread</Filter>
+      <Filter>Thread</Filter>
     </ClCompile>
     <ClCompile Include="src\Thread\ThreadMan.cpp">
-      <Filter>src\Thread</Filter>
+      <Filter>Thread</Filter>
     </ClCompile>
     <ClCompile Include="src\Utils\Clk.cpp">
-      <Filter>src\Utils</Filter>
+      <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="src\pch.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
+    <ClCompile Include="src\pch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Graphics\HLSL\basic_ibl_PS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+      <Filter>Graphics\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="src\Graphics\HLSL\basic_ibl_VS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+      <Filter>Graphics\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="src\Graphics\HLSL\basic_ibl_tex_PS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+      <Filter>Graphics\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="src\Graphics\HLSL\basic_ibl_tex_VS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\cubemap_PS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\cubemap_VS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+      <Filter>Graphics\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="src\Graphics\HLSL\environmapping_normal_PS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+      <Filter>Graphics\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="src\Graphics\HLSL\environmapping_normal_VS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+      <Filter>Graphics\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="src\Graphics\HLSL\environmapping_reflect_PS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+      <Filter>Graphics\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="src\Graphics\HLSL\environmapping_reflect_VS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+      <Filter>Graphics\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\phong_PS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+    <FxCompile Include="src\Graphics\HLSL_PS\cubemap_PS.hlsl">
+      <Filter>Graphics\HLSL_PS</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\phong_VS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+    <FxCompile Include="src\Graphics\HLSL_PS\fullscreen_blur_PS.hlsl">
+      <Filter>Graphics\HLSL_PS</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\phong_tex_PS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+    <FxCompile Include="src\Graphics\HLSL_PS\phong_PS.hlsl">
+      <Filter>Graphics\HLSL_PS</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\phong_tex_VS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+    <FxCompile Include="src\Graphics\HLSL_PS\point_light_PS.hlsl">
+      <Filter>Graphics\HLSL_PS</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\solid_PS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+    <FxCompile Include="src\Graphics\HLSL_PS\post_null_PS.hlsl">
+      <Filter>Graphics\HLSL_PS</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\solid_VS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+    <FxCompile Include="src\Graphics\HLSL_PS\solid_PS.hlsl">
+      <Filter>Graphics\HLSL_PS</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\solid_tex_PS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+    <FxCompile Include="src\Graphics\HLSL_PS\unreal_pbr_PS.hlsl">
+      <Filter>Graphics\HLSL_PS</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL\solid_tex_VS.hlsl">
-      <Filter>src\Graphics\HLSL</Filter>
+    <FxCompile Include="src\Graphics\HLSL_VS\fullscreen_filter_VS.hlsl">
+      <Filter>Graphics\HLSL_VS</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <FxCompile Include="src\Graphics\HLSL_VS\phong_VS.hlsl">
+      <Filter>Graphics\HLSL_VS</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_VS.hlsl">
+      <Filter>Graphics\HLSL_VS</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_VS.hlsl">
+      <Filter>Graphics\HLSL_VS</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tan_VS.hlsl">
+      <Filter>Graphics\HLSL_VS</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tan_tex_VS.hlsl">
+      <Filter>Graphics\HLSL_VS</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tex_VS.hlsl">
+      <Filter>Graphics\HLSL_VS</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tex_height_VS.hlsl">
+      <Filter>Graphics\HLSL_VS</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\pos_tex_VS.hlsl">
+      <Filter>Graphics\HLSL_VS</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\solid_VS.hlsl">
+      <Filter>Graphics\HLSL_VS</Filter>
+    </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_VS\unreal_pbr_VS.hlsl">
+      <Filter>Graphics\HLSL_VS</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
