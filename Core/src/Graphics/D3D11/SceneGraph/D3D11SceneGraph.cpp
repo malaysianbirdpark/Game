@@ -14,7 +14,13 @@
 #include "D3D11MeshDataHolder.h"
 
 Engine::Graphics::D3D11Material::D3D11Material(ID3D11Device& device)
-    : _vertexShaderConstants{device}, _phongConstants{device}, _textureTypes{}
+    : _vertexShaderConstants{device}, _phongConstants{device}, _solidConstants{device}, _unrealPBRConstants{device}, _textureTypes{}
+{
+}
+
+Engine::Graphics::D3D11Material::D3D11Material(D3D11Material const& other)
+    : _vertexShaderConstants{other._vertexShaderConstants}, _phongConstants{other._phongConstants}, _unrealPBRConstants{other._unrealPBRConstants},
+      _solidConstants{other._solidConstants}, _srs{other._srs}, _textureTypes{other._textureTypes}
 {
 }
 
@@ -22,8 +28,16 @@ Engine::x_vector<Engine::Graphics::D3D11ShaderResource> const& Engine::Graphics:
     return _srs;
 }
 
-Engine::Graphics::D3D11PhongMaterialConstants* const Engine::Graphics::D3D11Material::GetPhongConstants() {
+Engine::Graphics::D3D11PhongConstants* const Engine::Graphics::D3D11Material::GetPhongConstants() {
     return &_phongConstants;
+}
+
+Engine::Graphics::D3D11UnrealPBRConstants* const Engine::Graphics::D3D11Material::GetUnrealPBRConstants() {
+    return &_unrealPBRConstants;
+}
+
+Engine::Graphics::D3D11SolidConstants* const Engine::Graphics::D3D11Material::GetSolidConstants() {
+    return &_solidConstants;
 }
 
 Engine::Graphics::D3D11VertexShaderConstants* const Engine::Graphics::D3D11Material::GetVSConstants() {
@@ -34,12 +48,28 @@ void Engine::Graphics::D3D11Material::BindVertexShaderConstants(ID3D11DeviceCont
     _vertexShaderConstants.Bind(context);
 }
 
+void Engine::Graphics::D3D11Material::BindSolid(ID3D11DeviceContext& context) {
+    _solidConstants.Bind(context);
+}
+
 void Engine::Graphics::D3D11Material::BindPhong(ID3D11DeviceContext& context) {
     _phongConstants.Bind(context);
 }
 
+void Engine::Graphics::D3D11Material::BindUnrealPBR(ID3D11DeviceContext& context) {
+    _unrealPBRConstants.Bind(context);
+}
+
 void Engine::Graphics::D3D11Material::CopyPhongConstants(D3D11Material const& source) {
     _phongConstants._params = source._phongConstants._params;
+}
+
+void Engine::Graphics::D3D11Material::CopyUnrealPBRConstants(D3D11Material const& source) {
+    _unrealPBRConstants._params = source._unrealPBRConstants._params;
+}
+
+void Engine::Graphics::D3D11Material::CopySolidConstants(D3D11Material const& source) {
+    _solidConstants._params = source._solidConstants._params;
 }
 
 void Engine::Graphics::D3D11Material::CopyVSConstants(D3D11Material const& source) {
@@ -74,7 +104,12 @@ void Engine::Graphics::D3D11Material::AddOrRelplaceTexture(ID3D11Device& device,
 
 Engine::Graphics::D3D11Mesh::D3D11Mesh(std::shared_ptr<D3D11VertexBuffer>& vertex_buffer,
                                        std::shared_ptr<D3D11IndexBuffer>& index_buffer, D3D11_PRIMITIVE_TOPOLOGY topology)
-        : _vertexBuffer{std::move(vertex_buffer)}, _indexBuffer{std::move(index_buffer)}, _topology{topology}
+        : _vertexBuffer{vertex_buffer}, _indexBuffer{index_buffer}, _topology{topology}
+{
+}
+
+Engine::Graphics::D3D11Mesh::D3D11Mesh(D3D11Mesh const& other)
+    : _vertexBuffer{other._vertexBuffer}, _indexBuffer{other._indexBuffer}, _topology{other._topology}
 {
 }
 
@@ -146,6 +181,19 @@ Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, char co
     _tree.shrink_to_fit();
 }
 
+Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(D3D11SceneGraph const& other)
+    : _mesh{other._mesh}, _material{other._material}, _tree{other._tree},
+      _nodeNames{other._nodeNames}, _nodeId_to_meshId{other._nodeId_to_meshId}, _nodeId_to_materialId{other._nodeId_to_materialId},
+      _nodeId_to_namesId{other._nodeId_to_namesId}, _globalTransforms{other._globalTransforms}, _localTransforms{other._localTransforms}
+{
+    _renderStrategy.resize(other._renderStrategy.size());
+    _transforms.resize(other._transforms.size());
+}
+
+Engine::Graphics::D3D11SceneGraph Engine::Graphics::D3D11SceneGraph::Clone() {
+    return D3D11SceneGraph{*this};
+}
+
 void Engine::Graphics::D3D11SceneGraph::MarkAsTransformed(int32_t node) {
     auto const level {_tree[node]._level};
     _transformed[level].push_back(node);
@@ -156,10 +204,26 @@ void Engine::Graphics::D3D11SceneGraph::MarkAsTransformed(int32_t node) {
 
 void Engine::Graphics::D3D11SceneGraph::MarkAsPhongMaterialEdited(int32_t node) {
     auto const level {_tree[node]._level};
-    _materialEdited[level].push_back(node);
+    _phongMaterialEdited[level].push_back(node);
 
     for (int32_t s {_tree[node]._firstChild}; s != -1; s = _tree[s]._nextSibling)
         MarkAsPhongMaterialEdited(s);
+}
+
+void Engine::Graphics::D3D11SceneGraph::MarkAsUnrealPBRMaterialEdited(int32_t node) {
+    auto const level {_tree[node]._level};
+    _unrealPBRMaterialEdited[level].push_back(node);
+
+    for (int32_t s {_tree[node]._firstChild}; s != -1; s = _tree[s]._nextSibling)
+        MarkAsUnrealPBRMaterialEdited(s);
+}
+
+void Engine::Graphics::D3D11SceneGraph::MarkAsSolidMaterialEdited(int32_t node) {
+    auto const level {_tree[node]._level};
+    _solidMaterialEdited[level].push_back(node);
+
+    for (int32_t s {_tree[node]._firstChild}; s != -1; s = _tree[s]._nextSibling)
+        MarkAsSolidMaterialEdited(s);
 }
 
 void Engine::Graphics::D3D11SceneGraph::MarkAsVSConstantEdited(int32_t node) {
@@ -222,29 +286,90 @@ void Engine::Graphics::D3D11SceneGraph::UpdatePhongMaterialConstants() {
         return;
 
     // For the Root Layer (Their global transforms are always coincide with local transforms)
-    if (!_materialEdited[0].empty()) {
-        auto const cur {_materialEdited[0][0]};
+    if (!_phongMaterialEdited[0].empty()) {
+        auto const cur {_phongMaterialEdited[0][0]};
 
         if (_nodeId_to_materialId.contains(cur))
             _material[_nodeId_to_materialId.at(cur)].CopyPhongConstants(_material[_nodeId_to_materialId.at(_recentlyUpdatedPhongMaterial)]);
 
-        _materialEdited[0].clear();
+        _phongMaterialEdited[0].clear();
     }
     // --------------------------------------------------------------------------------------
 
     using namespace DirectX;
 
     // Iterate for each nodes (all of the nodes have parents)
-    for (int32_t i {1}; i != MAX_NODE_LEVEL && !_materialEdited[i].empty(); ++i) {
-        for (auto const cur : _materialEdited[i]) {
+    for (int32_t i {1}; i != MAX_NODE_LEVEL && !_phongMaterialEdited[i].empty(); ++i) {
+        for (auto const cur : _phongMaterialEdited[i]) {
             if (_nodeId_to_materialId.contains(cur))
                 _material[_nodeId_to_materialId.at(cur)].CopyPhongConstants(_material[_nodeId_to_materialId.at(_recentlyUpdatedPhongMaterial)]);
         }
 
-        _materialEdited[i].clear();
+        _phongMaterialEdited[i].clear();
     }
 
     _recentlyUpdatedPhongMaterial = -1;
+}
+
+void Engine::Graphics::D3D11SceneGraph::UpdateUnrealPBRMaterialConstants() {
+    if (_recentlyUpdatedUnrealPBRMaterial == -1)
+        return;
+
+    // For the Root Layer (Their global transforms are always coincide with local transforms)
+    if (!_unrealPBRMaterialEdited[0].empty()) {
+        auto const cur {_unrealPBRMaterialEdited[0][0]};
+
+        if (_nodeId_to_materialId.contains(cur))
+            _material[_nodeId_to_materialId.at(cur)].CopyUnrealPBRConstants(_material[_nodeId_to_materialId.at(_recentlyUpdatedUnrealPBRMaterial)]);
+
+        _unrealPBRMaterialEdited[0].clear();
+    }
+    // --------------------------------------------------------------------------------------
+
+    using namespace DirectX;
+
+    // Iterate for each nodes (all of the nodes have parents)
+    for (int32_t i {1}; i != MAX_NODE_LEVEL && !_unrealPBRMaterialEdited[i].empty(); ++i) {
+        for (auto const cur : _unrealPBRMaterialEdited[i]) {
+            if (_nodeId_to_materialId.contains(cur))
+                _material[_nodeId_to_materialId.at(cur)].CopyUnrealPBRConstants(_material[_nodeId_to_materialId.at(_recentlyUpdatedUnrealPBRMaterial)]);
+        }
+
+        _unrealPBRMaterialEdited[i].clear();
+    }
+
+    _recentlyUpdatedUnrealPBRMaterial = -1;
+}
+
+void Engine::Graphics::D3D11SceneGraph::UpdateSolidMaterialConstants() {
+    if (_recentlyUpdatedSolidMaterial == -1)
+        return;
+
+    // For the Root Layer (Their global transforms are always coincide with local transforms)
+    if (!_solidMaterialEdited[0].empty()) {
+        auto const cur {_solidMaterialEdited[0][0]};
+
+        if (_nodeId_to_materialId.contains(cur))
+            _material[_nodeId_to_materialId.at(cur)].CopySolidConstants(_material[_nodeId_to_materialId.at(_recentlyUpdatedSolidMaterial)]);
+
+        _solidMaterialEdited[0].clear();
+    }
+    // --------------------------------------------------------------------------------------
+
+    using namespace DirectX;
+
+    // Iterate for each nodes (all of the nodes have parents)
+    for (int32_t i {1}; i != MAX_NODE_LEVEL && !_solidMaterialEdited[i].empty(); ++i) {
+        for (auto const cur : _solidMaterialEdited[i]) {
+            if (_nodeId_to_materialId.contains(cur))
+                _material[_nodeId_to_materialId.at(cur)].CopySolidConstants(_material[_nodeId_to_materialId.at(_recentlyUpdatedSolidMaterial)]);
+        }
+
+        _solidMaterialEdited[i].clear();
+    }
+
+    _recentlyUpdatedSolidMaterial = -1;
+
 }
 
 void Engine::Graphics::D3D11SceneGraph::UpdateVertexShaderConstants() {
@@ -252,26 +377,26 @@ void Engine::Graphics::D3D11SceneGraph::UpdateVertexShaderConstants() {
         return;
 
     // For the Root Layer (Their global transforms are always coincide with local transforms)
-    if (!_materialEdited[0].empty()) {
-        auto const cur {_materialEdited[0][0]};
+    if (!_phongMaterialEdited[0].empty()) {
+        auto const cur {_phongMaterialEdited[0][0]};
 
         if (_nodeId_to_materialId.contains(cur))
             _material[_nodeId_to_materialId.at(cur)].CopyVSConstants(_material[_nodeId_to_materialId.at(_recentlyUpdatedPhongMaterial)]);
 
-        _materialEdited[0].clear();
+        _phongMaterialEdited[0].clear();
     }
     // --------------------------------------------------------------------------------------
 
     using namespace DirectX;
 
     // Iterate for each nodes (all of the nodes have parents)
-    for (int32_t i {1}; i != MAX_NODE_LEVEL && !_materialEdited[i].empty(); ++i) {
-        for (auto const cur : _materialEdited[i]) {
+    for (int32_t i {1}; i != MAX_NODE_LEVEL && !_phongMaterialEdited[i].empty(); ++i) {
+        for (auto const cur : _phongMaterialEdited[i]) {
             if (_nodeId_to_materialId.contains(cur))
                 _material[_nodeId_to_materialId.at(cur)].CopyVSConstants(_material[_nodeId_to_materialId.at(_recentlyUpdatedPhongMaterial)]);
         }
 
-        _materialEdited[i].clear();
+        _phongMaterialEdited[i].clear();
     }
 
     _recentlyUpdatedVSConstants = -1;
@@ -279,7 +404,7 @@ void Engine::Graphics::D3D11SceneGraph::UpdateVertexShaderConstants() {
 }
 
 void Engine::Graphics::D3D11SceneGraph::SetRenderStrategies(int32_t node, int strategy) {
-    _renderStrategies[node] = strategy;
+    _renderStrategy[node] = strategy;
 
     for (int32_t s {_tree[node]._firstChild}; s != -1; s = _tree[s]._nextSibling)
         SetRenderStrategies(s, strategy);
@@ -304,9 +429,9 @@ Engine::Graphics::D3D11Material& Engine::Graphics::D3D11SceneGraph::GetMaterialA
     return _material[node];
 }
 
-uint64_t& Engine::Graphics::D3D11SceneGraph::GetRenderStrategyAt(int32_t node) {
-    CORE_ASSERT(node < _renderStrategies.size() && node >= 0, "invalid node index");
-    return _renderStrategies[node];
+uint32_t& Engine::Graphics::D3D11SceneGraph::GetRenderStrategyAt(int32_t node) {
+    CORE_ASSERT(node < _renderStrategy.size() && node >= 0, "invalid node index");
+    return _renderStrategy[node];
 }
 
 void Engine::Graphics::D3D11SceneGraph::Update() {
@@ -371,7 +496,7 @@ int32_t Engine::Graphics::D3D11SceneGraph::ParseNode(int32_t parent_id, int32_t 
 int32_t Engine::Graphics::D3D11SceneGraph::AddNode(int32_t parent_id, int32_t level, DirectX::XMMATRIX const& local_transform) {
     int32_t const id {static_cast<int32_t>(_tree.size())};
     {
-        _renderStrategies.emplace_back();
+        _renderStrategy.emplace_back();
         _transforms.emplace_back();
         _globalTransforms.emplace_back();
         _localTransforms.emplace_back();
@@ -551,12 +676,33 @@ Engine::Graphics::D3D11Material Engine::Graphics::D3D11SceneGraph::ParseMaterial
         result.AddOrRelplaceTexture(device, ShaderResourceTypes::HeightMap, final_path.c_str());
     }
 
-    // Opacity Map
-    if (aiGetMaterialTexture(ai_material, aiTextureType_OPACITY, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
+    // Metallic
+    if (aiGetMaterialTexture(ai_material, aiTextureType_METALNESS, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
         auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
 
-        result.AddOrRelplaceTexture(device, ShaderResourceTypes::OpacityMap, final_path.c_str());
+        result.AddOrRelplaceTexture(device, ShaderResourceTypes::MetallicMap, final_path.c_str());
     }
+
+    // Roughness
+    if (aiGetMaterialTexture(ai_material, aiTextureType_DIFFUSE_ROUGHNESS, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
+        auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
+
+        result.AddOrRelplaceTexture(device, ShaderResourceTypes::RoughnessMap, final_path.c_str());
+    }
+
+    // AO
+    if (aiGetMaterialTexture(ai_material, aiTextureType_AMBIENT_OCCLUSION, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
+        auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
+
+        result.AddOrRelplaceTexture(device, ShaderResourceTypes::AOMap, final_path.c_str());
+    }
+
+    // Opacity Map
+    //if (aiGetMaterialTexture(ai_material, aiTextureType_OPACITY, 0u, &ai_path, &mapping, &uv_index, &blend, &texture_op, texture_map_mode, &texture_flags) == AI_SUCCESS) {
+    //    auto const final_path {process_ai_path(base_path, ai_path.C_Str())};
+
+    //    result.AddOrRelplaceTexture(device, ShaderResourceTypes::OpacityMap, final_path.c_str());
+    //}
 
     // TODO: patch materials..
 

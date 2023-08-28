@@ -57,7 +57,17 @@ std::optional<std::pair<int32_t, Engine::x_string>> Engine::Graphics::D3D11ImGui
     if (ImGui::Begin("Asset Browser")) {
         ImGui::SameLine();
         static int selected_type = -1;
-        const char* names[] = { "Emissive Map", "Diffuse Map", "Specular Map", "Normal Map", "Height Map", "Opacity Map" };
+        const char* names[] = {
+            "Emissive Map",
+            "Diffuse Map",
+            "Specular Map",
+            "Normal Map", 
+            "Height Map",
+            "Metallic Map",
+            "Roughness Map",
+            "AmbientOcclusion Map",
+            "BRDF Lut Map",
+        };
         static bool toggles[] = { true, false, false, false, false, false };
 
         // Simple selection popup (if you want to show the current selection inside the Button itself,

@@ -4,8 +4,9 @@
 
 #include <assimp/scene.h>
 
+#include "D3D11SceneGraph.h"
+
 namespace Engine::Graphics {
-    class D3D11SceneGraph;
     class D3D11Mesh;
     class D3D11Material;
     class D3D11VertexBuffer;
@@ -14,10 +15,9 @@ namespace Engine::Graphics {
     class D3D11SceneHolder {
     public:
         static void Load(ID3D11Device& device);
-        static std::shared_ptr<D3D11SceneGraph> ResolveScene(x_string const& tag);
+        static D3D11SceneGraph ResolveScene(x_string const& tag);
     private:
-    private:
-        inline static x_unordered_map<x_string, std::shared_ptr<D3D11SceneGraph>> _scenes;
+        inline static x_unordered_map<x_string, std::unique_ptr<D3D11SceneGraph>> _scenes;
     };
 }
 

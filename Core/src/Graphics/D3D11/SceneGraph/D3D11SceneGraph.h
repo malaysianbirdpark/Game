@@ -10,7 +10,9 @@
 #include "Graphics/D3D11/ShaderResource/D3D11ShaderResource.h"
 #include "Graphics/D3D11/RenderStrategy/D3D11RenderStrategy.h"
 
-#include "Graphics/D3D11/ConstantBuffer/D3D11PhongMaterialConstants.h"
+#include "Graphics/D3D11/ConstantBuffer/D3D11PhongConstants.h"
+#include "Graphics/D3D11/ConstantBuffer/D3D11SolidConstant.h"
+#include "Graphics/D3D11/ConstantBuffer/D3D11UnrealPBRConstants.h"
 #include "Graphics/D3D11/ConstantBuffer/D3D11VertexShaderConstants.h"
 
 namespace Engine::Graphics {
@@ -35,13 +37,21 @@ namespace Engine::Graphics {
         friend class D3D11SceneGraph;
     public:
         D3D11Material(ID3D11Device& device);
+        D3D11Material(D3D11Material const& other);
         [[nodiscard]] x_vector<D3D11ShaderResource> const&  GetShaderResources() const;
-        [[nodiscard]] D3D11PhongMaterialConstants* const    GetPhongConstants();
+        [[nodiscard]] D3D11PhongConstants* const            GetPhongConstants();
+        [[nodiscard]] D3D11UnrealPBRConstants* const        GetUnrealPBRConstants();
+        [[nodiscard]] D3D11SolidConstants* const            GetSolidConstants();
         [[nodiscard]] D3D11VertexShaderConstants* const     GetVSConstants();
+
         void                                                BindVertexShaderConstants(ID3D11DeviceContext& context);
+        void                                                BindSolid(ID3D11DeviceContext& context);
         void                                                BindPhong(ID3D11DeviceContext& context);
+        void                                                BindUnrealPBR(ID3D11DeviceContext& context);
 
         void                                                CopyPhongConstants(D3D11Material const& source);
+        void                                                CopyUnrealPBRConstants(D3D11Material const& source);
+        void                                                CopySolidConstants(D3D11Material const& source);
         void                                                CopyVSConstants(D3D11Material const& source);
 
         x_string                                            GetTextureInfo() const;
@@ -56,7 +66,9 @@ namespace Engine::Graphics {
         float              _metallicFactor;
 
         D3D11VertexShaderConstants      _vertexShaderConstants;
-        D3D11PhongMaterialConstants     _phongConstants;
+        D3D11PhongConstants             _phongConstants;
+        D3D11UnrealPBRConstants         _unrealPBRConstants;
+        D3D11SolidConstants             _solidConstants;
         x_vector<D3D11ShaderResource>   _srs;
         std::bitset<16>                 _textureTypes;
     };
@@ -71,12 +83,12 @@ namespace Engine::Graphics {
             std::shared_ptr<D3D11IndexBuffer>& index_buffer,
             D3D11_PRIMITIVE_TOPOLOGY topology
         );
+        D3D11Mesh(D3D11Mesh const& other);
 
         void Bind(ID3D11DeviceContext& context) const;
 
         [[nodiscard]] UINT GetIndexCount() const;
     private:
-        x_string                                      _vertexFormat;
         std::shared_ptr<D3D11VertexBuffer>            _vertexBuffer;
         std::shared_ptr<D3D11IndexBuffer>             _indexBuffer; 
         D3D11_PRIMITIVE_TOPOLOGY                      _topology;
@@ -101,8 +113,15 @@ namespace Engine::Graphics {
     public:
         D3D11SceneGraph(ID3D11Device& device, char const* path);
 
+        // Copy ctor
+        D3D11SceneGraph(D3D11SceneGraph const& other);
+
+        D3D11SceneGraph Clone();
+
         void       MarkAsTransformed(int32_t node);
         void       MarkAsPhongMaterialEdited(int32_t node);
+        void       MarkAsUnrealPBRMaterialEdited(int32_t node);
+        void       MarkAsSolidMaterialEdited(int32_t node);
         void       MarkAsVSConstantEdited(int32_t node);
 
         void       SetRenderStrategies(int32_t node, int strategy);
@@ -111,7 +130,7 @@ namespace Engine::Graphics {
         SceneTransformParameters&           GetTransformParamAt(int32_t node);
         char const*                         GetNameAt(int32_t node);
         D3D11Material&                      GetMaterialAt(int32_t node);
-        uint64_t&                           GetRenderStrategyAt(int32_t node);
+        uint32_t&                           GetRenderStrategyAt(int32_t node);
         int32_t                             GetClosestMaterialConstant(int32_t node);
 
         void                                Update();
@@ -119,6 +138,8 @@ namespace Engine::Graphics {
     private:
         void                                RecalculateGlobalTransforms();
         void                                UpdatePhongMaterialConstants();
+        void                                UpdateUnrealPBRMaterialConstants();
+        void                                UpdateSolidMaterialConstants();
         void                                UpdateVertexShaderConstants();
     private:
         int32_t                              ParseNode(int32_t parent_id, int32_t level, aiScene const* ai_scene, aiNode const* ai_node);
@@ -134,7 +155,7 @@ namespace Engine::Graphics {
         x_vector<D3D11SceneNode>             _tree;
         x_vector<x_string>                   _nodeNames {};
     private:
-        x_vector<uint64_t>                   _renderStrategies;
+        x_vector<uint32_t>                   _renderStrategy;
         x_vector<SceneTransformParameters>   _transforms;
         x_vector<DirectX::XMFLOAT4X4>        _globalTransforms;
         x_vector<DirectX::XMFLOAT4X4>        _localTransforms;
@@ -142,12 +163,17 @@ namespace Engine::Graphics {
         x_unordered_map<uint32_t, uint32_t>  _nodeId_to_meshId {};
         x_unordered_map<uint32_t, uint32_t>  _nodeId_to_materialId {};
         x_unordered_map<uint32_t, uint32_t>  _nodeId_to_namesId {};
+    private:
         int32_t                              _recentlyUpdatedPhongMaterial {-1};
+        int32_t                              _recentlyUpdatedUnrealPBRMaterial {-1};
+        int32_t                              _recentlyUpdatedSolidMaterial {-1};
         int32_t                              _recentlyUpdatedVSConstants   {-1};
     private:
         // For the Update
         x_vector<int32_t>                    _transformed[MAX_NODE_LEVEL] {};
-        x_vector<int32_t>                    _materialEdited[MAX_NODE_LEVEL] {};
+        x_vector<int32_t>                    _phongMaterialEdited[MAX_NODE_LEVEL] {};
+        x_vector<int32_t>                    _unrealPBRMaterialEdited[MAX_NODE_LEVEL] {};
+        x_vector<int32_t>                    _solidMaterialEdited[MAX_NODE_LEVEL] {};
         x_vector<int32_t>                    _VSCEdited[MAX_NODE_LEVEL] {};
     };
 

@@ -18,9 +18,12 @@ cbuffer mvp : register(b0)
     matrix mvp;
 };
 
-cbuffer options : register(b1) {
-    float height_scale;
-    float padding[3];
+cbuffer texture_options : register(b1) {
+    bool use_diffuse_map;
+    bool use_specular_map;
+    bool use_normal_map;
+    bool use_height_map;
+    float padding1[3];
 }
 
 Texture2D height_map : register(t4);
@@ -30,9 +33,11 @@ VS_OUT main(VS_IN input)
 {
     VS_OUT output;
 
-    float height = height_map.SampleLevel(sampler0, input.texcoord, 0).r;
-    height = height * 2.0f - 1.0f;
-    input.pos += input.normal * height * height_scale;
+    if (use_height_map) {
+        float height = height_map.SampleLevel(sampler0, input.texcoord, 0).r;
+        height = height * 2.0f - 1.0f;
+        input.pos += input.normal * height;
+    }
 
     output.world_pos = mul(m, float4(input.pos, 1.0f)).xyz;
     output.normal = normalize(mul(mit, float4(input.normal, 1.0f)).xyz);

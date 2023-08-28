@@ -5,14 +5,17 @@
 #include <imgui_impl_dx11.h>
 
 #include "Graphics/D3D11/D3D11Core.h"
-#include "Graphics/D3D11/D3D11RenderObject.h"
+#include "Graphics/D3D11/D3D11RenderCommand.h"
+#include "Graphics/D3D11/RenderObject/D3D11RenderObject.h"
 #include "Graphics/D3D11/SceneGraph/D3D11SceneGraph.h"
 #include "Graphics/D3D11/Effect/D3D11Effect.h"
 #include "Graphics/D3D11/D3D11Cubemap.h"
-#include "Graphics/D3D11/ConstantBuffer/D3D11PhongMaterialConstants.h"
+#include "Graphics/D3D11/D3D11RenderCommand.h"
+#include "Graphics/D3D11/ConstantBuffer/D3D11PhongConstants.h"
+#include "Graphics/D3D11/RenderObject/D3D11ConcreteLight.h"
 #include "Platform/Platform.h"
 
-void Engine::Graphics::D3D11ImGuiRenderer::Init(ID3D11Device* device, ID3D11DeviceContext* context) {
+void Engine::Graphics::D3D11ImGuiRenderer::Init(ID3D11DeviceContext* context) {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -38,7 +41,7 @@ void Engine::Graphics::D3D11ImGuiRenderer::Init(ID3D11Device* device, ID3D11Devi
 
     // Setup Platform/Renderer backends
     ImGui_ImplWin32_Init(Platform::GetNativeWnd());
-    ImGui_ImplDX11_Init(device, context);
+    ImGui_ImplDX11_Init(&D3D11Core::Device(), context);
 
     imguiEnabled = true;
 }
@@ -196,11 +199,11 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowDockSpace() {
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowViewport() {
     if (ImGui::Begin("Viewport")) {
-        auto constexpr w {800};
-        auto constexpr h {400};
+        auto constexpr w {1920};
+        auto constexpr h {1080};
 
         ImGui::Image(
-            D3D11Core::GetFinalSRV(),
+            D3D11RenderCommand::GetFinalSRV(),
             ImVec2{w, h}
         );
     }
@@ -208,12 +211,12 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowViewport() {
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowRSEditWindow() {
-    auto& select {D3D11Core::RasterizerState()};
-    if (ImGui::Begin("Rasterizer State")) {
-        ImGui::RadioButton("Solid", &select, 0);
-        ImGui::RadioButton("Wireframe", &select, 1);
-    }
-    ImGui::End();
+    //auto& select {D3D11Core::RasterizerState()};
+    //if (ImGui::Begin("Rasterizer State")) {
+    //    ImGui::RadioButton("Solid", &select, 0);
+    //    ImGui::RadioButton("Wireframe", &select, 1);
+    //}
+    //ImGui::End();
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowCubemapEditWindow() {
@@ -231,7 +234,7 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowCubemapEditWindow() {
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSceneEditWindow(x_vector<std::shared_ptr<D3D11RenderObject>>& objs) {
     if (ImGui::Begin("Scene Edit Window")) {
-        ImGui::Columns(4, nullptr, true);
+        ImGui::Columns(3, nullptr, true);
         for (auto& obj : objs)
             ImGuiRenderSceneTree(*obj->GetScene(), 0);
 
@@ -242,8 +245,10 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSceneEditWindow(x_vector<std
             ImGui::NextColumn();
             ImGuiShowNodeEditWindow();
 
-            ImGui::NextColumn();
-            ImGuiShowRenderConfigureWindow();
+            if (ImGui::Begin("Rendering Configurations")) {
+                ImGuiShowRenderConfigureWindow();
+            }
+            ImGui::End();
         }
     }
     ImGui::End();
@@ -277,7 +282,7 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowNodeEditWindow() {
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowRenderConfigureWindow() {
     auto& [scene, node] {_selected};
-    static char const* methods[] {"Solid", "Phong", "PBR"};
+    static char const* methods[] {"Solid", "Phong", "Unreal PBR"};
     static int selected_method {};
     ImGui::Text("Rendering Configuration");
     ImGui::Text("Target Material ID: %d", scene->_nodeId_to_materialId.contains(node) ? scene->_nodeId_to_materialId.at(node) : -1);
@@ -327,6 +332,57 @@ int32_t Engine::Graphics::D3D11ImGuiRenderer::ImGuiRenderSceneTree(D3D11SceneGra
 	return _selected.second;
 }
 
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiRenderLightList(D3D11SceneGraph& scene, int32_t id) {
+    std::string const name = {std::string{"Light"} + std::to_string(id)};
+
+	constexpr int flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet;
+
+    ImGui::TreeNodeEx(name.data(), flags);
+
+	ImGui::PushID(id);
+
+	if (ImGui::IsItemClicked())
+	{
+		printf("Selected node: %d (%s)\n", id, name.c_str());
+        _selectedLight.first = &scene;
+		_selectedLight.second = id;
+	}
+    ImGui::TreePop();
+
+	ImGui::PopID();
+}
+
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowConcreteLightList(x_vector<std::shared_ptr<D3D11ConcreteLight>>& light_obj) {
+    if (ImGui::Begin("Concrete Lights")) {
+        ImGui::Columns(2, nullptr, true);
+        for (auto i {0}; i != light_obj.size(); ++i)
+            ImGuiRenderLightList(*light_obj[i]->GetScene(), i);
+
+        if (_selectedLight.first != nullptr) {
+            ImGui::NextColumn();
+            auto& [scene, id] {_selectedLight};
+            int interacted {};
+
+            auto& transform {scene->GetTransformParamAt(0)};
+
+            ImGui::Text(scene->GetNameAt(0));
+            ImGui::Text("Position");
+            interacted += ImGui::SliderFloat("X", &transform.x, -200.0f, 200.0f);
+            interacted += ImGui::SliderFloat("Y", &transform.y, -200.0f, 200.0f);
+            interacted += ImGui::SliderFloat("Z", &transform.z, -200.0f, 200.0f);
+
+            std::visit(UpdateConstantBuffer{0.0f}, light_obj[id]->GetCB());
+
+            if (interacted > 0) {
+                light_obj[id]->UpdatePos(DirectX::XMFLOAT3{transform.x, transform.y, transform.z});
+                scene->MarkAsTransformed(0);
+            }
+        }
+    }
+    ImGui::End();
+
+}
+
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSceneInfoWindow() {
     auto& [scene, node] {_selected};
     ImGui::Text("Number of Nodes: %d", scene->_tree.size());
@@ -370,7 +426,7 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSceneInfoWindow() {
             std::cout << submitted_file_info.value().first << ' ' << submitted_file_info.value().second << std::endl;
             scene->_material[_selectedMaterial].AddOrRelplaceTexture(
                 D3D11Core::Device(), 
-                static_cast<ShaderResourceTypes>(submitted_file_info.value().first + static_cast<int>(ShaderResourceTypes::EmissiveMap)), 
+                static_cast<ShaderResourceTypes>(submitted_file_info.value().first), 
                 submitted_file_info.value().second.c_str());
         }
     }
@@ -388,27 +444,14 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowTextureInfoWindow() {
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSolidConfigureWindow() {
     auto& [scene, node] {_selected};
     auto& render_strategy {scene->GetRenderStrategyAt(node)};
-
-    int temp {};
-    bool use_diffusemap {(render_strategy & (0b1 << static_cast<int>(ShaderResourceTypes::DiffuseMap))) != false};
-    bool use_heightmap {(render_strategy & (0b1 << static_cast<int>(ShaderResourceTypes::HeightMap))) != false};
-
-    ImGui::Checkbox("Diffuse Map", &use_diffusemap);
-    ImGui::Checkbox("Height Map", &use_heightmap);
-
-    ImGui::Text("Environment Mapping");
-    ImGui::RadioButton("None", &temp, 0);
-    ImGui::RadioButton("Basic Environment Mapping", &temp, 1);
-    ImGui::RadioButton("Basic IBL", &temp, 2);
+    auto constexpr current_strategy {0};
 
     auto const closest_node_that_has_material {scene->GetClosestMaterialConstant(node)};
+    ImGuiShowSolidConstantEditWindow(node);
     ImGuiShowVSConstantEditWindow(closest_node_that_has_material);
 
-    uint64_t current_value {0b0};
-    current_value |= (0b1 << static_cast<int>(ShaderResourceTypes::DiffuseMap)) * use_diffusemap;
-    current_value |= (0b1 << static_cast<int>(ShaderResourceTypes::HeightMap)) * use_heightmap;
-    if (render_strategy != current_value) {
-        render_strategy = current_value; 
+    if (render_strategy != current_strategy) {
+        render_strategy = current_strategy; 
         scene->SetRenderStrategies(node, render_strategy);
     }
 }
@@ -416,60 +459,41 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSolidConfigureWindow() {
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowPhongConfigureWindow() {
     auto& [scene, node] {_selected};
     auto& render_strategy {scene->GetRenderStrategyAt(node)};
+    auto constexpr current_strategy {1};
 
-    bool use_diffusemap {(render_strategy & (0b1 << static_cast<int>(ShaderResourceTypes::DiffuseMap))) != false};
-    bool use_specularmap {(render_strategy & (0b1 << static_cast<int>(ShaderResourceTypes::SpecularMap))) != false};
-    bool use_normalmap {(render_strategy & (0b1 << static_cast<int>(ShaderResourceTypes::NormalMap))) != false};
-    bool use_heightmap {(render_strategy & (0b1 << static_cast<int>(ShaderResourceTypes::HeightMap))) != false};
-    bool use_rim_effect {(render_strategy & (0b1 << static_cast<int>(EffectTypes::RimEffect))) != false};
-    bool use_fresnel_effect {(render_strategy & (0b1 << static_cast<int>(EffectTypes::FresnelEffect))) != false};
+    //int temp {};
+    //ImGui::Text("Environment Mapping");
+    //ImGui::RadioButton("None", &temp, 0);
+    //ImGui::RadioButton("Basic Environment Mapping", &temp, 1);
+    //ImGui::RadioButton("Basic IBL", &temp, 2);
 
-    ImGui::Text("Textures");
-    ImGui::Checkbox("Diffuse Map", &use_diffusemap);
-    ImGui::Checkbox("Specular Map", &use_specularmap);
-    ImGui::Checkbox("Normal Map", &use_normalmap);
-    ImGui::Checkbox("Height Map", &use_heightmap);
-
-    ImGui::Text("Effects");
-    ImGui::Checkbox("Rim Effect", &use_rim_effect);
-    ImGui::Checkbox("Fresnel Effect", &use_fresnel_effect);
-
-    int temp {};
-    ImGui::Text("Environment Mapping");
-    ImGui::RadioButton("None", &temp, 0);
-    ImGui::RadioButton("Basic Environment Mapping", &temp, 1);
-    ImGui::RadioButton("Basic IBL", &temp, 2);
+    //ImGui::Text("Effects");
+    //ImGui::Checkbox("Rim Effect", &use_rim_effect);
+    //ImGui::Checkbox("Fresnel Effect", &use_fresnel_effect);
 
     auto const closest_node_that_has_material {scene->GetClosestMaterialConstant(node)};
     ImGuiShowPhongConstantEditWindow(closest_node_that_has_material);
     ImGuiShowVSConstantEditWindow(closest_node_that_has_material);
 
-    uint64_t current_value {0b1};
-    current_value |= (0b1 << static_cast<int>(ShaderResourceTypes::DiffuseMap))  * use_diffusemap;
-    current_value |= (0b1 << static_cast<int>(ShaderResourceTypes::SpecularMap)) * use_specularmap;
-    current_value |= (0b1 << static_cast<int>(ShaderResourceTypes::NormalMap))   * use_normalmap;
-    current_value |= (0b1 << static_cast<int>(ShaderResourceTypes::HeightMap))   * use_heightmap;
-    current_value |= (0b1 << static_cast<int>(EffectTypes::RimEffect))           * use_rim_effect;
-    current_value |= (0b1 << static_cast<int>(EffectTypes::FresnelEffect))       * use_fresnel_effect;
-    if (render_strategy != current_value) {
-        render_strategy = current_value; 
+    if (render_strategy != current_strategy) {
+        render_strategy = current_strategy; 
         scene->SetRenderStrategies(node, render_strategy);
     }
-
-    //static bool use_cubemap {false};
-    //ImGui::Checkbox("use Cubemap Texture", &use_cubemap);
-    //if (use_cubemap) {
-    //    if (ImGui::RadioButton("Environment Mapping", &render_strategy, 0))
-    //        ImGuiShowEMConfigureWindow();        
-    //    else if (ImGui::RadioButton("Basic IBL", &render_strategy, 1))
-    //        ImGuiShowBasicIBLConfigureWindow(); 
-    //}
 }
 
-void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowPBRConfigureWindow() {
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowUnrealPBRConfigureWindow() {
     auto& [scene, node] {_selected};
     auto& render_strategy {scene->GetRenderStrategyAt(node)};
-    ImGui::Text("To be implemented");
+    auto constexpr current_strategy {2};
+
+    auto const closest_node_that_has_material {scene->GetClosestMaterialConstant(node)};
+    ImGuiShowUnrealPBRConstantEditWindow(closest_node_that_has_material);
+    ImGuiShowVSConstantEditWindow(closest_node_that_has_material);
+
+    if (render_strategy != current_strategy) {
+        render_strategy = current_strategy; 
+        scene->SetRenderStrategies(node, render_strategy);
+    }
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowEMConfigureWindow() {
@@ -497,22 +521,92 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowBasicIBLConfigureWindow() {
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowPhongConstantEditWindow(int32_t node) {
-    int interacted {};
-    if (node != -1) {
-        ImGui::Text("Phong Constant Editor");
-        auto& params {_selected.first->GetMaterialAt(_selected.first->_nodeId_to_materialId[node]).GetPhongConstants()->GetParams()};
-        interacted += ImGui::SliderFloat("Ambient Strength", &params.ambient_constant, 0.0f, 2.0f, "%.3f");
-        interacted += ImGui::SliderFloat("Diffuse Strength", &params.diffuse_constant, 0.0f, 2.0f, "%.3f");
-        interacted += ImGui::SliderFloat("Specular Strength", &params.specular_constant, 0.0f, 2.0f, "%.3f");
-        interacted += ImGui::InputFloat("Shininess", &params.shininess, 0.0f, 10000.0f, "%.3f");
+    if (ImGui::Begin("Phong Shading Options")) {
+        int interacted {};
+        if (node != -1) {
+            auto const constant {_selected.first->GetMaterialAt(_selected.first->_nodeId_to_materialId[node]).GetPhongConstants()};
+
+            auto& params {constant->GetParams()};
+
+            ImGui::Text("Texture Options");
+            interacted += ImGui::Checkbox("Diffuse Map", &params.use_diffuse_map);
+            interacted += ImGui::Checkbox("Specular Map", &params.use_specular_map);
+            interacted += ImGui::Checkbox("Normal Map", &params.use_normal_map);
+            interacted += ImGui::Checkbox("Height Map", &params.use_height_map);
+
+            ImGui::Text("Material Constants");
+            interacted += ImGui::SliderFloat("Ambient Strength", &params.ambient_constant, 0.0f, 2.0f, "%.3f");
+            interacted += ImGui::SliderFloat("Diffuse Strength", &params.diffuse_constant, 0.0f, 2.0f, "%.3f");
+            interacted += ImGui::SliderFloat("Specular Strength", &params.specular_constant, 0.0f, 2.0f, "%.3f");
+            interacted += ImGui::InputFloat("Shininess", &params.shininess, 0.0f, 10000.0f, "%.3f");
+        }
+        if (interacted > 0) {
+            _selected.first->_recentlyUpdatedPhongMaterial = node;
+            _selected.first->MarkAsPhongMaterialEdited(_selected.second);
+        }
+        else {
+            _selected.first->_recentlyUpdatedPhongMaterial = -1;
+        }
     }
-    if (interacted > 0) {
-        _selected.first->_recentlyUpdatedPhongMaterial = node;
-        _selected.first->MarkAsPhongMaterialEdited(_selected.second);
+    ImGui::End();
+}
+
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowUnrealPBRConstantEditWindow(int32_t node) {
+    if (ImGui::Begin("Unreal PBR Options")) {
+        int interacted {};
+        if (node != -1) {
+            auto const constant {_selected.first->GetMaterialAt(_selected.first->_nodeId_to_materialId[node]).GetUnrealPBRConstants()};
+
+            auto& params {constant->GetParams()};
+
+            ImGui::Text("Texture Options");
+            interacted += ImGui::Checkbox("Emissive Map", &params.use_emissive_map);
+            interacted += ImGui::Checkbox("Diffuse Map", &params.use_diffuse_map);
+            interacted += ImGui::Checkbox("Specular Map", &params.use_specular_map);
+            interacted += ImGui::Checkbox("Normal Map", &params.use_normal_map);
+            interacted += ImGui::Checkbox("Height Map", &params.use_height_map);
+            interacted += ImGui::Checkbox("Metallic Map", &params.use_metallic_map);
+            interacted += ImGui::Checkbox("Roughness Map", &params.use_roughness_map);
+            interacted += ImGui::Checkbox("AO Map", &params.use_ambient_occlusion);
+            interacted += ImGui::Checkbox("BRDF Lut Map", &params.use_brdf_lut);
+
+            ImGui::Text("Material Constants");
+            interacted += ImGui::ColorEdit3("Diffuse Color", &params.albedo_color.x);
+            interacted += ImGui::SliderFloat("Metallic Factor", &params.metallicFactor, 0.0f, 2.0f, "%.3f");
+            interacted += ImGui::SliderFloat("Roughness", &params.roughness, 0.0f, 2.0f, "%.3f");
+        }
+        if (interacted > 0) {
+            _selected.first->_recentlyUpdatedUnrealPBRMaterial = node;
+            _selected.first->MarkAsUnrealPBRMaterialEdited(_selected.second);
+        }
+        else {
+            _selected.first->_recentlyUpdatedUnrealPBRMaterial = -1;
+        }
     }
-    else {
-        _selected.first->_recentlyUpdatedPhongMaterial = -1;
+    ImGui::End();
+}
+
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSolidConstantEditWindow(int32_t node) {
+    if (ImGui::Begin("Solid Shading Options")) {
+        int interacted {};
+        if (node != -1) {
+            auto const constant {_selected.first->GetMaterialAt(_selected.first->_nodeId_to_materialId[node]).GetSolidConstants()};
+
+            auto& params {constant->GetParams()};
+
+            ImGui::Text("Texture Options");
+            interacted += ImGui::Checkbox("Diffuse Map", &params.use_diffuse_map);
+            interacted += ImGui::Checkbox("Height Map", &params.use_height_map);
+        }
+        if (interacted > 0) {
+            _selected.first->_recentlyUpdatedSolidMaterial = node;
+            _selected.first->MarkAsSolidMaterialEdited(_selected.second);
+        }
+        else {
+            _selected.first->_recentlyUpdatedSolidMaterial = -1;
+        }
     }
+    ImGui::End();
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSystemInfo() {
@@ -523,18 +617,20 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSystemInfo() {
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowVSConstantEditWindow(int32_t node) {
-    int interacted {};
-    if (node != -1) {
-        ImGui::Text("VS Constant Editor");
-        auto& params {_selected.first->GetMaterialAt(_selected.first->_nodeId_to_materialId[node]).GetVSConstants()->GetParams()};
-        interacted += ImGui::SliderFloat("Height Map Scale", &params.height_scale, 0.0f, 2.0f, "%.5f");
-    }
+    if (ImGui::Begin("VS Constant Editor")) {
+        int interacted {};
+        if (node != -1) {
+            auto& params {_selected.first->GetMaterialAt(_selected.first->_nodeId_to_materialId[node]).GetVSConstants()->GetParams()};
+            interacted += ImGui::SliderFloat("Height Map Scale", &params.height_scale, 0.0f, 2.0f, "%.5f");
+        }
 
-    if (interacted > 0) {
-        _selected.first->_recentlyUpdatedVSConstants = node;
-        _selected.first->MarkAsVSConstantEdited(_selected.second);
+        if (interacted > 0) {
+            _selected.first->_recentlyUpdatedVSConstants = node;
+            _selected.first->MarkAsVSConstantEdited(_selected.second);
+        }
+        else {
+            _selected.first->_recentlyUpdatedVSConstants = -1;
+        }
     }
-    else {
-        _selected.first->_recentlyUpdatedVSConstants = -1;
-    }
+    ImGui::End();
 }

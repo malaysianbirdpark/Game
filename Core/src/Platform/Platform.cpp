@@ -38,7 +38,7 @@ namespace Engine {
         _wndData.wndClass = new WindowClass{};
 
         _wndData.width = width;
-        _wndData.height = width;
+        _wndData.height = height;
 
         // calculate window size base on desired client region size 
         RECT wr;

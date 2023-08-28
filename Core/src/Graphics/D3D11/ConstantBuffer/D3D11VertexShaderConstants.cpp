@@ -35,6 +35,6 @@ void Engine::Graphics::D3D11VertexShaderConstants::Upload(ID3D11DeviceContext& c
 
 void Engine::Graphics::D3D11VertexShaderConstants::Bind(ID3D11DeviceContext& context) {
     Upload(context);
-    context.VSSetConstantBuffers(1u, 1u, _resource.GetAddressOf());
+    context.VSSetConstantBuffers(2u, 1u, _resource.GetAddressOf());
 }
 

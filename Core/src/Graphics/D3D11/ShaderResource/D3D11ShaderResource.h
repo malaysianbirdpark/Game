@@ -7,7 +7,10 @@
 #include "D3D11SpecularMap.h"
 #include "D3D11NormalMap.h"
 #include "D3D11HeightMap.h"
-#include "D3D11OpacityMap.h"
+#include "D3D11MetallicMap.h"
+#include "D3D11RoughnessMap.h"
+#include "D3D11AmbientOcclusionMap.h"
+#include "D3D11BRDFLut.h"
 
 namespace Engine::Graphics {
 #define SHADER_RESOURCE_TYPES       \
@@ -16,7 +19,10 @@ namespace Engine::Graphics {
     F(D3D11SpecularMap)             \
     F(D3D11NormalMap)               \
     F(D3D11HeightMap)               \
-    F(D3D11OpacityMap)              
+    F(D3D11MetallicMap)             \
+    F(D3D11RoughnessMap)            \
+    F(D3D11AmbientOcclusionMap)     \
+    F(D3D11BRDFLut)     
 
     // Variant Definition
     using D3D11ShaderResource = 
@@ -26,7 +32,10 @@ namespace Engine::Graphics {
             std::shared_ptr<D3D11SpecularMap>,
             std::shared_ptr<D3D11NormalMap>,
             std::shared_ptr<D3D11HeightMap>,
-            std::shared_ptr<D3D11OpacityMap>
+            std::shared_ptr<D3D11MetallicMap>,
+            std::shared_ptr<D3D11RoughnessMap>,
+            std::shared_ptr<D3D11AmbientOcclusionMap>,
+            std::shared_ptr<D3D11BRDFLut> 
         >;
 
     // Bind Declarations
@@ -50,12 +59,15 @@ namespace Engine::Graphics {
     };
 
     enum class ShaderResourceTypes {
-        EmissiveMap = 3,
+        EmissiveMap,
         DiffuseMap,
         SpecularMap,             
         NormalMap,             
         HeightMap,               
-        OpacityMap,              
+        MetallicMap,
+        RoughnessMap,
+        AOMap,
+        BRDFLut
     };
 
     struct GetShaderResourceTypeID {
@@ -74,18 +86,23 @@ namespace Engine::Graphics {
             &D3D11SpecularMap::GenUID,
             &D3D11NormalMap::GenUID,
             &D3D11HeightMap::GenUID,
-            &D3D11OpacityMap::GenUID,
+            &D3D11MetallicMap::GenUID,
+            &D3D11RoughnessMap::GenUID,
+            &D3D11AmbientOcclusionMap::GenUID,
+            &D3D11BRDFLut::GenUID,
         };
         inline static x_vector<std::function<D3D11ShaderResource(ID3D11Device&, char const*)>> ConstructorTable {
-            &D3D11EmissiveMap::CreateEmissiveMap,
-            &D3D11DiffuseMap::CreateDiffuseMap,
-            &D3D11SpecularMap::CreateSpecularMap,
-            &D3D11NormalMap::CreateNormalMap,
-            &D3D11HeightMap::CreateHeightMap,
-            &D3D11OpacityMap::CreateOpacityMap,
+            &D3D11EmissiveMap::Create,
+            &D3D11DiffuseMap::Create,
+            &D3D11SpecularMap::Create,
+            &D3D11NormalMap::Create,
+            &D3D11HeightMap::Create,
+            &D3D11MetallicMap::Create,
+            &D3D11RoughnessMap::Create,
+            &D3D11AmbientOcclusionMap::Create,
+            &D3D11BRDFLut::Create,
         };
         inline static x_unordered_map<x_string, D3D11ShaderResource> _srs;
     };
-
 }
 

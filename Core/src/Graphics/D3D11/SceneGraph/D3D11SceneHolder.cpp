@@ -38,17 +38,17 @@ void Engine::Graphics::D3D11SceneHolder::Load(ID3D11Device& device) {
         auto const model {it_model->GetObj()};
         auto const name {model["name"].GetString()};
 
-        _scenes[name] = MakeShared<D3D11SceneGraph>(device, model["path"].GetString());
+        _scenes[name] = std::make_unique<D3D11SceneGraph>(device, model["path"].GetString());
     }
 
     GRAPHICS_INFO("Done");
 }
 
-std::shared_ptr<Engine::Graphics::D3D11SceneGraph> Engine::Graphics::D3D11SceneHolder::ResolveScene(x_string const& tag) {
-    if (!_scenes.contains(tag)) {
-        GRAPHICS_ERROR("No scene tagged as " + tag + " has found!");
-        return nullptr;
-    }
+/***
+ * Get a copy of a scene graph
+ */
+Engine::Graphics::D3D11SceneGraph Engine::Graphics::D3D11SceneHolder::ResolveScene(x_string const& tag) {
+    CORE_ASSERT(_scenes.contains(tag), "No scene tagged as " + tag + " has found!")
 
-    return _scenes[tag];
+    return std::move(_scenes[tag]->Clone());
 }

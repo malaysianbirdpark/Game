@@ -28,7 +28,7 @@ Engine::Graphics::D3D11DiffuseMap::D3D11DiffuseMap(ID3D11Device& device, char co
     );
 }
 
-std::shared_ptr<Engine::Graphics::D3D11DiffuseMap> Engine::Graphics::D3D11DiffuseMap::CreateDiffuseMap(ID3D11Device& device, char const* path) {
+std::shared_ptr<Engine::Graphics::D3D11DiffuseMap> Engine::Graphics::D3D11DiffuseMap::Create(ID3D11Device& device, char const* path) {
     return std::move(MakeShared<D3D11DiffuseMap>(device, path));
 }
 
@@ -41,7 +41,7 @@ Engine::x_string Engine::Graphics::D3D11DiffuseMap::GetDescription() const {
 }
 
 int32_t Engine::Graphics::D3D11DiffuseMap::GetTypeID() const {
-    return 4;
+    return 1;
 }
 
 Engine::x_string Engine::Graphics::D3D11DiffuseMap::GenUID(char const* path) {

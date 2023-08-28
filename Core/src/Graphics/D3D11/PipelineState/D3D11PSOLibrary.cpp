@@ -9,6 +9,7 @@
 void Engine::Graphics::D3D11PSOLibrary::Init(ID3D11Device& device) {
     InitSolid(device);
     InitPhong(device);
+    InitPBR(device);
     InitCubemap(device);
     InitFilters(device);
     InitEnvironmentMapping(device);
@@ -29,89 +30,38 @@ std::shared_ptr<Engine::Graphics::D3D11PipelineStateObject> Engine::Graphics::D3
 }
 
 void Engine::Graphics::D3D11PSOLibrary::InitSolid(ID3D11Device& device) {
-    // solid
-    {
-        auto const pso {MakeShared<D3D11PipelineStateObject>()};
+    auto const pso {MakeShared<D3D11PipelineStateObject>()};
 
-        pso->SetVertexShader(device, "./ShaderLib/pos_VS.cso");
-        pso->SetInputLayout(device, D3D11VertexAttribute::_1p1n1t1uvLayout);
-        pso->SetPixelShader(device, "./ShaderLib/solid_PS.cso");
+    pso->SetVertexShader(device, "./ShaderLib/solid_VS.cso");
+    pso->SetInputLayout(device, D3D11VertexAttribute::_1p1n1t1uvLayout);
+    pso->SetPixelShader(device, "./ShaderLib/solid_PS.cso");
 
-        x_string const _tag {"solid"};
-        RegisterPSO(_tag, pso);
-    }
-
-    // solid textured
-    {
-        auto const pso {MakeShared<D3D11PipelineStateObject>()};
-
-        pso->SetVertexShader(device, "./ShaderLib/pos_tex_VS.cso");
-        pso->SetInputLayout(device, D3D11VertexAttribute::_1p1n1t1uvLayout);
-        pso->SetPixelShader(device, "./ShaderLib/solid_tex_PS.cso");
-
-        x_string const _tag {"solid-texture"};
-        RegisterPSO(_tag, pso);
-    }
-
-    // solid textured height
-    {
-        auto const pso {MakeShared<D3D11PipelineStateObject>()};
-
-        pso->SetVertexShader(device, "./ShaderLib/pos_norm_tex_height_VS.cso");
-        pso->SetInputLayout(device, D3D11VertexAttribute::_1p1n1t1uvLayout);
-        pso->SetPixelShader(device, "./ShaderLib/test_PS.cso");
-
-        x_string const _tag {"solid-texture-height"};
-        RegisterPSO(_tag, pso);
-    }
+    x_string const _tag {"solid"};
+    RegisterPSO(_tag, pso);
 }
 
 void Engine::Graphics::D3D11PSOLibrary::InitPhong(ID3D11Device& device) {
-    // Use Position as Vertex Color
     {
         auto const pso {MakeShared<D3D11PipelineStateObject>()};
 
-        pso->SetVertexShader(device, "./ShaderLib/pos_norm_VS.cso");
+        pso->SetVertexShader(device, "./ShaderLib/phong_vs.cso");
         pso->SetInputLayout(device, D3D11VertexAttribute::_1p1n1t1uvLayout);
         pso->SetPixelShader(device, "./ShaderLib/phong_PS.cso");
 
         x_string const _tag {"phong"};
         RegisterPSO(_tag, pso);
     }
+}
 
-    // Textured
+void Engine::Graphics::D3D11PSOLibrary::InitPBR(ID3D11Device& device) {
     {
         auto const pso {MakeShared<D3D11PipelineStateObject>()};
 
-        pso->SetVertexShader(device, "./ShaderLib/pos_norm_tex_VS.cso");
+        pso->SetVertexShader(device, "./ShaderLib/unreal_pbr_VS.cso");
         pso->SetInputLayout(device, D3D11VertexAttribute::_1p1n1t1uvLayout);
-        pso->SetPixelShader(device, "./ShaderLib/phong_tex_PS.cso");
+        pso->SetPixelShader(device, "./ShaderLib/unreal_pbr_PS.cso");
 
-        x_string const _tag {"phong_tex"};
-        RegisterPSO(_tag, pso);
-    }
-
-    // Textured-Norm
-    {
-        auto const pso {MakeShared<D3D11PipelineStateObject>()};
-
-        pso->SetVertexShader(device, "./ShaderLib/pos_norm_tan_tex_VS.cso");
-        pso->SetInputLayout(device, D3D11VertexAttribute::_1p1n1t1uvLayout);
-        pso->SetPixelShader(device, "./ShaderLib/phong_tex_norm_PS.cso");
-
-        x_string const _tag {"phong_tex_norm"};
-        RegisterPSO(_tag, pso);
-    }
-
-    // Textured-Norm
-    {
-        auto const pso {MakeShared<D3D11PipelineStateObject>()};
-
-        pso->SetVertexShader(device, "./ShaderLib/pos_norm_tan_tex_VS.cso");
-        pso->SetInputLayout(device, D3D11VertexAttribute::_1p1n1t1uvLayout);
-        pso->SetPixelShader(device, "./ShaderLib/phong_tex_norm_spec_PS.cso");
-
-        x_string const _tag {"phong_tex_norm_spec"};
+        x_string const _tag {"unreal_pbr"};
         RegisterPSO(_tag, pso);
     }
 }

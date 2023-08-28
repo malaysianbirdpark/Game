@@ -28,7 +28,7 @@ Engine::Graphics::D3D11SpecularMap::D3D11SpecularMap(ID3D11Device& device, char 
     );
 }
 
-std::shared_ptr<Engine::Graphics::D3D11SpecularMap> Engine::Graphics::D3D11SpecularMap::CreateSpecularMap(ID3D11Device& device, char const* path) {
+std::shared_ptr<Engine::Graphics::D3D11SpecularMap> Engine::Graphics::D3D11SpecularMap::Create(ID3D11Device& device, char const* path) {
     return std::move(MakeShared<D3D11SpecularMap>(device, path));
 }
 
@@ -41,7 +41,7 @@ Engine::x_string Engine::Graphics::D3D11SpecularMap::GetDescription() const {
 }
 
 int32_t Engine::Graphics::D3D11SpecularMap::GetTypeID() const {
-    return 5;
+    return 2;
 }
 
 Engine::x_string Engine::Graphics::D3D11SpecularMap::GenUID(char const* path) {
