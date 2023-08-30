@@ -59,15 +59,14 @@ Texture2D brdf_lut : register(t23);
 SamplerState sampler_wrap : register(s0);
 SamplerState sampler_clamp : register(s1);
 
-static const float3 Fdielectric = 0.04;
+static const float3 Fdielectric = float3(0.04f, 0.04f, 0.04f);
 
 float3 SchlickFresnel(const float3 F0, const float NdotV) {
     return F0 + (1.0f - F0) * pow(2.0f, (-5.55473f * NdotV - 6.98316f) * NdotV);
 }
 
-float3 UnrealPBRDiffuseIBL(const float3 normal, const float3 albedo, const float3 to_camera, const float metal) {
-    const float3 F0 = lerp(Fdielectric, albedo, metal);
-    const float NdotV = max(0.0f, dot(normal, to_camera));
+float3 UnrealPBRDiffuseIBL(const float3 normal, const float3 albedo, const float3 F0, const float3 to_camera, const float metal) {
+    const float NdotV = saturate(dot(normal, to_camera));
     const float3 fresnel = SchlickFresnel(F0, NdotV);
     const float3 kd = lerp(1.0f - fresnel, 0.0f, metal);
     const float3 irradiance = env_diffuse.Sample(sampler_wrap, normal).rgb;
@@ -75,19 +74,17 @@ float3 UnrealPBRDiffuseIBL(const float3 normal, const float3 albedo, const float
     return kd * albedo * irradiance;
 }
 
-float3 UnrealPBRSpecularIBL(const float3 normal, const float3 albedo, const float3 to_camera, const float metal, const float rough) {
-    const float NdotV = dot(normal, to_camera);
+float3 UnrealPBRSpecularIBL(const float3 normal, const float3 F0, const float3 to_camera, const float metal, const float rough) {
+    const float NdotV = saturate(dot(normal, to_camera));
     const float2 specularBRDF = brdf_lut.Sample(sampler_clamp, float2(NdotV, 1.0f - rough)).rg;
     const float3 specularIrradiance = env_specular.SampleLevel(sampler_wrap, reflect(-to_camera, normal), 3.0f + rough * 5.0f).rgb;
-    const float3 F0 = lerp(Fdielectric, albedo, metal);
 
-    return (F0 * specularBRDF.x + specularBRDF.y) * specularIrradiance;
+    return (F0 * specularBRDF.r + specularBRDF.g) * specularIrradiance;
 }
 
-float3 UnrealPBRAmbient(const float3 pos, const float3 normal, const float3 albedo, const float metal, const float rough) {
-    const float3 to_camera = normalize(cam_pos - pos);
-    return (UnrealPBRDiffuseIBL(normal, albedo, to_camera, metal) +
-            UnrealPBRSpecularIBL(normal, albedo, to_camera, metal, rough));
+float3 UnrealPBRAmbient(const float3 pos, const float3 normal, const float3 to_camera, const float3 albedo, const float metal, const float rough) {
+    const float3 F0 = lerp(Fdielectric, albedo, metal);
+    return UnrealPBRDiffuseIBL(normal, albedo, F0, to_camera, metal) + UnrealPBRSpecularIBL(normal, F0, to_camera, metal, rough);
 }
 
 float NdfGGX(const float NdotH, const float roughness) {
@@ -95,7 +92,7 @@ float NdfGGX(const float NdotH, const float roughness) {
     const float a_sq = a * a;
     const float denom = (NdotH * NdotH) * (a_sq - 1) + 1;
 
-    return a_sq / (3.141592 * denom * denom);
+    return a_sq / (3.141592f * denom * denom);
 }
 
 float SchlickG1(const float NdotV, const float k) {
@@ -105,7 +102,7 @@ float SchlickG1(const float NdotV, const float k) {
 float SchlickGGX(const float NdotL, const float NdotV, const float rough) {
     const float r = rough + 1.0f;
     const float k = (r * r) / 8.0f;
-    return SchlickG1(NdotL, k) + SchlickG1(NdotV, k);
+    return SchlickG1(NdotL, k) * SchlickG1(NdotV, k);
 }
 
 float3 UnrealPBRLightDiffuse(const float3 albedo, const float3 F, const float metal) {
@@ -120,14 +117,13 @@ float3 UnrealPBRLightSpecular(const float3 F, const float3 NdotH, const float3 N
     return (F * D * G) / max(1e-5, 4.0f * NdotL * NdotV);
 }
 
-float3 UnrealPBRLight(const float3 pos, const float3 albedo, const float3 normal, const float3 to_light, const float3 to_camera, const float metal, const float rough)
+float3 UnrealPBRLight(const float3 albedo, const float3 normal, const float3 to_light, const float3 to_camera, const float3 NdotL, const float metal, const float rough)
 {
     const float3 h = normalize(to_light + to_camera);
-    const float3 NdotL = max(0.0f, dot(normal, -to_light));
-    const float3 NdotH = max(0.0f, dot(normal, h));
-    const float3 NdotV = max(0.0f, dot(normal, to_camera));
+    const float3 NdotH = saturate(dot(normal, h));
+    const float3 NdotV = saturate(dot(normal, to_camera));
     const float3 F0 = lerp(Fdielectric, albedo, metal);
-    const float3 F = SchlickFresnel(F0, NdotV);
+    const float3 F = SchlickFresnel(F0, saturate(dot(h, to_camera)));
 
     return UnrealPBRLightDiffuse(albedo, F, metal) + UnrealPBRLightSpecular(F, NdotH, NdotL, NdotV, rough);
 }
@@ -136,11 +132,14 @@ PS_OUT main(PS_IN input)
 {
     PS_OUT output;
 
+    output.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+
     const float3 albedo =
         use_diffuse_map ? diffuse_map.Sample(sampler_wrap, input.texcoord).rgb : albedo_color;
 
-    const float3 emission =
-        use_emissive_map ? emissive_map.Sample(sampler_wrap, input.texcoord).rgb : float3(0.0f, 0.0f, 0.0f);
+    if (use_emissive_map) {
+        output.color.rgb = emissive_map.Sample(sampler_wrap, input.texcoord).rgb;
+    }
 
     float3 normal = float3(0.0f, 0.0f, 0.0f);
     if (use_normal_map) {
@@ -160,25 +159,40 @@ PS_OUT main(PS_IN input)
     rough = clamp(rough, Fdielectric.r, 1.0f);
     float ao = use_ao_map ? saturate(ao_map.Sample(sampler_wrap, input.texcoord).r) : 1.0f;
 
-    output.color = float4(emission, 1.0f);
     if (light_type == 0)
     {
-        // ambient
-        output.color += float4(UnrealPBRAmbient(input.world_pos, normal, albedo, metal, rough), 1.0f) * ao;
-        
         const float3 to_camera = normalize(cam_pos - input.world_pos);
-        const float3 to_light = normalize(-dl_dir);
-        const float3 NdotL = max(0.0f, dot(-to_light, normal));
+
+        // ambient
+        output.color.rgb += float3(UnrealPBRAmbient(input.world_pos, normal, to_camera, albedo, metal, rough)) * ao;
+        
         // directional light
-        output.color +=
-            float4(UnrealPBRLight(input.world_pos, albedo, normal, to_light, to_camera, metal, rough)
-            * dl_color * NdotL, 1.0f);
+        const float3 to_light = normalize(-dl_dir);
+        const float3 NdotL = saturate(dot(to_light, normal));
+        output.color.rgb +=
+            float3(UnrealPBRLight(albedo, normal, to_light, to_camera, NdotL, metal, rough)
+            * dl_color * NdotL);
     }
     else if (light_type == 1)
     {
-        // point light
         output.color = previous_frame.Load(input.sv_pos);
+
+        // point light
+        const float3 to_camera = normalize(cam_pos - input.world_pos);
+        float3 to_light = pl_pos - input.world_pos;
+        const float dist_to_light = length(to_light);
+        to_light = normalize(to_light);
+        const float3 NdotL = saturate(dot(to_light, normal));
+
+        // attenuation
+        const float dist_to_light_norm = 1.0f - saturate(dist_to_light * pl_reciprocal_range);
+        const float att = dist_to_light_norm * dist_to_light_norm;
+
+        output.color +=
+            float4(UnrealPBRLight(albedo, normal, to_light, to_camera, NdotL, metal, rough)
+            * pl_color * NdotL, 1.0f) * att;
     }
 
+    output.color = clamp(output.color, 0.0f, 0.993f);
     return output;
 }

@@ -28,32 +28,32 @@ Engine::Graphics::D3D11Cubemap::D3D11Cubemap(ID3D11Device& device, ID3D11DeviceC
         device, 
         context,
         "Assets/CubeMapTextures/IBLBakerDefault/IBLBakerDefaultEnvHDR.dds",
-        "Assets/CubeMapTextures/IBLBakerDefault/IBLBakerDefaultDiffuseHDR.dds",
         "Assets/CubeMapTextures/IBLBakerDefault/IBLBakerDefaultSpecularHDR.dds",
+        "Assets/CubeMapTextures/IBLBakerDefault/IBLBakerDefaultDiffuseHDR.dds",
         "Assets/CubeMapTextures/IBLBakerDefault/IBLBakerDefaultBrdf.dds"
     );
     AddHDRTexture(
         device,
         context,
         "Assets/CubeMapTextures/Countryside/CountrysideEnvHDR.dds",
-        "Assets/CubeMapTextures/Countryside/CountrysideDiffuseHDR.dds",
         "Assets/CubeMapTextures/Countryside/CountrysideSpecularHDR.dds",
+        "Assets/CubeMapTextures/Countryside/CountrysideDiffuseHDR.dds",
         "Assets/CubeMapTextures/Countryside/CountrysideBrdf.dds"
     );
     AddHDRTexture(
         device,
         context,
         "Assets/CubeMapTextures/Indoor/IndoorEnvHDR.dds",
-        "Assets/CubeMapTextures/Indoor/IndoorDiffuseHDR.dds",
         "Assets/CubeMapTextures/Indoor/IndoorSpecularHDR.dds",
+        "Assets/CubeMapTextures/Indoor/IndoorDiffuseHDR.dds",
         "Assets/CubeMapTextures/Indoor/IndoorBrdf.dds"
     );
     AddHDRTexture(
         device,
         context,
         "Assets/CubeMapTextures/Bench/BenchEnvHDR.dds",
-        "Assets/CubeMapTextures/Bench/BenchDiffuseHDR.dds",
         "Assets/CubeMapTextures/Bench/BenchSpecularHDR.dds",
+        "Assets/CubeMapTextures/Bench/BenchDiffuseHDR.dds",
         "Assets/CubeMapTextures/Bench/BenchBrdf.dds"
     );
 }

@@ -160,16 +160,16 @@ void Engine::Graphics::D3D11Core::InitData() {
         )
     );
 
-    _data->_obj.push_back(
-        std::move(
-            MakeShared<D3D11RenderObject>(
-                device,
-                D3DCamera::GetView(),
-                GetProj(),
-                D3D11SceneHolder::ResolveScene("Goblin")
-            )
-        )
-    );
+    //_data->_obj.push_back(
+    //    std::move(
+    //        MakeShared<D3D11RenderObject>(
+    //            device,
+    //            D3DCamera::GetView(),
+    //            GetProj(),
+    //            D3D11SceneHolder::ResolveScene("Goblin")
+    //        )
+    //    )
+    //);
 
 
     _data->_obj.push_back(
