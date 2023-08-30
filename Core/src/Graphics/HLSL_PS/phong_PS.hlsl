@@ -2,7 +2,6 @@ struct PS_IN {
     float3 world_pos : POSITION;
     float3 normal    : NORMAL;
     float3 tangent   : TANGENT;
-    float3 binormal  : BINORMAL;
     float2 texcoord  : TEXCOORD;
     float4 sv_pos    : SV_POSITION;
 };
@@ -132,10 +131,11 @@ PS_OUT main(PS_IN input)
 
     float3 normal = float3(0.0f, 0.0f, 0.0f);
     if (use_normal_map) {
-        float4 sampled_normal = normal_map.Sample(sampler0, input.texcoord);
+        float4 sampled_normal = normal_map.SampleLevel(sampler0, input.texcoord, 0.0f);
         sampled_normal = sampled_normal * 2.0f - 1.0f;
-        const float4x4 tbn = float4x4(float4(input.tangent, 0.0f), float4(input.binormal, 0.0f), float4(input.normal, 0.0f), float4(0.0f, 0.0f, 0.0f, 1.0f));
-        normal = normalize(mul(tbn, sampled_normal)).xyz;
+        const float3 binormal = cross(input.normal, input.tangent);
+        const float3x3 tbn = float3x3(input.tangent, binormal, input.normal);
+        normal = normalize(mul(sampled_normal, tbn)).xyz;
     }
     else {
         normal = input.normal;

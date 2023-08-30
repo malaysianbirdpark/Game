@@ -10,7 +10,6 @@
 #include "D3D11MetallicMap.h"
 #include "D3D11RoughnessMap.h"
 #include "D3D11AmbientOcclusionMap.h"
-#include "D3D11BRDFLut.h"
 
 namespace Engine::Graphics {
 #define SHADER_RESOURCE_TYPES       \
@@ -21,8 +20,7 @@ namespace Engine::Graphics {
     F(D3D11HeightMap)               \
     F(D3D11MetallicMap)             \
     F(D3D11RoughnessMap)            \
-    F(D3D11AmbientOcclusionMap)     \
-    F(D3D11BRDFLut)     
+    F(D3D11AmbientOcclusionMap)     
 
     // Variant Definition
     using D3D11ShaderResource = 
@@ -34,8 +32,7 @@ namespace Engine::Graphics {
             std::shared_ptr<D3D11HeightMap>,
             std::shared_ptr<D3D11MetallicMap>,
             std::shared_ptr<D3D11RoughnessMap>,
-            std::shared_ptr<D3D11AmbientOcclusionMap>,
-            std::shared_ptr<D3D11BRDFLut> 
+            std::shared_ptr<D3D11AmbientOcclusionMap>
         >;
 
     // Bind Declarations
@@ -67,7 +64,6 @@ namespace Engine::Graphics {
         MetallicMap,
         RoughnessMap,
         AOMap,
-        BRDFLut
     };
 
     struct GetShaderResourceTypeID {
@@ -78,7 +74,7 @@ namespace Engine::Graphics {
 
     class D3D11ShaderResourceHolder {
     public:
-        [[nodiscard]] static D3D11ShaderResource Resolve(ID3D11Device& device, ShaderResourceTypes type, char const* path);
+        [[nodiscard]] static D3D11ShaderResource Resolve(ID3D11Device& device, ID3D11DeviceContext& context, ShaderResourceTypes type, char const* path);
     private:
         inline static x_vector<std::function<x_string(char const*)>> GenUIDTable {
             &D3D11EmissiveMap::GenUID,
@@ -89,9 +85,8 @@ namespace Engine::Graphics {
             &D3D11MetallicMap::GenUID,
             &D3D11RoughnessMap::GenUID,
             &D3D11AmbientOcclusionMap::GenUID,
-            &D3D11BRDFLut::GenUID,
         };
-        inline static x_vector<std::function<D3D11ShaderResource(ID3D11Device&, char const*)>> ConstructorTable {
+        inline static x_vector<std::function<D3D11ShaderResource(ID3D11Device&, ID3D11DeviceContext&, char const*)>> ConstructorTable {
             &D3D11EmissiveMap::Create,
             &D3D11DiffuseMap::Create,
             &D3D11SpecularMap::Create,
@@ -100,7 +95,6 @@ namespace Engine::Graphics {
             &D3D11MetallicMap::Create,
             &D3D11RoughnessMap::Create,
             &D3D11AmbientOcclusionMap::Create,
-            &D3D11BRDFLut::Create,
         };
         inline static x_unordered_map<x_string, D3D11ShaderResource> _srs;
     };

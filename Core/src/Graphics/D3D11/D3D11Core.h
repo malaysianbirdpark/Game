@@ -20,6 +20,7 @@ namespace Engine::Graphics {
         [[nodiscard]] static DirectX::XMMATRIX GetProj();
 
         static ID3D11Device& Device() { return *_device.Get(); }
+        static ID3D11DeviceContext& Context() { return *_immContext.Get(); }
         //static int32_t&      RasterizerState() { return _selectedRS; }
     private:
         void InitData();
@@ -27,8 +28,8 @@ namespace Engine::Graphics {
         WindowInfo                        _windowInfo;
         inline static DirectX::XMFLOAT4X4 _proj;
     private:
-        inline static Microsoft::WRL::ComPtr<ID3D11Device>     _device;
-        Microsoft::WRL::ComPtr<ID3D11DeviceContext>            _immContext;
+        inline static Microsoft::WRL::ComPtr<ID3D11Device>         _device;
+        inline static Microsoft::WRL::ComPtr<ID3D11DeviceContext>  _immContext;
 
         Microsoft::WRL::ComPtr<IDXGISwapChain>                 _swapChain;
     private:

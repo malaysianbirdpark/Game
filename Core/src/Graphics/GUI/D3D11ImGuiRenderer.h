@@ -36,9 +36,9 @@ namespace Engine::Graphics {
     private:
         static void     ImGuiShowSceneInfoWindow();
         static void     ImGuiShowTextureInfoWindow();
-        static void     ImGuiShowSolidConfigureWindow();
-        static void     ImGuiShowPhongConfigureWindow();
-        static void     ImGuiShowUnrealPBRConfigureWindow();
+        static void     ImGuiShowSolidConfigureWindow(int32_t& render_strategy);
+        static void     ImGuiShowPhongConfigureWindow(int32_t& render_strategy);
+        static void     ImGuiShowUnrealPBRConfigureWindow(int32_t& render_strategy);
         static void     ImGuiShowEMConfigureWindow();
         static void     ImGuiShowBasicIBLConfigureWindow();
 
@@ -49,7 +49,7 @@ namespace Engine::Graphics {
         static void     ImGuiShowUnrealPBRConstantEditWindow(int32_t node);
         static void     ImGuiShowSolidConstantEditWindow(int32_t node);
 
-        inline static   x_vector<std::function<void(void)>> _renderConfigureTable {
+        inline static   x_vector<std::function<void(int32_t&)>> _renderConfigureTable {
            &ImGuiShowSolidConfigureWindow,
            &ImGuiShowPhongConfigureWindow,
            &ImGuiShowUnrealPBRConfigureWindow,

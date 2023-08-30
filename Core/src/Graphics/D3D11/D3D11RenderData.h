@@ -9,8 +9,8 @@
 
 namespace Engine::Graphics {
     struct D3D11RenderData {
-        D3D11RenderData(ID3D11Device& device, DirectX::XMMATRIX proj)
-            : _globalCB{device}, _cubemap{device, proj}, _fsFilter{device} {}
+        D3D11RenderData(ID3D11Device& device, ID3D11DeviceContext& context, DirectX::XMMATRIX proj)
+            : _globalCB{device}, _cubemap{device, context, proj}, _fsFilter{device} {}
 
         x_vector<std::shared_ptr<D3D11RenderObject>> _obj;
         x_vector<std::shared_ptr<D3D11ConcreteLight>> _concreteLights;

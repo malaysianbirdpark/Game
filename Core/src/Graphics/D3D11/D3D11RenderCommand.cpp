@@ -5,6 +5,8 @@
 #include "Graphics/GUI/D3D11ImGuiRenderer.h"
 #include "ConstantBuffer/D3D11ConstantBuffer.h"
 
+#include <directxtk/PostProcess.h>
+
 void Engine::Graphics::D3D11RenderCommand::Init(ID3D11Device& device, ID3D11DeviceContext& imm_context, IDXGISwapChain& swap_chain, int width, int height) {
     swap_chain.GetBuffer(0u, IID_PPV_ARGS(_backBuffers.ReleaseAndGetAddressOf()));
     device.CreateRenderTargetView(_backBuffers.Get(), nullptr, _backBufferView.ReleaseAndGetAddressOf());
@@ -53,13 +55,13 @@ void Engine::Graphics::D3D11RenderCommand::Init(ID3D11Device& device, ID3D11Devi
     device.CreateRenderTargetView(_resolvedBuffer.Get(), nullptr, _resolvedRTV.ReleaseAndGetAddressOf());
 
     desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    device.CreateTexture2D(&desc, nullptr, _imguiBuffer.ReleaseAndGetAddressOf());
-    device.CreateShaderResourceView(_imguiBuffer.Get(), nullptr, _imguiSRV.ReleaseAndGetAddressOf());
-    device.CreateRenderTargetView(_imguiBuffer.Get(), nullptr, _imguiRTV.ReleaseAndGetAddressOf());
-
     device.CreateTexture2D(&desc, nullptr, _finalBuffer.ReleaseAndGetAddressOf());
     device.CreateShaderResourceView(_finalBuffer.Get(), nullptr, _finalSRV.ReleaseAndGetAddressOf());
     device.CreateRenderTargetView(_finalBuffer.Get(), nullptr, _finalRTV.ReleaseAndGetAddressOf());
+
+    device.CreateTexture2D(&desc, nullptr, _imguiBuffer.ReleaseAndGetAddressOf());
+    device.CreateShaderResourceView(_imguiBuffer.Get(), nullptr, _imguiSRV.ReleaseAndGetAddressOf());
+    device.CreateRenderTargetView(_imguiBuffer.Get(), nullptr, _imguiRTV.ReleaseAndGetAddressOf());
 
     D3D11ImGuiRenderer::Init(_defContexts[IMGUI_CONTEXT].Get());
 
@@ -129,7 +131,7 @@ void Engine::Graphics::D3D11RenderCommand::Init(ID3D11Device& device, ID3D11Devi
         sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
         sd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
         sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-        sd.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
+        //sd.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
         sd.MipLODBias = 0.0f;
         sd.MinLOD = 0.0f;
         sd.MaxLOD = D3D11_FLOAT32_MAX;
@@ -139,14 +141,10 @@ void Engine::Graphics::D3D11RenderCommand::Init(ID3D11Device& device, ID3D11Devi
 
     {
         D3D11_SAMPLER_DESC sd {};
-        sd.Filter = D3D11_FILTER_ANISOTROPIC;
+        sd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
         sd.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
         sd.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
         sd.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-        sd.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
-        sd.MipLODBias = 0.0f;
-        sd.MinLOD = 0.0f;
-        sd.MaxLOD = D3D11_FLOAT32_MAX;
 
         device.CreateSamplerState(&sd, _samplerClamp.ReleaseAndGetAddressOf());
     }

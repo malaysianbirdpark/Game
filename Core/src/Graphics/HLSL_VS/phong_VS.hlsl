@@ -10,7 +10,6 @@ struct VS_OUT {
     float3 world_pos : POSITION;
     float3 normal    : NORMAL;
     float3 tangent   : TANGENT;
-    float3 binormal  : BINORMAL;
     float2 texcoord  : TEXCOORD;
     float4 sv_pos    : SV_POSITION;
 };
@@ -51,12 +50,11 @@ VS_OUT main(VS_IN input)
         input.pos += input.normal * height * height_scale;
     }
 
-    output.world_pos = mul(m, float4(input.pos, 1.0f)).xyz;
-    output.normal = normalize(mul(mit, float4(input.normal, 1.0f)).xyz);
-    output.tangent = normalize(input.tangent);
-    output.binormal = normalize(input.binormal);
+    output.world_pos = mul(input.pos, (float3x3) m).xyz;
+    output.normal = normalize(mul(input.normal,(float3x3) mit).xyz);
+    output.tangent = normalize(mul(input.tangent,(float3x3) m).xyz);
     output.texcoord = input.texcoord;
-    output.sv_pos = mul(mvp, float4(input.pos, 1.0f));
+    output.sv_pos = mul(float4(input.pos, 1.0f), mvp);
 
 	return output;
 }

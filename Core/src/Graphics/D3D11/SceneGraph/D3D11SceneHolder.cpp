@@ -7,7 +7,7 @@
 #include <fstream>
 #include <rapidjson/document.h>
 
-void Engine::Graphics::D3D11SceneHolder::Load(ID3D11Device& device) {
+void Engine::Graphics::D3D11SceneHolder::Load(ID3D11Device& device, ID3D11DeviceContext& context) {
     GRAPHICS_INFO("Loading Models..");
 
     static constexpr auto model_list_path {"Assets/model_list.json"};
@@ -38,7 +38,7 @@ void Engine::Graphics::D3D11SceneHolder::Load(ID3D11Device& device) {
         auto const model {it_model->GetObj()};
         auto const name {model["name"].GetString()};
 
-        _scenes[name] = std::make_unique<D3D11SceneGraph>(device, model["path"].GetString());
+        _scenes[name] = std::make_unique<D3D11SceneGraph>(device, context, model["path"].GetString());
     }
 
     GRAPHICS_INFO("Done");

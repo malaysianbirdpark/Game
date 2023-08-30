@@ -162,37 +162,6 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowDockSpace() {
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     }
 
-    // This is to show the menu bar that will change the config settings at runtime.
-    // If you copied this demo function into your own code and removed ImGuiWindowFlags_MenuBar at the top of the function,
-    // you should remove the below if-statement as well.
-    //if (ImGui::BeginMenuBar())
-    //{
-    //    if (ImGui::BeginMenu("Options"))
-    //    {
-    //        // Disabling fullscreen would allow the window to be moved to the front of other windows,
-    //        // which we can't undo at the moment without finer window depth/z control.
-    //        ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-    //        ImGui::MenuItem("Padding", NULL, &opt_padding);
-    //        ImGui::Separator();
-
-    //        // Display a menu item for each Dockspace flag, clicking on one will toggle its assigned flag.
-    //        if (ImGui::MenuItem("Flag: NoSplit",                "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))                 { dockspace_flags ^= ImGuiDockNodeFlags_NoSplit; }
-    //        if (ImGui::MenuItem("Flag: NoResize",               "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0))                { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
-    //        if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0))  { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
-    //        if (ImGui::MenuItem("Flag: AutoHideTabBar",         "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0))          { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-    //        if (ImGui::MenuItem("Flag: PassthruCentralNode",    "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
-    //        ImGui::Separator();
-
-    //        // Display a menu item to close this example.
-    //        if (ImGui::MenuItem("Close", NULL, false, p_open != NULL))
-    //            if (p_open != NULL) // Remove MSVC warning C6011 (NULL dereference) - the `p_open != NULL` in MenuItem() does prevent NULL derefs, but IntelliSense doesn't analyze that deep so we need to add this in ourselves.
-    //                p_open = false; // Changing this variable to false will close the parent window, therefore closing the Dockspace as well.
-    //        ImGui::EndMenu();
-    //    }
-
-    //    ImGui::EndMenuBar();
-    //}
-
     // End the parent window that contains the Dockspace:
     ImGui::End();
 }
@@ -223,11 +192,15 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowCubemapEditWindow() {
     auto& index {D3D11Cubemap::TextureIndex()};
 
     if (ImGui::Begin("Cubemap Edit Window")) {
-        ImGui::RadioButton("Santa Maria (No IBL)", &index, 0);
-        ImGui::RadioButton("Fort Point (No IBL)", &index, 1);
-        ImGui::RadioButton("Atrium", &index, 2);
-        ImGui::RadioButton("Garage", &index, 3);
-        ImGui::RadioButton("Day Environment (HDR)", &index, 4);
+        //ImGui::RadioButton("Santa Maria (No IBL)", &index, 0);
+        //ImGui::RadioButton("Fort Point (No IBL)", &index, 1);
+        //ImGui::RadioButton("Atrium", &index, 2);
+        //ImGui::RadioButton("Garage", &index, 3);
+        ImGui::RadioButton("Under the Bridge (HDR, BRDF)", &index, 0);
+        ImGui::RadioButton("IBLBakerDefault (HDR, BRDF)", &index, 1);
+        ImGui::RadioButton("Countryside (HDR, BRDF)", &index, 2);
+        ImGui::RadioButton("Indoor (HDR, BRDF)", &index, 3);
+        ImGui::RadioButton("Bench (HDR, BRDF)", &index, 4);
     }
     ImGui::End();
 }
@@ -283,11 +256,11 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowNodeEditWindow() {
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowRenderConfigureWindow() {
     auto& [scene, node] {_selected};
     static char const* methods[] {"Solid", "Phong", "Unreal PBR"};
-    static int selected_method {};
+    auto& selected_method {scene->GetRenderStrategyAt(node)};
     ImGui::Text("Rendering Configuration");
     ImGui::Text("Target Material ID: %d", scene->_nodeId_to_materialId.contains(node) ? scene->_nodeId_to_materialId.at(node) : -1);
     ImGui::Combo("Shading", &selected_method, methods, static_cast<int>(std::size(methods)));
-    _renderConfigureTable[selected_method]();
+    _renderConfigureTable[selected_method](selected_method);
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowMaterialEditWindow() {
@@ -403,6 +376,8 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSceneInfoWindow() {
         materials.push_back("Material");
         materials.back() += std::to_string(i);
     }
+
+    _selectedMaterial = std::clamp(_selectedMaterial, 0, static_cast<int32_t>(materials.size()) - 1);
     char const* preview_value {materials[_selectedMaterial].c_str()};
     if (ImGui::BeginCombo("Materials", preview_value))
     {
@@ -419,16 +394,15 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSceneInfoWindow() {
         ImGui::EndCombo();
     }
 
-    if (_selectedMaterial >= 0 && _selectedMaterial < scene->_material.size()) {
-        ImGuiShowTextureInfoWindow();
+    ImGuiShowTextureInfoWindow();
 
-        if (submitted_file_info.has_value() && submitted_file_info.value().first != -1 && submitted_file_info.value().second.ends_with(".dds")) {
-            std::cout << submitted_file_info.value().first << ' ' << submitted_file_info.value().second << std::endl;
-            scene->_material[_selectedMaterial].AddOrRelplaceTexture(
-                D3D11Core::Device(), 
-                static_cast<ShaderResourceTypes>(submitted_file_info.value().first), 
-                submitted_file_info.value().second.c_str());
-        }
+    if (submitted_file_info.has_value() && submitted_file_info.value().first != -1 && submitted_file_info.value().second.ends_with(".dds")) {
+        std::cout << submitted_file_info.value().first << ' ' << submitted_file_info.value().second << std::endl;
+        scene->_material[_selectedMaterial].AddOrRelplaceTexture(
+            D3D11Core::Device(), 
+            D3D11Core::Context(),
+            static_cast<ShaderResourceTypes>(submitted_file_info.value().first), 
+            submitted_file_info.value().second.c_str());
     }
 }
 
@@ -441,25 +415,19 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowTextureInfoWindow() {
     ImGui::Text("%s", description.c_str());
 }
 
-void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSolidConfigureWindow() {
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSolidConfigureWindow(int32_t& render_strategy) {
     auto& [scene, node] {_selected};
-    auto& render_strategy {scene->GetRenderStrategyAt(node)};
-    auto constexpr current_strategy {0};
+    scene->SetRenderStrategies(node, render_strategy);
 
     auto const closest_node_that_has_material {scene->GetClosestMaterialConstant(node)};
     ImGuiShowSolidConstantEditWindow(node);
     ImGuiShowVSConstantEditWindow(closest_node_that_has_material);
-
-    if (render_strategy != current_strategy) {
-        render_strategy = current_strategy; 
-        scene->SetRenderStrategies(node, render_strategy);
-    }
 }
 
-void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowPhongConfigureWindow() {
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowPhongConfigureWindow(int32_t& render_strategy) {
     auto& [scene, node] {_selected};
-    auto& render_strategy {scene->GetRenderStrategyAt(node)};
-    auto constexpr current_strategy {1};
+
+    scene->SetRenderStrategies(node, render_strategy);
 
     //int temp {};
     //ImGui::Text("Environment Mapping");
@@ -474,26 +442,15 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowPhongConfigureWindow() {
     auto const closest_node_that_has_material {scene->GetClosestMaterialConstant(node)};
     ImGuiShowPhongConstantEditWindow(closest_node_that_has_material);
     ImGuiShowVSConstantEditWindow(closest_node_that_has_material);
-
-    if (render_strategy != current_strategy) {
-        render_strategy = current_strategy; 
-        scene->SetRenderStrategies(node, render_strategy);
-    }
 }
 
-void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowUnrealPBRConfigureWindow() {
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowUnrealPBRConfigureWindow(int32_t& render_strategy) {
     auto& [scene, node] {_selected};
-    auto& render_strategy {scene->GetRenderStrategyAt(node)};
-    auto constexpr current_strategy {2};
+    scene->SetRenderStrategies(node, render_strategy);
 
     auto const closest_node_that_has_material {scene->GetClosestMaterialConstant(node)};
     ImGuiShowUnrealPBRConstantEditWindow(closest_node_that_has_material);
     ImGuiShowVSConstantEditWindow(closest_node_that_has_material);
-
-    if (render_strategy != current_strategy) {
-        render_strategy = current_strategy; 
-        scene->SetRenderStrategies(node, render_strategy);
-    }
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowEMConfigureWindow() {
@@ -568,10 +525,9 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowUnrealPBRConstantEditWindow(
             interacted += ImGui::Checkbox("Metallic Map", &params.use_metallic_map);
             interacted += ImGui::Checkbox("Roughness Map", &params.use_roughness_map);
             interacted += ImGui::Checkbox("AO Map", &params.use_ambient_occlusion);
-            interacted += ImGui::Checkbox("BRDF Lut Map", &params.use_brdf_lut);
 
             ImGui::Text("Material Constants");
-            interacted += ImGui::ColorEdit3("Diffuse Color", &params.albedo_color.x);
+            interacted += ImGui::ColorEdit3("Albedo", &params.albedo_color.x);
             interacted += ImGui::SliderFloat("Metallic Factor", &params.metallicFactor, 0.0f, 2.0f, "%.3f");
             interacted += ImGui::SliderFloat("Roughness", &params.roughness, 0.0f, 2.0f, "%.3f");
         }

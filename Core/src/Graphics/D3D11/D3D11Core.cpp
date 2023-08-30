@@ -21,8 +21,6 @@
 #include "Graphics/D3D11/ConstantBuffer/D3D11DirectionalLight.h"
 
 #include "ConstantBuffer/D3D11ConstantBuffer.h"
-#include "ConstantBuffer/D3D11PointLight.h"
-#include "RenderObject/D3D11ConcreteLight.h"
 
 Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, bool windowed)
     : _windowInfo{width, height, native_wnd, windowed}
@@ -73,10 +71,11 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
     ));
 
     auto& device {*_device.Get()};
+    auto& context {*_immContext.Get()};
 
     D3D11RenderCommand::Init(device, *_immContext.Get(), *_swapChain.Get(), width, height);
 
-    D3D11SceneHolder::Load(device);
+    D3D11SceneHolder::Load(device, context);
     D3D11PSOLibrary::Init(device);
 
     InitRenderStrategies();
@@ -146,8 +145,9 @@ void Engine::Graphics::D3D11Core::InitData() {
 
 
     auto& device {*_device.Get()};
+    auto& context {*_immContext.Get()};
 
-    _data = MakeUnique<D3D11RenderData>(device, GetProj());
+    _data = MakeUnique<D3D11RenderData>(device, context, GetProj());
 
     _data->_obj.push_back(
         std::move(
@@ -160,33 +160,45 @@ void Engine::Graphics::D3D11Core::InitData() {
         )
     );
 
-    //_data->_obj.push_back(
-    //    std::move(
-    //        MakeShared<D3D11RenderObject>(
+    _data->_obj.push_back(
+        std::move(
+            MakeShared<D3D11RenderObject>(
+                device,
+                D3DCamera::GetView(),
+                GetProj(),
+                D3D11SceneHolder::ResolveScene("Goblin")
+            )
+        )
+    );
+
+
+    _data->_obj.push_back(
+        std::move(
+            MakeShared<D3D11RenderObject>(
+                device,
+                D3DCamera::GetView(),
+                GetProj(),
+                D3D11SceneHolder::ResolveScene("DamagedHelmet")
+            )
+        )
+    );
+
+    //_data->_concreteLights.push_back(
+    //        MakeShared<D3D11ConcreteLight>(
     //            device,
     //            D3DCamera::GetView(),
     //            GetProj(),
-    //            D3D11SceneHolder::ResolveScene("DamagedHelmet")
+    //            ConcreteLightType::PointLight
     //        )
-    //    )
     //);
-
-    _data->_concreteLights.push_back(
-            MakeShared<D3D11ConcreteLight>(
-                device,
-                D3DCamera::GetView(),
-                GetProj(),
-                ConcreteLightType::PointLight
-            )
-    );
-    _data->_concreteLights.push_back(
-            MakeShared<D3D11ConcreteLight>(
-                device,
-                D3DCamera::GetView(),
-                GetProj(),
-                ConcreteLightType::PointLight
-            )
-    );
+    //_data->_concreteLights.push_back(
+    //        MakeShared<D3D11ConcreteLight>(
+    //            device,
+    //            D3DCamera::GetView(),
+    //            GetProj(),
+    //            ConcreteLightType::PointLight
+    //        )
+    //);
 
     _data->_ambDirLights.push_back(D3D11HemisphericAmbientLight{device});
     _data->_ambDirLights.push_back(D3D11DirectionalLight{device, {0.0f, -0.5f, 1.0f}, {1.0f, 1.0f, 1.0f}});

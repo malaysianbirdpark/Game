@@ -56,7 +56,7 @@ namespace Engine::Graphics {
 
         x_string                                            GetTextureInfo() const;
 
-        void                                                AddOrRelplaceTexture(ID3D11Device& device, ShaderResourceTypes type, char const* path);
+        void                                                AddOrRelplaceTexture(ID3D11Device& device, ID3D11DeviceContext& context, ShaderResourceTypes type, char const* path);
     private:
         DirectX::XMFLOAT4  _emissiveColor;
         DirectX::XMFLOAT4  _albedoColor;
@@ -111,7 +111,7 @@ namespace Engine::Graphics {
 
         static constexpr int MAX_NODE_LEVEL {20};
     public:
-        D3D11SceneGraph(ID3D11Device& device, char const* path);
+        D3D11SceneGraph(ID3D11Device& device, ID3D11DeviceContext& context, char const* path);
 
         // Copy ctor
         D3D11SceneGraph(D3D11SceneGraph const& other);
@@ -130,7 +130,7 @@ namespace Engine::Graphics {
         SceneTransformParameters&           GetTransformParamAt(int32_t node);
         char const*                         GetNameAt(int32_t node);
         D3D11Material&                      GetMaterialAt(int32_t node);
-        uint32_t&                           GetRenderStrategyAt(int32_t node);
+        int32_t&                            GetRenderStrategyAt(int32_t node);
         int32_t                             GetClosestMaterialConstant(int32_t node);
 
         void                                Update();
@@ -144,7 +144,7 @@ namespace Engine::Graphics {
     private:
         int32_t                              ParseNode(int32_t parent_id, int32_t level, aiScene const* ai_scene, aiNode const* ai_node);
         [[nodiscard]] static D3D11Mesh       ParseMesh(ID3D11Device& device, aiMesh const* ai_mesh);
-        [[nodiscard]] static D3D11Material   ParseMaterial(ID3D11Device& device, aiMaterial const* ai_material, char const* base_path);
+        [[nodiscard]] static D3D11Material   ParseMaterial(ID3D11Device& device, ID3D11DeviceContext& context, aiMaterial const* ai_material, char const* base_path);
         using VertexData = std::pair<std::shared_ptr<D3D11VertexBuffer>, std::shared_ptr<D3D11IndexBuffer>>;
         [[nodiscard]] static VertexData      ParseVertexData(ID3D11Device& device, aiMesh const* ai_mesh, x_string const& vertex_format);
     private:
@@ -155,7 +155,7 @@ namespace Engine::Graphics {
         x_vector<D3D11SceneNode>             _tree;
         x_vector<x_string>                   _nodeNames {};
     private:
-        x_vector<uint32_t>                   _renderStrategy;
+        x_vector<int32_t>                    _renderStrategy;
         x_vector<SceneTransformParameters>   _transforms;
         x_vector<DirectX::XMFLOAT4X4>        _globalTransforms;
         x_vector<DirectX::XMFLOAT4X4>        _localTransforms;

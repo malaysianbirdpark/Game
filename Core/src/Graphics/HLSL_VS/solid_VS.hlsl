@@ -40,10 +40,10 @@ VS_OUT main(VS_IN input)
         input.pos += input.normal * height * height_scale;
     }
 
-    output.world_pos = mul(m, float4(input.pos, 1.0f)).xyz;
-    output.normal = normalize(mul(mit, float4(input.normal, 1.0f)).xyz);
+    output.world_pos = mul(float4(input.pos, 1.0f), m).xyz;
+    output.normal = normalize(mul(float4(input.normal, 1.0f), mit).xyz);
     output.texcoord = input.texcoord;
-    output.sv_pos = mul(mvp, float4(input.pos, 1.0f));
+    output.sv_pos = mul(float4(input.pos, 1.0f), mvp);
 
 	return output;
 }

@@ -17,9 +17,9 @@ Engine::Graphics::D3D11TransformMVP::D3D11TransformMVP(ID3D11Device& device, Dir
     XMStoreFloat4x4(&_proj, proj);
 
     D3D11_SUBRESOURCE_DATA sd {};
-    XMStoreFloat4x4(&_mvp._m, model);
-    XMStoreFloat4x4(&_mvp._mit, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&_mvp._m))));
-    XMStoreFloat4x4(&_mvp._mvp, XMMatrixMultiply(XMMatrixMultiply(XMLoadFloat4x4(&_mvp._m), view), proj));
+    XMStoreFloat4x4(&_mvp._m, XMMatrixTranspose(model));
+    XMStoreFloat4x4(&_mvp._mit, XMMatrixInverse(nullptr, XMMatrixTranspose(XMLoadFloat4x4(&_model))));
+    XMStoreFloat4x4(&_mvp._mvp, XMMatrixTranspose(XMMatrixMultiply(XMMatrixMultiply(XMLoadFloat4x4(&_model), view), proj)));
     sd.pSysMem = &_mvp;
 
     device.CreateBuffer(&bd, &sd, _resource.ReleaseAndGetAddressOf());
@@ -55,9 +55,9 @@ void Engine::Graphics::D3D11TransformMVP::SetProj(DirectX::XMMATRIX const& proj)
 
 void Engine::Graphics::D3D11TransformMVP::Update(ID3D11DeviceContext& context) {
     using namespace DirectX;
-    XMStoreFloat4x4(&_mvp._m, XMLoadFloat4x4(&_model));
-    XMStoreFloat4x4(&_mvp._mit, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&_mvp._m))));
-    XMStoreFloat4x4(&_mvp._mvp, XMMatrixMultiply(XMMatrixMultiply(XMLoadFloat4x4(&_mvp._m), XMLoadFloat4x4(&_view)), XMLoadFloat4x4(&_proj)));
+    XMStoreFloat4x4(&_mvp._m, XMMatrixTranspose(XMLoadFloat4x4(&_model)));
+    XMStoreFloat4x4(&_mvp._mit, XMMatrixInverse(nullptr, XMLoadFloat4x4(&_model)));
+    XMStoreFloat4x4(&_mvp._mvp, XMMatrixTranspose(XMMatrixMultiply(XMMatrixMultiply(XMLoadFloat4x4(&_model), XMLoadFloat4x4(&_view)), XMLoadFloat4x4(&_proj))));
 
     D3D11_MAPPED_SUBRESOURCE msr {};
     context.Map(

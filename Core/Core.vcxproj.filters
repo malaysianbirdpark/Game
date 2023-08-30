@@ -596,5 +596,6 @@
     <FxCompile Include="src\Graphics\HLSL_VS\unreal_pbr_VS.hlsl">
       <Filter>Graphics\HLSL_VS</Filter>
     </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_PS\disney_pbr_PS.hlsl" />
   </ItemGroup>
 </Project>

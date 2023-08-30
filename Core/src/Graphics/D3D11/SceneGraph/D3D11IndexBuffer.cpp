@@ -10,8 +10,8 @@ namespace Engine::Graphics {
         bd.Usage = D3D11_USAGE_IMMUTABLE;
         bd.CPUAccessFlags = 0u;
         bd.MiscFlags = 0u;
-        bd.ByteWidth = static_cast<UINT>(_count * sizeof(unsigned short));
-        bd.StructureByteStride = sizeof(unsigned short);
+        bd.ByteWidth = static_cast<UINT>(_count * sizeof(uint16_t));
+        bd.StructureByteStride = sizeof(uint16_t);
 
         D3D11_SUBRESOURCE_DATA sd {};
         sd.pSysMem = data;

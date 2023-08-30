@@ -11,7 +11,7 @@ Engine::Graphics::D3D11FullScreenFilter::D3D11FullScreenFilter(ID3D11Device& dev
     _psoBlur = D3D11PSOLibrary::ResolvePSO("fullscreen_blur");
 
     D3D11_SAMPLER_DESC sd {};
-    sd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+    sd.Filter = D3D11_FILTER_ANISOTROPIC;
     sd.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR;
     sd.AddressV = D3D11_TEXTURE_ADDRESS_MIRROR;
     sd.AddressW = D3D11_TEXTURE_ADDRESS_MIRROR;

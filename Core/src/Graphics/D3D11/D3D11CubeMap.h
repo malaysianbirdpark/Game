@@ -8,17 +8,18 @@
 namespace Engine::Graphics {
     class D3D11Cubemap {
         enum {
-            edge = 60,
+            side = 100,
         };
         struct CubeMapVertex {
             DirectX::XMFLOAT3 pos;
         };
     public:
-        D3D11Cubemap(ID3D11Device& device, DirectX::XMMATRIX proj);
+        D3D11Cubemap(ID3D11Device& device, ID3D11DeviceContext& context, DirectX::XMMATRIX proj);
 
-        static void AddSDRTexture(ID3D11Device& device, char const* specular_path);
-        static void AddSDRTexture(ID3D11Device& device, char const* specular_path, char const* diffuse_path);
-        static void AddHDRTexture(ID3D11Device& device, char const* env_path, char const* specular_path, char const* diffuse_path);
+        static void AddSDRTexture(ID3D11Device& device, ID3D11DeviceContext& context, char const* specular_path);
+        static void AddSDRTexture(ID3D11Device& device, ID3D11DeviceContext& context, char const* specular_path, char const* diffuse_path);
+        static void AddHDRTexture(ID3D11Device& device, ID3D11DeviceContext& context, char const* env_path, char const* specular_path, char const* diffuse_path);
+        static void AddHDRTexture(ID3D11Device& device, ID3D11DeviceContext& context, char const* env_path, char const* specular_path, char const* diffuse_path, char const* brdf_path);
         static void SetTexture(uint8_t idx);
         static int& TextureIndex();
 
@@ -27,35 +28,35 @@ namespace Engine::Graphics {
         void Render(ID3D11DeviceContext& context);
     private:
         inline static x_array<CubeMapVertex, 24> cube_vertices {{
-            {.pos = {-edge, edge, -edge}},
-            {.pos = {-edge, edge, edge}},
-            {.pos = {edge, edge, edge}},
-            {.pos = {edge, edge, -edge}},
+            {.pos = {-side, side, -side}},
+            {.pos = {-side, side, side}},
+            {.pos = {side, side, side}},
+            {.pos = {side, side, -side}},
 
-            {.pos = {-edge, -edge, -edge}},
-            {.pos = {edge, -edge, -edge}},
-            {.pos = {edge, -edge, edge}},
-            {.pos = {-edge, -edge, edge}},
+            {.pos = {-side, -side, -side}},
+            {.pos = {side, -side, -side}},
+            {.pos = {side, -side, side}},
+            {.pos = {-side, -side, side}},
 
-            {.pos = {-edge, -edge, -edge}},
-            {.pos = {-edge, edge, -edge}},
-            {.pos = {edge, edge, -edge}},
-            {.pos = {edge, -edge, -edge}},
+            {.pos = {-side, -side, -side}},
+            {.pos = {-side, side, -side}},
+            {.pos = {side, side, -side}},
+            {.pos = {side, -side, -side}},
 
-            {.pos = {-edge, -edge, edge}},
-            {.pos = {edge, -edge, edge}},
-            {.pos = {edge, edge, edge}},
-            {.pos = {-edge, edge, edge}},
+            {.pos = {-side, -side, side}},
+            {.pos = {side, -side, side}},
+            {.pos = {side, side, side}},
+            {.pos = {-side, side, side}},
 
-            {.pos = {-edge, -edge, edge}},
-            {.pos = {-edge, edge, edge}},
-            {.pos = {-edge, edge, -edge}},
-            {.pos = {-edge, -edge, -edge}},
+            {.pos = {-side, -side, side}},
+            {.pos = {-side, side, side}},
+            {.pos = {-side, side, -side}},
+            {.pos = {-side, -side, -side}},
 
-            {.pos = {edge, -edge, edge}},
-            {.pos = {edge, -edge, -edge}},
-            {.pos = {edge, edge, -edge}},
-            {.pos = {edge, edge, edge}},
+            {.pos = {side, -side, side}},
+            {.pos = {side, -side, -side}},
+            {.pos = {side, side, -side}},
+            {.pos = {side, side, side}},
         }};
         inline static x_array<uint16_t, 36> cube_indices {
             23, 22, 20, 22, 21, 20,

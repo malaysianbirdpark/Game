@@ -3,7 +3,7 @@
 
 #include <directxtk/DDSTextureLoader.h>
 
-Engine::Graphics::D3D11OpacityMap::D3D11OpacityMap(ID3D11Device& device, char const* path)
+Engine::Graphics::D3D11OpacityMap::D3D11OpacityMap(ID3D11Device& device, ID3D11DeviceContext& context, char const* path)
     : _path{path}
 {
     using namespace DirectX;
@@ -26,10 +26,11 @@ Engine::Graphics::D3D11OpacityMap::D3D11OpacityMap(ID3D11Device& device, char co
         _srv.ReleaseAndGetAddressOf(),
         &alphaMode
     );
+    context.GenerateMips(_srv.Get());
 }
 
-std::shared_ptr<Engine::Graphics::D3D11OpacityMap> Engine::Graphics::D3D11OpacityMap::Create(ID3D11Device& device, char const* path) {
-    return std::move(MakeShared<D3D11OpacityMap>(device, path));
+std::shared_ptr<Engine::Graphics::D3D11OpacityMap> Engine::Graphics::D3D11OpacityMap::Create(ID3D11Device& device, ID3D11DeviceContext& context, char const* path) {
+    return std::move(MakeShared<D3D11OpacityMap>(device, context, path));
 }
 
 void Engine::Graphics::D3D11OpacityMap::Bind(ID3D11DeviceContext& context) const {
