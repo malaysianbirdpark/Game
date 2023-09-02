@@ -272,27 +272,6 @@
     <ClInclude Include="src\Platform\WindowsInclude.h">
       <Filter>Platform</Filter>
     </ClInclude>
-    <ClInclude Include="src\Thread\DeadLockProfiler.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Thread\GlobalQueue.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Thread\Job.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Thread\JobQueue.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Thread\Lock.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Thread\LockQueue.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Thread\ThreadMan.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
     <ClInclude Include="src\Utils\Clk.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -493,21 +472,6 @@
     </ClCompile>
     <ClCompile Include="src\Platform\Platform.cpp">
       <Filter>Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Thread\DeadLockProfiler.cpp">
-      <Filter>Thread</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Thread\GlobalQueue.cpp">
-      <Filter>Thread</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Thread\JobQueue.cpp">
-      <Filter>Thread</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Thread\Lock.cpp">
-      <Filter>Thread</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Thread\ThreadMan.cpp">
-      <Filter>Thread</Filter>
     </ClCompile>
     <ClCompile Include="src\Utils\Clk.cpp">
       <Filter>Utils</Filter>

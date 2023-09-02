@@ -26,10 +26,6 @@
 
 #include "Memory/MemoryLib.h"
 
-#include "Thread/Lock.h"
-#include "Thread/ThreadMan.h"
-#include "Thread/DeadLockProfiler.h"
-
 struct WindowInfo {
     int width;
     int height;

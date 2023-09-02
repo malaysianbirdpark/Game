@@ -181,13 +181,6 @@
     <ClInclude Include="src\Platform\Input.h" />
     <ClInclude Include="src\Platform\Platform.h" />
     <ClInclude Include="src\Platform\WindowsInclude.h" />
-    <ClInclude Include="src\Thread\DeadLockProfiler.h" />
-    <ClInclude Include="src\Thread\GlobalQueue.h" />
-    <ClInclude Include="src\Thread\Job.h" />
-    <ClInclude Include="src\Thread\JobQueue.h" />
-    <ClInclude Include="src\Thread\Lock.h" />
-    <ClInclude Include="src\Thread\LockQueue.h" />
-    <ClInclude Include="src\Thread\ThreadMan.h" />
     <ClInclude Include="src\Utils\Clk.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
@@ -258,11 +251,6 @@
     <ClCompile Include="src\Memory\MemoryPool.cpp" />
     <ClCompile Include="src\Platform\Input.cpp" />
     <ClCompile Include="src\Platform\Platform.cpp" />
-    <ClCompile Include="src\Thread\DeadLockProfiler.cpp" />
-    <ClCompile Include="src\Thread\GlobalQueue.cpp" />
-    <ClCompile Include="src\Thread\JobQueue.cpp" />
-    <ClCompile Include="src\Thread\Lock.cpp" />
-    <ClCompile Include="src\Thread\ThreadMan.cpp" />
     <ClCompile Include="src\Utils\Clk.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
