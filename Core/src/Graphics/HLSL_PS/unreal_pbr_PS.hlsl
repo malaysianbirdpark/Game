@@ -2,6 +2,7 @@ struct PS_IN {
     float4 world_pos : POSITION;
     float3 normal    : NORMAL;
     float3 tangent   : TANGENT;
+    float3 binormal  : BINORMAL;
     float2 texcoord  : TEXCOORD;
     float4 sv_pos    : SV_POSITION;
 };
@@ -146,8 +147,8 @@ PS_OUT main(PS_IN input)
     if (use_normal_map) {
         float3 sampled_normal = normal_map.Sample(sampler_wrap, input.texcoord).xyz;
         sampled_normal = sampled_normal * 2.0f - float3(1.0f, 1.0f, 1.0f);
-        const float3 binormal = cross(input.normal, input.tangent);
-        const float3x3 tbn = float3x3(input.tangent, binormal, input.normal);
+        //const float3 binormal = cross(input.normal, input.tangent);
+        const float3x3 tbn = float3x3(input.tangent, input.binormal, input.normal);
         normal = normalize(mul(sampled_normal, tbn));
     }
     else {
@@ -182,7 +183,7 @@ PS_OUT main(PS_IN input)
         const float3 to_camera = normalize(cam_pos - input.world_pos.xyz);
         float3 to_light = pl_pos - input.world_pos.xyz;
         const float dist_to_light = length(to_light);
-        to_light = normalize(to_light);
+        to_light = to_light / dist_to_light;
         const float3 NdotL = saturate(dot(to_light, normal));
 
         // attenuation

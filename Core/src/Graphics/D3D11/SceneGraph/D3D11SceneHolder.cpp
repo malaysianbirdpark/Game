@@ -45,12 +45,12 @@ void Engine::Graphics::D3D11SceneHolder::Load(ID3D11Device& device, ID3D11Device
         std::wstring p (preview_path.length(), L' ');
         std::ranges::copy(preview_path, p.begin());
 
-        _previewImages.emplace_back();
+        _previewImages[name] = Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>{};
         DirectX::CreateDDSTextureFromFile(
             &device,
             p.c_str(),
             nullptr,
-            _previewImages.back().ReleaseAndGetAddressOf()
+            _previewImages[name].ReleaseAndGetAddressOf()
         );
     }
 
@@ -74,6 +74,6 @@ Engine::x_unordered_map<std::basic_string<char, std::char_traits<char>, STLAlloc
     return _scenes;
 }
 
-Engine::x_vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> const& Engine::Graphics::D3D11SceneHolder::GetPreviewImages() {
+Engine::x_unordered_map<Engine::x_string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> const& Engine::Graphics::D3D11SceneHolder::GetPreviewImages() {
     return _previewImages;
 }

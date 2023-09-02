@@ -14,7 +14,7 @@ Engine::Graphics::D3D11ConcreteLight::D3D11ConcreteLight(ID3D11Device& device, I
     switch (type) {
     case ConcreteLightType::PointLight:
         _lightCB = MakeUnique<D3D11ConstantBuffer>(std::move(D3D11PointLight{device}));
-        _scene = std::make_unique<D3D11SceneGraph>(D3D11SceneHolder::ResolveScene("Sphere"));
+        _scene = std::make_unique<D3D11SceneGraph>(D3D11SceneHolder::ResolveScene("HighDonut"));
         _stack.reserve(_scene->_tree.size());
         _visited.resize(_scene->_tree.size());
         break;

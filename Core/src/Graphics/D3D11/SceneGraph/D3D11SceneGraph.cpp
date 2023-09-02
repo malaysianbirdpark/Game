@@ -185,6 +185,8 @@ Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, ID3D11D
 
     _tree.shrink_to_fit();
     _nodeNames[0] = {tag};
+    MarkAsTransformed(0);
+    RecalculateGlobalTransforms();
 }
 
 Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(D3D11SceneGraph const& other)

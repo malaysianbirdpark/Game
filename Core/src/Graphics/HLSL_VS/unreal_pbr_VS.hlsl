@@ -10,6 +10,7 @@ struct VS_OUT {
     float4 world_pos : POSITION;
     float3 normal    : NORMAL;
     float3 tangent   : TANGENT;
+    float3 binormal  : BINORMAL;
     float2 texcoord  : TEXCOORD;
     float4 sv_pos    : SV_POSITION;
 };
@@ -60,6 +61,7 @@ VS_OUT main(VS_IN input)
     output.world_pos = mul(float4(input.pos, 1.0f), m);
     output.normal = normalize(mul(input.normal, (float3x3) mit));
     output.tangent = normalize(mul(input.tangent, (float3x3) m));
+    output.binormal = normalize(mul(input.binormal, (float3x3) m));
     output.texcoord = input.texcoord;
     output.sv_pos = mul(float4(input.pos, 1.0f), mvp);
 

@@ -19,10 +19,10 @@ namespace Engine::Graphics {
         static D3D11SceneGraph ResolveScene(x_string const& tag);
         static bool Contains(x_string const& tag);
         static x_unordered_map<x_string, std::unique_ptr<D3D11SceneGraph>> const& GetSceneMap();
-        static x_vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> const& GetPreviewImages();
+        static x_unordered_map<x_string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> const& GetPreviewImages();
     private:
         inline static x_unordered_map<x_string, std::unique_ptr<D3D11SceneGraph>> _scenes;
-        inline static x_vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> _previewImages;
+        inline static x_unordered_map<x_string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> _previewImages;
     };
 }
 
