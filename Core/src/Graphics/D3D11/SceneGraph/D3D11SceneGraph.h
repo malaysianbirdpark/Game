@@ -108,7 +108,7 @@ namespace Engine::Graphics {
 
         static constexpr int MAX_NODE_LEVEL {20};
     public:
-        D3D11SceneGraph(ID3D11Device& device, ID3D11DeviceContext& context, char const* path);
+        D3D11SceneGraph(ID3D11Device& device, ID3D11DeviceContext& context, char const* path, char const* tag);
 
         // Copy ctor
         D3D11SceneGraph(D3D11SceneGraph const& other);

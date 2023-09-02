@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <rapidjson/document.h>
+#include <directxtk/DDSTextureLoader.h>
 
 void Engine::Graphics::D3D11SceneHolder::Load(ID3D11Device& device, ID3D11DeviceContext& context) {
     GRAPHICS_INFO("Loading Models..");
@@ -38,7 +39,19 @@ void Engine::Graphics::D3D11SceneHolder::Load(ID3D11Device& device, ID3D11Device
         auto const model {it_model->GetObj()};
         auto const name {model["name"].GetString()};
 
-        _scenes[name] = std::make_unique<D3D11SceneGraph>(device, context, model["path"].GetString());
+        _scenes[name] = std::make_unique<D3D11SceneGraph>(device, context, model["path"].GetString(), name);
+
+        x_string preview_path {model["preview"].GetString()};
+        std::wstring p (preview_path.length(), L' ');
+        std::ranges::copy(preview_path, p.begin());
+
+        _previewImages.emplace_back();
+        DirectX::CreateDDSTextureFromFile(
+            &device,
+            p.c_str(),
+            nullptr,
+            _previewImages.back().ReleaseAndGetAddressOf()
+        );
     }
 
     GRAPHICS_INFO("Done");
@@ -53,10 +66,14 @@ Engine::Graphics::D3D11SceneGraph Engine::Graphics::D3D11SceneHolder::ResolveSce
     return std::move(_scenes[tag]->Clone());
 }
 
-bool Engine::Graphics::D3D11SceneHolder::Constains(x_string const& tag) {
+bool Engine::Graphics::D3D11SceneHolder::Contains(x_string const& tag) {
     return _scenes.contains(tag);
 }
 
 Engine::x_unordered_map<std::basic_string<char, std::char_traits<char>, STLAllocator<char>>, std::unique_ptr<Engine::Graphics::D3D11SceneGraph>> const& Engine::Graphics::D3D11SceneHolder::GetSceneMap() {
     return _scenes;
+}
+
+Engine::x_vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> const& Engine::Graphics::D3D11SceneHolder::GetPreviewImages() {
+    return _previewImages;
 }

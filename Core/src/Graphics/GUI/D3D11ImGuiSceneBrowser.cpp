@@ -41,6 +41,7 @@ void Engine::Graphics::D3D11ImGuiSceneBrowser::SetOpened() {
 
 void Engine::Graphics::D3D11ImGuiSceneBrowser::ImGuiShowSceneList() {
     auto const& scene_map {D3D11SceneHolder::GetSceneMap()};
+    auto const& preview_images {D3D11SceneHolder::GetPreviewImages()};
 
     static int pressed_count = 0;
     for (auto it {scene_map.begin()}; it != scene_map.end(); ++it)
@@ -57,7 +58,7 @@ void Engine::Graphics::D3D11ImGuiSceneBrowser::ImGuiShowSceneList() {
         ImVec2 uv1 = ImVec2(1.0f, 1.0f);    // UV coordinates for (32,32) in our texture
         ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);             // Black background
         ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);           // No tint
-        if (ImGui::ImageButton("", 0, size, uv0, uv1, bg_col, tint_col))
+        if (ImGui::ImageButton("", preview_images[id].Get(), size, uv0, uv1, bg_col, tint_col))
             _selectedSceneTag = it->first;
         ImGui::SameLine();
         ImGui::Text(it->first.c_str());

@@ -124,7 +124,7 @@ UINT Engine::Graphics::D3D11Mesh::GetIndexCount() const {
     return _indexBuffer->GetCount();
 }
 
-Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, ID3D11DeviceContext& context, char const* path) {
+Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, ID3D11DeviceContext& context, char const* path, char const* tag) {
     unsigned const flags {
         aiProcess_FlipUVs               |
         aiProcess_GenSmoothNormals      |
@@ -184,6 +184,7 @@ Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, ID3D11D
     // -------------------------------------------
 
     _tree.shrink_to_fit();
+    _nodeNames[0] = {tag};
 }
 
 Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(D3D11SceneGraph const& other)

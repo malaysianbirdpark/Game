@@ -215,7 +215,7 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSceneEditWindow(x_vector<std
             selected_scene_tag = _sceneBrowser.Browse();
         }
 
-        if (selected_scene_tag.has_value() && D3D11SceneHolder::Constains(selected_scene_tag.value())) {
+        if (selected_scene_tag.has_value() && D3D11SceneHolder::Contains(selected_scene_tag.value())) {
             objs.push_back(
                 std::move(
                     MakeShared<D3D11DefaultObject>(
