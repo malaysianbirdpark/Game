@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Application.h"
 
+#include <imgui.h>
+
 #include "Platform/Platform.h"
 #include "Platform/Input.h"
 #include "Graphics/D3DCamera.h"
@@ -35,42 +37,38 @@ int Engine::Core::Application::Run() {
 
         auto const dt {Clk::Mark()};
 
-        _gfx->BeginFrame();
         ProcessInput(dt);
+        _gfx->BeginFrame();
         Update(dt);
         _gfx->EndFrame();
     }
 }
 
 void Engine::Core::Application::ProcessInput(float const dt) {
-    auto const kbd {Input::GetKeyboardState()};
-    auto const mouse {Input::GetMouseState()};
+    auto const kbd_tracker {Input::GetKeyboardState()};
+    //auto const mouse {Input::GetMouseState()};
 
-    if (kbd.Escape)
+    if (kbd_tracker.pressed.Escape)
         Input::ToggleRaw();
 
+    auto const kbd_state {kbd_tracker.GetLastState()};
     if (!Input::_cursorEnabled) {
-        if (kbd.D)
-            Graphics::D3DCamera::Translate({dt, 0.0f, 0.0f});
-        if (kbd.A)
-            Graphics::D3DCamera::Translate({-dt, 0.0f, 0.0f});
-        if (kbd.R)
-            Graphics::D3DCamera::Translate({0.0f, dt, 0.0f});
-        if (kbd.F)
-            Graphics::D3DCamera::Translate({0.0f, -dt, 0.0f});
-        if (kbd.W)
-            Graphics::D3DCamera::Translate({0.0f, 0.0f, dt});
-        if (kbd.S)
-            Graphics::D3DCamera::Translate({0.0f, 0.0f, -dt});
-    }
+        DirectX::XMFLOAT3 translate {};
+        translate.x += static_cast<float>(kbd_state.D) * dt;
+        translate.x -= static_cast<float>(kbd_state.A) * dt;
+        translate.y += static_cast<float>(kbd_state.R) * dt;
+        translate.y += static_cast<float>(kbd_state.F) * dt;
+        translate.z += static_cast<float>(kbd_state.W) * dt;
+        translate.z -= static_cast<float>(kbd_state.S) * dt;
 
-    while (auto const raw_delta {Input::ReadRawDelta()}) {
-        if (!Input::_cursorEnabled) 
+        Graphics::D3DCamera::Translate(translate);
+
+        while (auto const raw_delta {Input::ReadRawDelta()})
             Graphics::D3DCamera::Rotate(raw_delta.value().first * dt, raw_delta.value().second * dt);
     }
 
-    Input::ClearKeyboard();
-    Input::ClearMouse();
+    //Input::ClearKeyboard();
+    //Input::ClearMouse();
 }
 
 void Engine::Core::Application::Update(float const dt) {

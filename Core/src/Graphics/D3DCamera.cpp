@@ -63,16 +63,17 @@ void Engine::Graphics::D3DCamera::Rotate(float const dx, float const dy) {
     _pitch = std::clamp(_pitch + dy * _rotationSpeed, -(PI / 2.0f) * 0.995f, PI / 2.0f * 0.995f);
 }
 
-void Engine::Graphics::D3DCamera::Translate(DirectX::XMFLOAT3 mat) {
-   DirectX::XMStoreFloat3(&mat, DirectX::XMVector3Transform(
-       DirectX::XMLoadFloat3(&mat),
-       DirectX::XMMatrixRotationRollPitchYaw(_pitch, _yaw, 0.0f) *
-       DirectX::XMMatrixScaling(_travelSpeed, _travelSpeed, _travelSpeed)
-   ));
+void Engine::Graphics::D3DCamera::Translate(DirectX::XMFLOAT3 const& vec) {
+   auto const transform {
+       DirectX::XMVector3Transform(
+           DirectX::XMVectorScale(DirectX::XMLoadFloat3(&vec), _travelSpeed),
+           DirectX::XMMatrixRotationRollPitchYaw(_pitch, _yaw, 0.0f)
+       )
+   };
 
    _pos = {
-       _pos.x + mat.x,
-       _pos.y + mat.y,
-       _pos.z + mat.z
+       _pos.x + transform.m128_f32[0],
+       _pos.y + transform.m128_f32[1],
+       _pos.z + transform.m128_f32[2]
    };
 }

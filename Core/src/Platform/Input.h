@@ -10,7 +10,7 @@ namespace Engine {
     public:
         static void Init(HWND hWnd);
     public:
-        [[nodiscard]] static DirectX::Keyboard::State GetKeyboardState();
+        [[nodiscard]] static DirectX::Keyboard::KeyboardStateTracker& GetKeyboardState();
         [[nodiscard]] static DirectX::Mouse::State GetMouseState();
         [[nodiscard]] static std::optional<std::pair<int, int>> ReadRawDelta();
 
@@ -39,8 +39,9 @@ namespace Engine {
             int y;
         };
     private:
-        inline static std::unique_ptr<DirectX::Mouse> _mouse {};
-        inline static std::unique_ptr<DirectX::Keyboard> _keyboard {};
+        inline static DirectX::Mouse _mouse {};
+        inline static DirectX::Keyboard _keyboard {};
+        inline static DirectX::Keyboard::KeyboardStateTracker _tracker {};
 
         inline static DSAL::x_circular_queue<RawMouseData, 16u> _rawDeltaBuffer;
         inline static x_vector<BYTE> _rawBuffer;

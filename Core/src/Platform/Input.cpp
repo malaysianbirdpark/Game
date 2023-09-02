@@ -6,20 +6,18 @@
 void Engine::Input::Init(HWND hWnd) {
     _hWnd = hWnd;
 
-    _mouse = MakeUnique<DirectX::Mouse>();
-    _mouse->SetWindow(hWnd);
-
-    _keyboard = MakeUnique<DirectX::Keyboard>();
+    _mouse.SetWindow(hWnd);
 
     PLATFORM_INFO("InputHanlder Initialized!");
 }
 
-DirectX::Keyboard::State Engine::Input::GetKeyboardState() {
-    return _keyboard->GetState();
+DirectX::Keyboard::KeyboardStateTracker& Engine::Input::GetKeyboardState() {
+    _tracker.Update(_keyboard.GetState());
+    return _tracker;
 }
 
 DirectX::Mouse::State Engine::Input::GetMouseState() {
-    return _mouse->GetState();
+    return _mouse.GetState();
 }
 
 std::optional<std::pair<int, int>> Engine::Input::ReadRawDelta() {
@@ -109,11 +107,11 @@ void Engine::Input::DisableCursor() {
 }
 
 void Engine::Input::ClearKeyboard() {
-    _keyboard->Reset();
+    _keyboard.Reset();
 }
 
 void Engine::Input::ClearMouse() {
-    _mouse->ResetScrollWheelValue();
+    _mouse.ResetScrollWheelValue();
 }
 
 void Engine::Input::ConfineCursor() {
