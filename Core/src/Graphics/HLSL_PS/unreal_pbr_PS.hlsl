@@ -90,7 +90,8 @@ float3 UnrealPBRAmbient(const float3 pos, const float3 normal, const float3 to_c
 float NdfGGX(const float NdotH, const float roughness) {
     const float a = roughness * roughness;
     const float a_sq = a * a;
-    const float denom = (NdotH * NdotH) * (a_sq - 1) + 1;
+    //const float denom = (NdotH * NdotH) * (a_sq - 1.0f) + 1.0f;
+    const float denom = (NdotH * a - NdotH) * NdotH + 1.0f;
 
     return a_sq / (3.141592f * denom * denom);
 }
@@ -100,9 +101,15 @@ float SchlickG1(const float NdotV, const float k) {
 }
 
 float SchlickGGX(const float NdotL, const float NdotV, const float rough) {
-    const float r = rough + 1.0f;
-    const float k = (r * r) / 8.0f;
-    return SchlickG1(NdotL, k) * SchlickG1(NdotV, k);
+    //const float r = rough + 1.0f;
+    //const float k = (r * r) / 8.0f;
+    //return SchlickG1(NdotL, k) * SchlickG1(NdotV, k);
+
+    const float r = rough * rough;
+    const float attL = 2.0f * NdotL / (NdotL + sqrt(r + (1.0f - r) * (NdotL * NdotL)));
+    const float attV = 2.0f * NdotV / (NdotV + sqrt(r + (1.0f - r) * (NdotV * NdotV)));
+
+    return attL * attV;
 }
 
 float3 UnrealPBRLightDiffuse(const float3 albedo, const float3 F, const float metal) {
@@ -147,8 +154,8 @@ PS_OUT main(PS_IN input)
     if (use_normal_map) {
         float3 sampled_normal = normal_map.Sample(sampler_wrap, input.texcoord).xyz;
         sampled_normal = sampled_normal * 2.0f - float3(1.0f, 1.0f, 1.0f);
-        //const float3 binormal = cross(input.normal, input.tangent);
-        const float3x3 tbn = float3x3(input.tangent, input.binormal, input.normal);
+        const float3 binormal = cross(input.normal, input.tangent);
+        const float3x3 tbn = float3x3(input.tangent, binormal, input.normal);
         normal = normalize(mul(sampled_normal, tbn));
     }
     else {
@@ -156,7 +163,7 @@ PS_OUT main(PS_IN input)
     }
 
     float metal = use_metallic_map ? metallic_map.Sample(sampler_wrap, input.texcoord).b : metallic_factor;
-    metal = clamp(metal, 0.0f, 1.0f);
+    metal = saturate(metal);
     float rough = use_roughness_map ? roughness_map.Sample(sampler_wrap, input.texcoord).g : roughness;
     rough = clamp(rough, Fdielectric.r, 1.0f);
     float ao = use_ao_map ? saturate(ao_map.Sample(sampler_wrap, input.texcoord).r) : 1.0f;
@@ -171,9 +178,9 @@ PS_OUT main(PS_IN input)
         // directional light
         const float3 to_light = normalize(-dl_dir);
         const float3 NdotL = saturate(dot(to_light, normal));
-        output.color.rgb +=
-            float3(UnrealPBRLight(albedo, normal, to_light, to_camera, NdotL, metal, rough)
-            * dl_color * NdotL);
+        output.color +=
+            float4(UnrealPBRLight(albedo, normal, to_light, to_camera, NdotL, metal, rough)
+            * dl_color * NdotL, 1.0f);
     }
     else if (light_type == 1)
     {
@@ -195,6 +202,6 @@ PS_OUT main(PS_IN input)
             * pl_color * NdotL, 1.0f) * att;
     }
 
-    output.color = clamp(output.color, 0.0f, 0.993f);
+    output.color = clamp(output.color, 0.0f, 0.99f);
     return output;
 }

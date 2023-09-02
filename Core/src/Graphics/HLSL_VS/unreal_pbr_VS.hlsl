@@ -53,15 +53,18 @@ VS_OUT main(VS_IN input)
     VS_OUT output;
 
     if (use_height_map) {
-        float height = height_map.SampleLevel(sampler0, input.texcoord, 0).r;
-        height = height * 2.0f - 1.0f;
-        input.pos += input.normal * height * height_scale;
+        if ((input.texcoord.x >= 0.01f && input.texcoord.y >= 0.01f) &&
+            (input.texcoord.x <= 0.99f && input.texcoord.y <= 0.99f)) 
+        {
+            float height = height_map.SampleLevel(sampler0, input.texcoord, 0.0f).r;
+            height = height * 2.0f - 1.0f;
+            input.pos += input.normal * height * height_scale;
+        }
     }
 
     output.world_pos = mul(float4(input.pos, 1.0f), m);
-    output.normal = normalize(mul(input.normal, (float3x3) mit));
-    output.tangent = normalize(mul(input.tangent, (float3x3) m));
-    output.binormal = normalize(mul(input.binormal, (float3x3) m));
+    output.normal = normalize(mul(input.normal,(float3x3) mit));
+    output.tangent = normalize(mul(input.tangent,(float3x3) m));
     output.texcoord = input.texcoord;
     output.sv_pos = mul(float4(input.pos, 1.0f), mvp);
 

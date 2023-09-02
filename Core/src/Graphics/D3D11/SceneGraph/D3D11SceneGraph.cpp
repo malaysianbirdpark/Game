@@ -127,9 +127,7 @@ UINT Engine::Graphics::D3D11Mesh::GetIndexCount() const {
 Engine::Graphics::D3D11SceneGraph::D3D11SceneGraph(ID3D11Device& device, ID3D11DeviceContext& context, char const* path, char const* tag) {
     unsigned const flags {
         aiProcess_FlipUVs               |
-        aiProcess_GenSmoothNormals      |
         aiProcess_CalcTangentSpace      |
-        aiProcess_GenUVCoords           |
         aiProcess_Triangulate           |
         aiProcess_JoinIdenticalVertices |
         aiProcess_ImproveCacheLocality  

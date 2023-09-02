@@ -118,18 +118,6 @@ void Engine::Graphics::D3D11Core::InitData() {
         );
     }
 
-    //_data->_obj.push_back(
-    //    std::move(
-    //        MakeShared<D3D11DefaultObject>(
-    //            device,
-    //            context,
-    //            D3DCamera::GetView(),
-    //            GetProj(),
-    //            D3D11SceneHolder::ResolveScene("Sponza")
-    //        )
-    //    )
-    //);
-
     _data->_concreteLights.push_back(
             MakeShared<D3D11ConcreteLight>(
                 device,

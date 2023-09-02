@@ -5,7 +5,7 @@ namespace Engine::Graphics {
         friend class D3D11Material;
 
         struct MaterialParameters {
-            float height_scale {0.5f};
+            float height_scale {0.1f};
             float padding[3] {};
         };
     public:

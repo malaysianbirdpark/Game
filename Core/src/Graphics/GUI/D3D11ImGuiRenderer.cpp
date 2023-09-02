@@ -170,8 +170,8 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowDockSpace() {
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowViewport() {
     if (ImGui::Begin("Viewport")) {
-        auto constexpr w {1920};
-        auto constexpr h {1080};
+        auto constexpr w {1600};
+        auto constexpr h {900};
 
         ImGui::Image(
             D3D11RenderCommand::GetFinalSRV(),
@@ -365,6 +365,16 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiRenderMirrorList(D3D11SceneGraph
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowConcreteLightEditWindow(x_vector<std::shared_ptr<D3D11ConcreteLight>>& light_obj) {
     if (ImGui::Begin("Concrete Lights")) {
+        if (ImGui::Button("Add Point Light")) {
+            light_obj.push_back(
+                MakeShared<D3D11ConcreteLight>(
+                    D3D11Core::Device(),
+                    D3D11Core::Context(),
+                    ConcreteLightType::PointLight
+                )
+            );
+        }
+
         ImGui::Columns(2, nullptr, true);
         for (auto i {0}; i != light_obj.size(); ++i)
             ImGuiRenderLightList(*light_obj[i]->GetScene(), i);
@@ -647,7 +657,7 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowVSConstantEditWindow(int32_t
         int interacted {};
         if (node != -1) {
             auto& params {_selected.first->GetMaterialAt(_selected.first->_nodeId_to_materialId[node]).GetVSConstants()->GetParams()};
-            interacted += ImGui::SliderFloat("Height Map Scale", &params.height_scale, 0.0f, 2.0f, "%.5f");
+            interacted += ImGui::SliderFloat("Height Map Scale", &params.height_scale, 0.0f, 0.1f, "%.5f");
         }
 
         if (interacted > 0) {

@@ -24,7 +24,7 @@ PS_OUT main(PS_IN input)
         output.color = diffuse_map.Sample(sampler0, input.texcoord);
     }
     else {
-        output.color = input.world_pos;
+        output.color = float4(1.0f, 1.0f, 1.0f, 1.0f);
     }
     clip(output.color.a < 0.1f ? -1 : 1);
 
