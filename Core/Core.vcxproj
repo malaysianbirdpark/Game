@@ -108,6 +108,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Graphics\GUI\D3D11ImGuiSceneBrowser.h" />
+    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11MirrorObject.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Core.h" />
     <ClInclude Include="src\Core\Log.h" />
@@ -119,11 +121,12 @@
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11GlobalConstants.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11HemisphericAmbientLight.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightSpot.h" />
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11PhongConstants.h" />
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11MaterialConstants.h" />
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11PhongConstants.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11PointLight.h" />
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11SolidConstant.h" />
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformMVP.h" />
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11UnrealPBRConstants.h" />
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11SolidConstant.h" />
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformCB.h" />
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11UnrealPBRConstants.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11VertexShaderConstants.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11Core.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11Cubemap.h" />
@@ -143,8 +146,7 @@
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11ConcreteLight.h" />
-    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11RenderObject.h" />
-    <ClInclude Include="src\Graphics\D3D11\RenderPass\D3D11RenderPass.h" />
+    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11DefaultObject.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11RenderStrategy.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11SolidStrategy.h" />
@@ -190,6 +192,8 @@
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Graphics\GUI\D3D11ImGuiSceneBrowser.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11MirrorObject.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11ConstantBuffer.cpp" />
@@ -197,11 +201,11 @@
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11GlobalConstants.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11HemisphericAmbientLight.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightSpot.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11PhongConstants.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11PhongConstants.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11PointLight.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11SolidConstant.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformMVP.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11UnrealPBRConstants.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11SolidConstant.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformCB.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11UnrealPBRConstants.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11VertexShaderConstants.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11Core.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11Cubemap.cpp" />
@@ -220,8 +224,7 @@
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11ConcreteLight.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11RenderObject.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\RenderPass\D3D11RenderPass.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11DefaultObject.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11RenderStrategy.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11SolidStrategy.cpp" />
@@ -336,18 +339,6 @@
       <EntryPointName>main</EntryPointName>
       <ObjectFileOutput>../Game/ShaderLib/phong_PS.cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_PS\point_light_PS.hlsl">
-      <ShaderType>Pixel</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-      <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/point_light_PS.cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_PS\post_null_PS.hlsl">
-      <ShaderType>Pixel</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-      <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/post_null_PS.cso</ObjectFileOutput>
-    </FxCompile>
     <FxCompile Include="src\Graphics\HLSL_PS\solid_PS.hlsl">
       <ShaderType>Pixel</ShaderType>
       <ShaderModel>5.0</ShaderModel>
@@ -377,42 +368,6 @@
       <ShaderModel>5.0</ShaderModel>
       <EntryPointName>main</EntryPointName>
       <ObjectFileOutput>../Game/ShaderLib/pos_VS.cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_VS.hlsl">
-      <ShaderType>Vertex</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-      <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/pos_norm_VS.cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tan_VS.hlsl">
-      <ShaderType>Vertex</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-      <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/pos_norm_tan_VS.cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tan_tex_VS.hlsl">
-      <ShaderType>Vertex</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-      <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/pos_norm_tan_tex_VS.cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tex_VS.hlsl">
-      <ShaderType>Vertex</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-      <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/pos_norm_tex_VS.cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tex_height_VS.hlsl">
-      <ShaderType>Vertex</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-      <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/pos_norm_tex_height_VS.cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_VS\pos_tex_VS.hlsl">
-      <ShaderType>Vertex</ShaderType>
-      <ShaderModel>5.0</ShaderModel>
-      <EntryPointName>main</EntryPointName>
-      <ObjectFileOutput>../Game/ShaderLib/pos_tex_VS.cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="src\Graphics\HLSL_VS\solid_VS.hlsl">
       <ShaderType>Vertex</ShaderType>

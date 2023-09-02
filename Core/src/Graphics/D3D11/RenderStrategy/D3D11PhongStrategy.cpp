@@ -29,6 +29,12 @@ void Engine::Graphics::D3D11PhongStrategy::Render(ID3D11DeviceContext& context, 
         else if (auto const* height_map {std::get_if<std::shared_ptr<D3D11HeightMap>>(&sr)}) {
             height_map->get()->Bind(context);  
         }
+        else if (auto const* metallic_map {std::get_if<std::shared_ptr<D3D11MetallicMap>>(&sr)}) {
+            metallic_map->get()->Bind(context);  
+        }
+        else if (auto const* roughness_map {std::get_if<std::shared_ptr<D3D11RoughnessMap>>(&sr)}) {
+            roughness_map->get()->Bind(context);  
+        }
     }
 
     context.DrawIndexed(mesh.GetIndexCount(), 0u, 0u);

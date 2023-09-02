@@ -6,13 +6,15 @@
 
 #include "Graphics/D3D11/D3D11Core.h"
 #include "Graphics/D3D11/D3D11RenderCommand.h"
-#include "Graphics/D3D11/RenderObject/D3D11RenderObject.h"
+#include "Graphics/D3D11/RenderObject/D3D11DefaultObject.h"
 #include "Graphics/D3D11/SceneGraph/D3D11SceneGraph.h"
 #include "Graphics/D3D11/Effect/D3D11Effect.h"
 #include "Graphics/D3D11/D3D11Cubemap.h"
 #include "Graphics/D3D11/D3D11RenderCommand.h"
-#include "Graphics/D3D11/ConstantBuffer/D3D11PhongConstants.h"
+#include "Graphics/D3D11/ConstantBuffer/MaterialConstants/D3D11MaterialConstants.h"
 #include "Graphics/D3D11/RenderObject/D3D11ConcreteLight.h"
+#include "Graphics/D3D11/RenderObject/D3D11MirrorObject.h"
+#include "Graphics/D3D11/SceneGraph/D3D11SceneHolder.h"
 #include "Platform/Platform.h"
 
 void Engine::Graphics::D3D11ImGuiRenderer::Init(ID3D11DeviceContext* context) {
@@ -70,8 +72,8 @@ void Engine::Graphics::D3D11ImGuiRenderer::EndFrame() {
     io.DisplaySize = ImVec2(static_cast<float>(Platform::GetWidth()), 
                             static_cast<float>(Platform::GetHeight()));
 
-    bool showDemoWindow {true};
-    if (showDemoWindow) [[likely]] {
+    bool showDemoWindow {false};
+    if (showDemoWindow) [[unlikely]] {
         ImGui::ShowDemoWindow(&showDemoWindow);
     }
 
@@ -180,12 +182,12 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowViewport() {
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowRSEditWindow() {
-    //auto& select {D3D11Core::RasterizerState()};
-    //if (ImGui::Begin("Rasterizer State")) {
-    //    ImGui::RadioButton("Solid", &select, 0);
-    //    ImGui::RadioButton("Wireframe", &select, 1);
-    //}
-    //ImGui::End();
+    auto& select {D3D11RenderCommand::RasterizerState()};
+    if (ImGui::Begin("Rasterizer State")) {
+        ImGui::RadioButton("Solid", &select, 0);
+        ImGui::RadioButton("Wireframe", &select, 1);
+    }
+    ImGui::End();
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowCubemapEditWindow() {
@@ -205,17 +207,32 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowCubemapEditWindow() {
     ImGui::End();
 }
 
-void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSceneEditWindow(x_vector<std::shared_ptr<D3D11RenderObject>>& objs) {
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSceneEditWindow(x_vector<std::shared_ptr<D3D11DefaultObject>>& objs) {
     if (ImGui::Begin("Scene Edit Window")) {
-        ImGui::Columns(3, nullptr, true);
+        std::optional<x_string> selected_scene_tag {};
+        if (ImGui::Button("Add Scene") || _sceneBrowser.Opened()) {
+            _sceneBrowser.SetOpened();
+            selected_scene_tag = _sceneBrowser.Browse();
+        }
+
+        if (selected_scene_tag.has_value() && D3D11SceneHolder::Constains(selected_scene_tag.value())) {
+            objs.push_back(
+                std::move(
+                    MakeShared<D3D11DefaultObject>(
+                        D3D11Core::Device(),
+                        D3D11Core::Context(),
+                        D3D11SceneHolder::ResolveScene(selected_scene_tag.value())
+                    )
+                )
+            );
+        }
+
         for (auto& obj : objs)
             ImGuiRenderSceneTree(*obj->GetScene(), 0);
 
-        ImGui::NextColumn();
         if (_selected.first != nullptr) {
             ImGuiShowSceneInfoWindow();
 
-            ImGui::NextColumn();
             ImGuiShowNodeEditWindow();
 
             if (ImGui::Begin("Rendering Configurations")) {
@@ -228,29 +245,30 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSceneEditWindow(x_vector<std
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowNodeEditWindow() {
-    auto& [scene, node] {_selected};
-    int interacted {};
+    if (ImGui::Begin("Node Configuration")) {
+        auto& [scene, node] {_selected};
+        int interacted {};
 
-    auto& transform {scene->GetTransformParamAt(node)};
+        auto& transform {scene->GetTransformParamAt(node)};
 
-    ImGui::Text(scene->GetNameAt(node));
-    ImGui::Text("Position");
-    interacted += ImGui::SliderFloat("X", &transform.x, -20.0f, 20.0f);
-    interacted += ImGui::SliderFloat("Y", &transform.y, -20.0f, 20.0f);
-    interacted += ImGui::SliderFloat("Z", &transform.z, -20.0f, 20.0f);
+        ImGui::Text(scene->GetNameAt(node));
+        ImGui::Text("Position");
+        interacted += ImGui::SliderFloat("X", &transform.x, -20.0f, 20.0f);
+        interacted += ImGui::SliderFloat("Y", &transform.y, -20.0f, 20.0f);
+        interacted += ImGui::SliderFloat("Z", &transform.z, -20.0f, 20.0f);
 
-    ImGui::Text("Rotation");
-    interacted += ImGui::SliderAngle("Roll", &transform.roll, -180.0f, 180.0f);
-    interacted += ImGui::SliderAngle("Pitch", &transform.pitch, -180.0f, 180.0f);
-    interacted += ImGui::SliderAngle("Yaw", &transform.yaw, -180.0f, 180.0f);
+        ImGui::Text("Rotation");
+        interacted += ImGui::SliderAngle("Roll", &transform.roll, -180.0f, 180.0f);
+        interacted += ImGui::SliderAngle("Pitch", &transform.pitch, -180.0f, 180.0f);
+        interacted += ImGui::SliderAngle("Yaw", &transform.yaw, -180.0f, 180.0f);
 
-    ImGui::Text("Scaling");
-    interacted += ImGui::SliderFloat("Scale X", &transform.scale_x, 0.0f, 10.0f);
-    interacted += ImGui::SliderFloat("Scale Y", &transform.scale_y, 0.0f, 10.0f);
-    interacted += ImGui::SliderFloat("Scale Z", &transform.scale_z, 0.0f, 10.0f);
+        ImGui::Text("Scaling");
+        interacted += ImGui::SliderFloat("Scale", &transform.scale, 0.1f, 5.0f);
 
-    if (interacted > 0)
-        scene->MarkAsTransformed(node);
+        if (interacted > 0)
+            scene->MarkAsTransformed(node);
+    }
+    ImGui::End();
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowRenderConfigureWindow() {
@@ -325,7 +343,27 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiRenderLightList(D3D11SceneGraph&
 	ImGui::PopID();
 }
 
-void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowConcreteLightList(x_vector<std::shared_ptr<D3D11ConcreteLight>>& light_obj) {
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiRenderMirrorList(D3D11SceneGraph& scene, int32_t id) {
+    std::string const name = {std::string{"Mirror"} + std::to_string(id)};
+
+	constexpr int flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet;
+
+    ImGui::TreeNodeEx(name.data(), flags);
+
+	ImGui::PushID(id);
+
+	if (ImGui::IsItemClicked())
+	{
+		printf("Selected node: %d (%s)\n", id, name.c_str());
+        _selectedLight.first = &scene;
+		_selectedLight.second = id;
+	}
+    ImGui::TreePop();
+
+	ImGui::PopID();
+}
+
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowConcreteLightEditWindow(x_vector<std::shared_ptr<D3D11ConcreteLight>>& light_obj) {
     if (ImGui::Begin("Concrete Lights")) {
         ImGui::Columns(2, nullptr, true);
         for (auto i {0}; i != light_obj.size(); ++i)
@@ -340,70 +378,102 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowConcreteLightList(x_vector<s
 
             ImGui::Text(scene->GetNameAt(0));
             ImGui::Text("Position");
-            interacted += ImGui::SliderFloat("X", &transform.x, -200.0f, 200.0f);
-            interacted += ImGui::SliderFloat("Y", &transform.y, -200.0f, 200.0f);
-            interacted += ImGui::SliderFloat("Z", &transform.z, -200.0f, 200.0f);
+            interacted += ImGui::SliderFloat("X", &transform.x, -20.0f, 20.0f, "%0.5f");
+            interacted += ImGui::SliderFloat("Y", &transform.y, -20.0f, 20.0f, "%0.5f");
+            interacted += ImGui::SliderFloat("Z", &transform.z, -20.0f, 20.0f, "%0.5f");
 
             std::visit(UpdateConstantBuffer{0.0f}, light_obj[id]->GetCB());
+            light_obj[id]->UpdatePos(DirectX::XMFLOAT3{transform.x, transform.y, transform.z});
 
             if (interacted > 0) {
-                light_obj[id]->UpdatePos(DirectX::XMFLOAT3{transform.x, transform.y, transform.z});
                 scene->MarkAsTransformed(0);
             }
         }
     }
     ImGui::End();
+}
 
+void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowMirrorEditWindow(x_vector<std::shared_ptr<D3D11MirrorObject>>& mirror_obj) {
+    if (ImGui::Begin("Mirror")) {
+        ImGui::Columns(2, nullptr, true);
+        for (auto i {0}; i != mirror_obj.size(); ++i)
+            ImGuiRenderMirrorList(*mirror_obj[i]->GetScene(), i);
+
+        if (_selectedLight.first != nullptr) {
+            ImGui::NextColumn();
+            auto& [scene, id] {_selectedLight};
+            int interacted {};
+
+            auto& transform {scene->GetTransformParamAt(0)};
+
+            ImGui::Text(scene->GetNameAt(0));
+            ImGui::Text("Position");
+            interacted += ImGui::SliderFloat("X", &transform.x, -200.0f, 200.0f, "%0.5f");
+            interacted += ImGui::SliderFloat("Y", &transform.y, -200.0f, 200.0f, "%0.5f");
+            interacted += ImGui::SliderFloat("Z", &transform.z, -200.0f, 200.0f, "%0.5f");
+
+            ImGui::Text("Scale");
+            interacted += ImGui::SliderFloat("Scale", &transform.scale, 0.1f, 5.0f);
+
+            if (interacted > 0) {
+                scene->MarkAsTransformed(0);
+            }
+        }
+    }
+    ImGui::End();
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowSceneInfoWindow() {
-    auto& [scene, node] {_selected};
-    ImGui::Text("Number of Nodes: %d", scene->_tree.size());
-    ImGui::Text("Number of Meshes: %d", scene->_mesh.size());
-    ImGui::Text("Number of Materials: %d", scene->_material.size());
-    if (ImGui::Button("Add Material"))
-        scene->AddMaterial(D3D11Core::Device());
+    if (ImGui::Begin("Scene info")) {
+        auto& [scene, node] {_selected};
+        ImGui::Text("Number of Nodes: %d", scene->_tree.size());
+        ImGui::Text("Number of Meshes: %d", scene->_mesh.size());
+        ImGui::Text("Number of Materials: %d", scene->_material.size());
+        if (ImGui::Button("Add Material"))
+            scene->AddMaterial(D3D11Core::Device());
 
-    ImGui::SameLine();
-    std::optional<std::pair<int32_t, x_string>> submitted_file_info {};
-    if (ImGui::Button("Add Texture") || _assetBrowser.Opened()) {
-        _assetBrowser.SetOpened();
-        submitted_file_info = _assetBrowser.Browse();
-    }
-
-    x_vector<x_string> materials {};
-    for (auto i {0}; i != scene->_material.size(); ++i) {
-        materials.push_back("Material");
-        materials.back() += std::to_string(i);
-    }
-
-    _selectedMaterial = std::clamp(_selectedMaterial, 0, static_cast<int32_t>(materials.size()) - 1);
-    char const* preview_value {materials[_selectedMaterial].c_str()};
-    if (ImGui::BeginCombo("Materials", preview_value))
-    {
-        for (int n = 0; n != materials.size(); n++)
-        {
-            const bool is_selected = (_selectedMaterial == n);
-            if (ImGui::Selectable(materials[n].c_str(), is_selected))
-                _selectedMaterial = n;
-
-            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-            if (is_selected)
-                ImGui::SetItemDefaultFocus();
+        ImGui::SameLine();
+        std::optional<std::pair<int32_t, x_string>> submitted_file_info {};
+        if (ImGui::Button("Add Texture") || _assetBrowser.Opened()) {
+            _assetBrowser.SetOpened();
+            submitted_file_info = _assetBrowser.Browse();
         }
-        ImGui::EndCombo();
-    }
 
-    ImGuiShowTextureInfoWindow();
+        x_vector<x_string> materials {};
+        for (auto i {0}; i != scene->_material.size(); ++i) {
+            materials.push_back("Material");
+            materials.back() += std::to_string(i);
+        }
 
-    if (submitted_file_info.has_value() && submitted_file_info.value().first != -1 && submitted_file_info.value().second.ends_with(".dds")) {
-        std::cout << submitted_file_info.value().first << ' ' << submitted_file_info.value().second << std::endl;
-        scene->_material[_selectedMaterial].AddOrRelplaceTexture(
-            D3D11Core::Device(), 
-            D3D11Core::Context(),
-            static_cast<ShaderResourceTypes>(submitted_file_info.value().first), 
-            submitted_file_info.value().second.c_str());
+        _selectedMaterial = std::clamp(_selectedMaterial, 0, static_cast<int32_t>(materials.size()) - 1);
+        char const* preview_value {materials[_selectedMaterial].c_str()};
+        if (ImGui::BeginCombo("Materials", preview_value))
+        {
+            for (int n = 0; n != materials.size(); n++)
+            {
+                const bool is_selected = (_selectedMaterial == n);
+                if (ImGui::Selectable(materials[n].c_str(), is_selected))
+                    _selectedMaterial = n;
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        ImGuiShowTextureInfoWindow();
+
+        if (submitted_file_info.has_value() && submitted_file_info.value().first != -1 && submitted_file_info.value().second.ends_with(".dds")) {
+            std::cout << submitted_file_info.value().first << ' ' << submitted_file_info.value().second << std::endl;
+            scene->_material[_selectedMaterial].AddOrRelplaceTexture(
+                D3D11Core::Device(), 
+                D3D11Core::Context(),
+                static_cast<ShaderResourceTypes>(submitted_file_info.value().first), 
+                submitted_file_info.value().second.c_str());
+        }
     }
+    ImGui::End();
 }
 
 void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowTextureInfoWindow() {
@@ -519,7 +589,6 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowUnrealPBRConstantEditWindow(
             ImGui::Text("Texture Options");
             interacted += ImGui::Checkbox("Emissive Map", &params.use_emissive_map);
             interacted += ImGui::Checkbox("Diffuse Map", &params.use_diffuse_map);
-            interacted += ImGui::Checkbox("Specular Map", &params.use_specular_map);
             interacted += ImGui::Checkbox("Normal Map", &params.use_normal_map);
             interacted += ImGui::Checkbox("Height Map", &params.use_height_map);
             interacted += ImGui::Checkbox("Metallic Map", &params.use_metallic_map);
@@ -528,8 +597,9 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowUnrealPBRConstantEditWindow(
 
             ImGui::Text("Material Constants");
             interacted += ImGui::ColorEdit3("Albedo", &params.albedo_color.x);
-            interacted += ImGui::SliderFloat("Metallic Factor", &params.metallicFactor, 0.0f, 2.0f, "%.3f");
-            interacted += ImGui::SliderFloat("Roughness", &params.roughness, 0.0f, 2.0f, "%.3f");
+            interacted += ImGui::SliderFloat("Metallic Factor", &params.metallicFactor, 0.0f, 1.0f, "%.3f");
+            interacted += ImGui::SliderFloat("Roughness", &params.roughness, 0.0f, 1.0f, "%.3f");
+            interacted += ImGui::SliderFloat("Ambient Strength", &params.ambient_strength, 0.0f, 1.0f, "%.3f");
         }
         if (interacted > 0) {
             _selected.first->_recentlyUpdatedUnrealPBRMaterial = node;

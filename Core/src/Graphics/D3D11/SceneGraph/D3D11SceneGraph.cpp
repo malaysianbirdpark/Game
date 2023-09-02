@@ -22,6 +22,7 @@ Engine::Graphics::D3D11Material::D3D11Material(D3D11Material const& other)
     : _vertexShaderConstants{other._vertexShaderConstants}, _phongConstants{other._phongConstants}, _unrealPBRConstants{other._unrealPBRConstants},
       _solidConstants{other._solidConstants}, _srs{other._srs}, _textureTypes{other._textureTypes}
 {
+    GRAPHICS_INFO("cloning materials..");
 }
 
 Engine::x_vector<Engine::Graphics::D3D11ShaderResource> const& Engine::Graphics::D3D11Material::GetShaderResources() const {
@@ -249,11 +250,11 @@ void Engine::Graphics::D3D11SceneGraph::RecalculateGlobalTransforms() {
             &_globalTransforms[cur],
             XMLoadFloat4x4(&_localTransforms[cur]) *
             XMMatrixMultiply(
+                XMMatrixScaling(_transforms[cur].scale, _transforms[cur].scale, _transforms[cur].scale),
                 XMMatrixMultiply(
                     XMMatrixRotationRollPitchYaw(_transforms[cur].pitch, _transforms[cur].yaw, _transforms[cur].roll),
                     XMMatrixTranslation(_transforms[cur].x, _transforms[cur].y, _transforms[cur].z)
-                ),
-                XMMatrixScaling(_transforms[cur].scale_x, _transforms[cur].scale_y, _transforms[cur].scale_z)
+                )
             )
         );
 
@@ -267,16 +268,17 @@ void Engine::Graphics::D3D11SceneGraph::RecalculateGlobalTransforms() {
         for (auto const cur : _transformed[i]) {
             auto const parent {_tree[cur]._parent};
 
-            XMStoreFloat4x4(&_globalTransforms[cur],
+            XMStoreFloat4x4(
+                &_globalTransforms[cur],
                 XMMatrixMultiply(
                     XMLoadFloat4x4(&_globalTransforms[parent]),
                     XMLoadFloat4x4(&_localTransforms[cur]) *
                     XMMatrixMultiply(
+                        XMMatrixScaling(_transforms[cur].scale, _transforms[cur].scale, _transforms[cur].scale),
                         XMMatrixMultiply(
                             XMMatrixRotationRollPitchYaw(_transforms[cur].pitch, _transforms[cur].yaw, _transforms[cur].roll),
                             XMMatrixTranslation(_transforms[cur].x, _transforms[cur].y, _transforms[cur].z)
-                        ),
-                        XMMatrixScaling(_transforms[cur].scale_x, _transforms[cur].scale_y, _transforms[cur].scale_z)
+                        )
                     )
                 )
             );
@@ -504,7 +506,7 @@ int32_t Engine::Graphics::D3D11SceneGraph::ParseNode(int32_t parent_id, int32_t 
 int32_t Engine::Graphics::D3D11SceneGraph::AddNode(int32_t parent_id, int32_t level, DirectX::XMMATRIX const& local_transform) {
     int32_t const id {static_cast<int32_t>(_tree.size())};
     {
-        _renderStrategy.emplace_back();
+        _renderStrategy.emplace_back(2);
         _transforms.emplace_back();
         _globalTransforms.emplace_back();
         _localTransforms.emplace_back();
@@ -721,7 +723,7 @@ std::pair<std::shared_ptr<Engine::Graphics::D3D11VertexBuffer>, std::shared_ptr<
 Engine::Graphics::D3D11SceneGraph::ParseVertexData(ID3D11Device& device, aiMesh const* ai_mesh, x_string const& vertex_format) {
     auto const buffer {D3D11VertexAttribute::GetBuffer(ai_mesh, vertex_format)};
 
-    x_vector<uint16_t> indices;
+    x_vector<uint32_t> indices;
     indices.reserve(ai_mesh->mNumFaces * 3);
     for (auto i {0}; i != ai_mesh->mNumFaces; ++i) {
         auto const& face {ai_mesh->mFaces[i]};

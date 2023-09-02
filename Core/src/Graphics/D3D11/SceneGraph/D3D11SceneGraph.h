@@ -8,11 +8,8 @@
 
 #include "D3D11SceneGraph.h"
 #include "Graphics/D3D11/ShaderResource/D3D11ShaderResource.h"
-#include "Graphics/D3D11/RenderStrategy/D3D11RenderStrategy.h"
 
-#include "Graphics/D3D11/ConstantBuffer/D3D11PhongConstants.h"
-#include "Graphics/D3D11/ConstantBuffer/D3D11SolidConstant.h"
-#include "Graphics/D3D11/ConstantBuffer/D3D11UnrealPBRConstants.h"
+#include "Graphics/D3D11/ConstantBuffer/MaterialConstants/D3D11MaterialConstants.h"
 #include "Graphics/D3D11/ConstantBuffer/D3D11VertexShaderConstants.h"
 
 namespace Engine::Graphics {
@@ -28,9 +25,7 @@ namespace Engine::Graphics {
         float roll {};
         float pitch {};
         float yaw {};
-        float scale_x {1.0f};
-        float scale_y {1.0f};
-        float scale_z {1.0f};
+        float scale {1.0f};
     };
 
     class D3D11Material {
@@ -105,7 +100,9 @@ namespace Engine::Graphics {
     };
 
     class D3D11SceneGraph {
-        friend class D3D11RenderObject;
+        friend class D3D11DefaultObject;
+        friend class D3D11ConcreteLight;
+        friend class D3D11MirrorObject;
         friend class D3D11Mesh;
         friend class D3D11ImGuiRenderer;
 

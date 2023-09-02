@@ -5,7 +5,7 @@ struct VS_IN {
 };
 
 struct VS_OUT {
-    float3 world_pos : POSITION;
+    float4 world_pos : POSITION;
     float3 normal    : NORMAL;
     float2 texcoord  : TEXCOORD;
     float4 sv_pos    : SV_POSITION;
@@ -23,7 +23,13 @@ cbuffer texture_options : register(b1) {
     bool use_height_map;
 }
 
-cbuffer vs_constants : register(b2) {
+cbuffer global_constants : register (b2) {
+    matrix vp;
+    float4 cam_pos;
+    int light_type;
+}
+
+cbuffer vs_constants : register(b3) {
     float height_scale;
 }
 
@@ -40,8 +46,8 @@ VS_OUT main(VS_IN input)
         input.pos += input.normal * height * height_scale;
     }
 
-    output.world_pos = mul(float4(input.pos, 1.0f), m).xyz;
-    output.normal = normalize(mul(float4(input.normal, 1.0f), mit).xyz);
+    output.world_pos = mul(float4(input.pos, 1.0f), m);
+    output.normal = normalize(mul(input.normal, (float3x3) mit).xyz);
     output.texcoord = input.texcoord;
     output.sv_pos = mul(float4(input.pos, 1.0f), mvp);
 

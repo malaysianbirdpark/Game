@@ -9,12 +9,11 @@ namespace Engine::Graphics {
             float  metallicFactor;
 
             float  roughness;
+            float  ambient_strength;
             bool   use_emissive_map {false};
             bool   pad0[3];
             bool   use_diffuse_map {false};
             bool   pad1[3];
-            bool   use_specular_map {false};
-            bool   pad2[3];
 
             bool   use_normal_map {false};
             bool   pad3[3];

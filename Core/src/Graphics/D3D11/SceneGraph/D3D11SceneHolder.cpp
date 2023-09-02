@@ -52,3 +52,11 @@ Engine::Graphics::D3D11SceneGraph Engine::Graphics::D3D11SceneHolder::ResolveSce
 
     return std::move(_scenes[tag]->Clone());
 }
+
+bool Engine::Graphics::D3D11SceneHolder::Constains(x_string const& tag) {
+    return _scenes.contains(tag);
+}
+
+Engine::x_unordered_map<std::basic_string<char, std::char_traits<char>, STLAllocator<char>>, std::unique_ptr<Engine::Graphics::D3D11SceneGraph>> const& Engine::Graphics::D3D11SceneHolder::GetSceneMap() {
+    return _scenes;
+}

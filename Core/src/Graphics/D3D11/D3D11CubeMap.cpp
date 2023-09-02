@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "D3D11Cubemap.h"
 
+#include "D3D11RenderCommand.h"
 #include "Graphics/D3DCamera.h"
 #include "Graphics/D3D11/PipelineState/D3D11PSOLibrary.h"
 #include "Graphics/D3D11/PipelineState/D3D11PipelineStateObject.h"
@@ -8,10 +9,11 @@
 Engine::Graphics::D3D11Cubemap::D3D11Cubemap(ID3D11Device& device, ID3D11DeviceContext& context, DirectX::XMMATRIX proj)
     : _vertex{device, sizeof(CubeMapVertex), sizeof(CubeMapVertex) * sizeof(cube_vertices), cube_vertices.data(), "cubemap"},
       _index{device, cube_indices.data(), cube_indices.size(), "cubemap"},
-      _transform{device, DirectX::XMMatrixIdentity(), D3DCamera::GetView(), proj}
+      _transform{device, context, DirectX::XMMatrixIdentity()}
 {
     _pso = D3D11PSOLibrary::ResolvePSO("cubemap");
 
+    GRAPHICS_INFO("Loading Cubemaps..");
     //AddSDRTexture(device, context, "Assets/CubeMapTextures/SantaMaria.dds");
     //AddSDRTexture(device, context, "Assets/CubeMapTextures/FortPoint.dds"); 
     //AddSDRTexture(device, context, "Assets/CubeMapTextures/Atrium_specularIBL.dds", "Assets/CubeMapTextures/Atrium_diffuseIBL.dds");
@@ -56,6 +58,7 @@ Engine::Graphics::D3D11Cubemap::D3D11Cubemap(ID3D11Device& device, ID3D11DeviceC
         "Assets/CubeMapTextures/Bench/BenchDiffuseHDR.dds",
         "Assets/CubeMapTextures/Bench/BenchBrdf.dds"
     );
+    GRAPHICS_INFO("Loading Cubemaps.. done");
 }
 
 void Engine::Graphics::D3D11Cubemap::AddSDRTexture(ID3D11Device& device, ID3D11DeviceContext& context, char const* specular_path) {
@@ -83,9 +86,7 @@ int& Engine::Graphics::D3D11Cubemap::TextureIndex() {
     return _selectedTexture;
 }
 
-void Engine::Graphics::D3D11Cubemap::Update(float const dt, DirectX::XMMATRIX view, DirectX::XMMATRIX proj) {
-    _transform.SetView(view);
-    _transform.SetProj(proj);
+void Engine::Graphics::D3D11Cubemap::Update(float const dt) {
 }
 
 void Engine::Graphics::D3D11Cubemap::Bind(ID3D11DeviceContext& context) {

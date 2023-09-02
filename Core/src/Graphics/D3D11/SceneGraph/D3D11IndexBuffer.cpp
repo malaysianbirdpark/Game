@@ -10,8 +10,8 @@ namespace Engine::Graphics {
         bd.Usage = D3D11_USAGE_IMMUTABLE;
         bd.CPUAccessFlags = 0u;
         bd.MiscFlags = 0u;
-        bd.ByteWidth = static_cast<UINT>(_count * sizeof(uint16_t));
-        bd.StructureByteStride = sizeof(uint16_t);
+        bd.ByteWidth = static_cast<UINT>(_count * sizeof(uint32_t));
+        bd.StructureByteStride = sizeof(uint32_t);
 
         D3D11_SUBRESOURCE_DATA sd {};
         sd.pSysMem = data;
@@ -20,7 +20,7 @@ namespace Engine::Graphics {
     }
 
     void D3D11IndexBuffer::Bind(ID3D11DeviceContext& context) noexcept {
-        context.IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
+        context.IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0u);
     }
 
     UINT D3D11IndexBuffer::GetCount() const noexcept {

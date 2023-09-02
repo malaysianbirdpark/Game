@@ -1,5 +1,5 @@
 struct PS_IN {
-    float3 world_pos : POSITION;
+    float4 world_pos : POSITION;
     float3 normal    : NORMAL;
     float3 tangent   : TANGENT;
     float2 texcoord  : TEXCOORD;
@@ -14,9 +14,9 @@ cbuffer unreal_pbr_constants : register(b1) {
     float3 albedo_color;
     float metallic_factor;
     float roughness;
+    float ambient_strength;
     bool use_emissive_map;
     bool use_diffuse_map;
-    bool use_specular_map;
     bool use_normal_map;
     bool use_height_map;
     bool use_metallic_map;
@@ -24,9 +24,9 @@ cbuffer unreal_pbr_constants : register(b1) {
     bool use_ao_map;
 }
 
-cbuffer cam_position : register (b2) {
-    float4 cam_pos : packoffset(c0);
-    int light_type : packoffset(c1);
+cbuffer global_constants : register (b2) {
+    float4 cam_pos;
+    int light_type;
 }
 
 cbuffer directional_light : register(b4)
@@ -43,7 +43,6 @@ cbuffer point_light : register(b5) {
 
 Texture2D emissive_map : register(t0);
 Texture2D diffuse_map : register(t1);
-Texture2D specular_map : register(t2);
 Texture2D normal_map : register(t3);
 Texture2D metallic_map : register(t5);
 Texture2D roughness_map : register(t6);
@@ -134,11 +133,13 @@ PS_OUT main(PS_IN input)
 
     output.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
 
-    const float3 albedo =
-        use_diffuse_map ? diffuse_map.Sample(sampler_wrap, input.texcoord).rgb : albedo_color;
+    const float4 albedo =
+        use_diffuse_map ? diffuse_map.Sample(sampler_wrap, input.texcoord) : float4(albedo_color, 1.0f);
+
+    clip(albedo.a < 0.1f ? -1 : 1);
 
     if (use_emissive_map) {
-        output.color.rgb = emissive_map.Sample(sampler_wrap, input.texcoord).rgb;
+        output.color = emissive_map.Sample(sampler_wrap, input.texcoord);
     }
 
     float3 normal = float3(0.0f, 0.0f, 0.0f);
@@ -164,7 +165,7 @@ PS_OUT main(PS_IN input)
         const float3 to_camera = normalize(cam_pos - input.world_pos);
 
         // ambient
-        output.color.rgb += float3(UnrealPBRAmbient(input.world_pos, normal, to_camera, albedo, metal, rough)) * ao;
+        output.color.rgb += float3(UnrealPBRAmbient(input.world_pos, normal, to_camera, albedo, metal, rough)) * ao * ambient_strength;
         
         // directional light
         const float3 to_light = normalize(-dl_dir);
@@ -178,8 +179,8 @@ PS_OUT main(PS_IN input)
         output.color = previous_frame.Load(input.sv_pos);
 
         // point light
-        const float3 to_camera = normalize(cam_pos - input.world_pos);
-        float3 to_light = pl_pos - input.world_pos;
+        const float3 to_camera = normalize(cam_pos - input.world_pos.xyz);
+        float3 to_light = pl_pos - input.world_pos.xyz;
         const float dist_to_light = length(to_light);
         to_light = normalize(to_light);
         const float3 NdotL = saturate(dot(to_light, normal));

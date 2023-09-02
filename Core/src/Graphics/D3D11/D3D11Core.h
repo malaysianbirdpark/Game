@@ -3,7 +3,7 @@
 namespace Engine::Graphics {
     class D3D11PipelineStateObject;
     class D3D11RootSignature;
-    class D3D11RenderObject;
+    class D3D11DefaultObject;
 
     class D3D11Core {
     public:

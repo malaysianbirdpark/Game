@@ -5,7 +5,6 @@
 #include <imgui.h>
 
 #include "Graphics/D3D11/D3D11Core.h"
-#include "Graphics/D3D11/RenderObject/D3D11RenderObject.h"
 #include "Graphics/D3DCamera.h"
 #include "Graphics/D3D11/SceneGraph/D3D11SceneHolder.h"
 
@@ -31,7 +30,7 @@ void Engine::Graphics::D3D11PointLight::Update(float const dt) {
     ImGui::Text("Color");
     _interacted += ImGui::ColorEdit3("Color", &_info._color.x);
     ImGui::Text("Range");
-    _interacted += ImGui::SliderFloat("Range", &_range, 0.0001f, 1000.0f);
+    _interacted += ImGui::SliderFloat("Range", &_range, 0.0001f, 300.0f);
     _info._reciprocalRange = 1.0f / _range;
 }
 

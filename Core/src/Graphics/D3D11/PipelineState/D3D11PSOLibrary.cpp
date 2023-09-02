@@ -89,7 +89,7 @@ void Engine::Graphics::D3D11PSOLibrary::InitFilters(ID3D11Device& device) {
         );
         aligned_byte_offset += sizeof(DirectX::XMFLOAT2);
 
-        pso->SetVertexShader(device, "./ShaderLib/fullscreen_filter_Vs.cso");
+        pso->SetVertexShader(device, "./ShaderLib/fullscreen_filter_VS.cso");
         pso->SetInputLayout(device, layout);
         pso->SetPixelShader(device, "./ShaderLib/fullscreen_blur_PS.cso");
 

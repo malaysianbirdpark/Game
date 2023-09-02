@@ -1,9 +1,10 @@
 #pragma once
 
 #include "D3D11ImGuiFileBrowser.h"
+#include "D3D11ImGuiSceneBrowser.h"
 
 namespace Engine::Graphics {
-    class D3D11RenderObject;
+    class D3D11DefaultObject;
     class D3D11ConcreteLight;
     class D3D11SceneGraph;
 
@@ -23,16 +24,16 @@ namespace Engine::Graphics {
         static void     ImGuiShowRSEditWindow();
         static void     ImGuiShowCubemapEditWindow();
 
-        static void     ImGuiShowSceneEditWindow(x_vector<std::shared_ptr<D3D11RenderObject>>& objs);
+        static void     ImGuiShowSceneEditWindow(x_vector<std::shared_ptr<D3D11DefaultObject>>& objs);
         static void     ImGuiShowNodeEditWindow();
         static void     ImGuiShowRenderConfigureWindow();
         static void     ImGuiShowMaterialEditWindow();
         static void     ImGuiShowPostProcessEditWindow();
         static int32_t  ImGuiRenderSceneTree(D3D11SceneGraph& scene, int32_t node);
         static void     ImGuiRenderLightList(D3D11SceneGraph& scene, int32_t id);
-        static void     ImGuiShowConcreteLightEditWindow();
-
-        static void     ImGuiShowConcreteLightList(x_vector<std::shared_ptr<D3D11ConcreteLight>>& light_obj);
+        static void     ImGuiRenderMirrorList(D3D11SceneGraph& scene, int32_t id);
+        static void     ImGuiShowConcreteLightEditWindow(x_vector<std::shared_ptr<D3D11ConcreteLight>>& light_obj);
+        static void     ImGuiShowMirrorEditWindow(x_vector<std::shared_ptr<class D3D11MirrorObject>>& mirror_obj);
     private:
         static void     ImGuiShowSceneInfoWindow();
         static void     ImGuiShowTextureInfoWindow();
@@ -59,6 +60,7 @@ namespace Engine::Graphics {
         inline static std::pair<D3D11SceneGraph*, int32_t> _selectedLight {};
         inline static int32_t                              _selectedMaterial {};
         inline static D3D11ImGuiFileBrowser                _assetBrowser {"C:\\Github\\Game\\Game\\Assets"};
+        inline static D3D11ImGuiSceneBrowser               _sceneBrowser {};
     };
 }
 

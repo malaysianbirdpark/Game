@@ -7,7 +7,7 @@
 
 #include <directxtk/PostProcess.h>
 
-void Engine::Graphics::D3D11RenderCommand::Init(ID3D11Device& device, ID3D11DeviceContext& imm_context, IDXGISwapChain& swap_chain, int width, int height) {
+void Engine::Graphics::D3D11RenderCommand::Init(ID3D11Device& device, IDXGISwapChain& swap_chain, int width, int height) {
     swap_chain.GetBuffer(0u, IID_PPV_ARGS(_backBuffers.ReleaseAndGetAddressOf()));
     device.CreateRenderTargetView(_backBuffers.Get(), nullptr, _backBufferView.ReleaseAndGetAddressOf());
 
@@ -24,7 +24,6 @@ void Engine::Graphics::D3D11RenderCommand::Init(ID3D11Device& device, ID3D11Devi
     _viewPort.MaxDepth = 1.0f;
     _viewPort.TopLeftX = 0.0f;
     _viewPort.TopLeftY = 0.0f;
-    imm_context.RSSetViewports(1u, &_viewPort);
 
     UINT quality_level {};
     device.CheckMultisampleQualityLevels(DXGI_FORMAT_R16G16B16A16_FLOAT, 8, &quality_level);
@@ -65,109 +64,13 @@ void Engine::Graphics::D3D11RenderCommand::Init(ID3D11Device& device, ID3D11Devi
 
     D3D11ImGuiRenderer::Init(_defContexts[IMGUI_CONTEXT].Get());
 
-    // Rasterizer State
-    {
-        _rasterizerState.resize(3);
-
-        D3D11_RASTERIZER_DESC rd {};
-        rd.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-        rd.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
-        rd.FrontCounterClockwise = false;
-        rd.DepthClipEnable = true;
-
-        device.CreateRasterizerState(&rd, _rasterizerState[0].ReleaseAndGetAddressOf());
-
-        rd.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
-        rd.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
-        rd.FrontCounterClockwise = false;
-        rd.DepthClipEnable = true;
-
-        device.CreateRasterizerState(&rd, _rasterizerState[1].ReleaseAndGetAddressOf());
-
-        rd.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-        rd.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
-        rd.FrontCounterClockwise = false;
-        rd.DepthClipEnable = false;
-
-        device.CreateRasterizerState(&rd, _rasterizerState[2].ReleaseAndGetAddressOf());
-    }
-
-    {
-        D3D11_DEPTH_STENCIL_DESC desc {};
-        desc.DepthEnable = TRUE;
-        desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-        desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-
-        Microsoft::WRL::ComPtr<ID3D11DepthStencilState> ds_state;
-        device.CreateDepthStencilState(&desc, ds_state.ReleaseAndGetAddressOf());
-        imm_context.OMSetDepthStencilState(ds_state.Get(), 1u);
-        _defContexts[0]->OMSetDepthStencilState(ds_state.Get(), 1u);
-        _defContexts[1]->OMSetDepthStencilState(ds_state.Get(), 1u);
-
-        D3D11_TEXTURE2D_DESC descDepth {};
-        descDepth.Usage = D3D11_USAGE_DEFAULT;
-        descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-        descDepth.Width = width;
-        descDepth.Height = height;
-        descDepth.MipLevels = 1u;
-        descDepth.ArraySize = 1u;
-        descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-        descDepth.SampleDesc.Count = 8;
-        descDepth.SampleDesc.Quality = quality_level - 1;
-
-        Microsoft::WRL::ComPtr<ID3D11Texture2D> _ds;
-        device.CreateTexture2D(&descDepth, nullptr, _ds.ReleaseAndGetAddressOf());
-
-        D3D11_DEPTH_STENCIL_VIEW_DESC desc_dsv {};
-        desc_dsv.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-        desc_dsv.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
-        desc_dsv.Texture2D.MipSlice = 0u;
-        device.CreateDepthStencilView(_ds.Get(), &desc_dsv, _depthStencilView.ReleaseAndGetAddressOf());
-    }
-
-    {
-        D3D11_SAMPLER_DESC sd {};
-        sd.Filter = D3D11_FILTER_ANISOTROPIC;
-        sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-        sd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-        sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-        //sd.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
-        sd.MipLODBias = 0.0f;
-        sd.MinLOD = 0.0f;
-        sd.MaxLOD = D3D11_FLOAT32_MAX;
-
-        device.CreateSamplerState(&sd, _samplerWrap.ReleaseAndGetAddressOf());
-    }
-
-    {
-        D3D11_SAMPLER_DESC sd {};
-        sd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-        sd.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-        sd.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-        sd.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-
-        device.CreateSamplerState(&sd, _samplerClamp.ReleaseAndGetAddressOf());
-    }
-
+    InitRasterizerState(device);
+    InitDepthStencil(device, width, height, quality_level);
+    InitSamplers(device);
 }
 
 void Engine::Graphics::D3D11RenderCommand::BeginForward(D3D11RenderData* data) {
-    static constexpr float clear_color[4] {0.0f, 0.0f, 0.0f, 1.0f};
-
-    // first context clears the screen and buffers
-    _defContexts[0]->RSSetState(_rasterizerState[_selectedRS].Get());
-    _defContexts[0]->RSSetViewports(1u, &_viewPort);
-    _defContexts[0]->OMSetRenderTargets(1u, _renderRTV.GetAddressOf(), _depthStencilView.Get());
-    _defContexts[0]->ClearRenderTargetView(_renderRTV.Get(), clear_color);
-    _defContexts[0]->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f , 0u);
-
-    _defContexts[1]->RSSetState(_rasterizerState[_selectedRS].Get());
-    _defContexts[1]->RSSetViewports(1u, &_viewPort);
-    _defContexts[1]->OMSetRenderTargets(1u, _renderRTV.GetAddressOf(), _depthStencilView.Get());
-
-    _defContexts[IMGUI_CONTEXT]->RSSetState(_rasterizerState[0].Get());
-    _defContexts[IMGUI_CONTEXT]->RSSetViewports(1u, &_viewPort);
-    _defContexts[IMGUI_CONTEXT]->OMSetRenderTargets(1u, _imguiRTV.GetAddressOf(), nullptr);
+    SetContextsStates();
 
     // For Ambient and Directional Light (Both are unique)
     {
@@ -188,11 +91,8 @@ void Engine::Graphics::D3D11RenderCommand::BeginForward(D3D11RenderData* data) {
 
     // For Point Lights
     {
-        auto& context {*_defContexts[1].Get()};
+        auto& context {*_defContexts[0].Get()};
 
-        context.PSSetSamplers(0u, 1u, _samplerWrap.GetAddressOf());
-        context.PSSetSamplers(1u, 1u, _samplerClamp.GetAddressOf());
-        context.VSSetSamplers(0u, 1u, _samplerWrap.GetAddressOf());
         context.PSSetShaderResources(14u, 1u, _intermediateSRV.GetAddressOf());
 
         data->_globalCB.SetLightType(LightType::Point);
@@ -212,21 +112,61 @@ void Engine::Graphics::D3D11RenderCommand::BeginForward(D3D11RenderData* data) {
     // Draw Concrete Lights
     {
         auto& context {*_defContexts[1].Get()};
-
         context.PSSetSamplers(0u, 1u, _samplerWrap.GetAddressOf());
         context.PSSetSamplers(1u, 1u, _samplerClamp.GetAddressOf());
         context.VSSetSamplers(0u, 1u, _samplerWrap.GetAddressOf());
-        context.PSSetShaderResources(14u, 1u, _intermediateSRV.GetAddressOf());
 
+        data->_globalCB.Bind(context);
         for (auto& light : data->_concreteLights)
             light->Render(context);
     }
     // ---------------------------------------------------
 
-    data->_cubemap.Render(*_defContexts[1].Get());
+    // Draw Cubemap
+    {
+        auto& context {*_defContexts[2].Get()};
 
-    _defContexts[1]->ResolveSubresource(_resolvedBuffer.Get(), 0, _renderBuffer.Get(), 0, DXGI_FORMAT_R16G16B16A16_FLOAT);
-    data->_fsFilter.Render(*_defContexts[1].Get(), _resolvedSRV.GetAddressOf(), _finalRTV.GetAddressOf());
+        context.PSSetSamplers(0u, 1u, _samplerWrap.GetAddressOf());
+        context.PSSetSamplers(1u, 1u, _samplerClamp.GetAddressOf());
+        context.VSSetSamplers(0u, 1u, _samplerWrap.GetAddressOf());
+
+        data->_globalCB.Bind(context);
+        data->_cubemap.Render(context);
+    }
+    // ---------------------------------------------------
+
+    // Draw Mirror
+    //{
+    //    auto& context {*_defContexts[3].Get()};
+    //    data->_globalCB.Bind(context);
+
+    //    context.OMSetDepthStencilState(_dsWriteMask.Get(), 0xff);
+    //    context.OMSetBlendState(_bsMirror.Get(), nullptr, 0xFFFFFFFFu);
+
+    //    for (auto& mirror : data->_mirrors)
+    //        mirror->Render(context);
+
+    //    context.ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0.0f);
+    //    context.RSSetState(_rasterizerState[2].Get());
+    //    context.OMSetDepthStencilState(_dsReadMask.Get(), 0xff);
+
+    //    for (auto& mirror : data->_mirrors) {
+    //        auto const plane {mirror->GetMirrorPlane()};
+    //        data->_globalCB.Reflect(plane);
+    //        data->_globalCB.Bind(context);
+    //        for (auto& obj : data->_obj)
+    //            obj->Render(context);
+    //    }
+
+    //    context.RSSetState(_rasterizerState[0].Get());
+    //    context.OMSetDepthStencilState(_dsDefault.Get(), 1.0f);
+    //    context.OMSetBlendState(_bsMirror.Get(), nullptr, 0xFFFFFFFFu);
+    //    for (auto& mirror : data->_mirrors)
+    //        mirror->Render(context);
+    //}
+
+    _defContexts[static_cast<int>(DefContext::PostProcess)]->ResolveSubresource(_resolvedBuffer.Get(), 0, _renderBuffer.Get(), 0, DXGI_FORMAT_R16G16B16A16_FLOAT);
+    data->_fsFilter.Render(_resolvedSRV.GetAddressOf(), _finalRTV.GetAddressOf());
     _defContexts[IMGUI_CONTEXT]->ResolveSubresource(_backBuffers.Get(), 0, _imguiBuffer.Get(), 0, DXGI_FORMAT_R8G8B8A8_UNORM);
 }
 
@@ -237,4 +177,221 @@ void Engine::Graphics::D3D11RenderCommand::EndForward(x_array<ID3D11CommandList*
 
 void* Engine::Graphics::D3D11RenderCommand::GetFinalSRV() {
     return _finalSRV.Get();
+}
+
+int32_t& Engine::Graphics::D3D11RenderCommand::RasterizerState() {
+    return _selectedRS;
+}
+
+ID3D11DeviceContext& Engine::Graphics::D3D11RenderCommand::GetContext(DefContext context) {
+    return *_defContexts[static_cast<int>(context)].Get();
+}
+
+void Engine::Graphics::D3D11RenderCommand::SetContextsStates() {
+    static constexpr float clear_color[4] {0.0f, 0.0f, 0.0f, 1.0f};
+
+    _defContexts[0]->RSSetViewports(1u, &_viewPort);
+    _defContexts[0]->RSSetState(_rasterizerState[_selectedRS].Get());
+    _defContexts[0]->OMSetDepthStencilState(_dsDefault.Get(), 0u);
+    _defContexts[0]->OMSetBlendState(_bsDefault.Get(), nullptr, 0xFFFFFFFFu);
+    _defContexts[0]->OMSetRenderTargets(1u, _renderRTV.GetAddressOf(), _depthStencilView.Get());
+    _defContexts[0]->ClearRenderTargetView(_renderRTV.Get(), clear_color);
+    _defContexts[0]->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f , 0u);
+
+    _defContexts[1]->RSSetViewports(1u, &_viewPort);
+    _defContexts[1]->RSSetState(_rasterizerState[_selectedRS].Get());
+    _defContexts[1]->OMSetDepthStencilState(_dsDefault.Get(), 0u);
+    _defContexts[1]->OMSetBlendState(_bsDefault.Get(), nullptr, 0xFFFFFFFFu);
+    _defContexts[1]->OMSetRenderTargets(1u, _renderRTV.GetAddressOf(), _depthStencilView.Get());
+
+    _defContexts[2]->RSSetViewports(1u, &_viewPort);
+    _defContexts[2]->RSSetState(_rasterizerState[_selectedRS].Get());
+    _defContexts[2]->OMSetDepthStencilState(_dsDefault.Get(), 0u);
+    _defContexts[2]->OMSetBlendState(_bsDefault.Get(), nullptr, 0xFFFFFFFFu);
+    _defContexts[2]->OMSetRenderTargets(1u, _renderRTV.GetAddressOf(), _depthStencilView.Get());
+
+    _defContexts[3]->RSSetViewports(1u, &_viewPort);
+    _defContexts[3]->RSSetState(_rasterizerState[_selectedRS].Get());
+    _defContexts[3]->OMSetRenderTargets(1u, _renderRTV.GetAddressOf(), _depthStencilView.Get());
+
+    _defContexts[4]->RSSetViewports(1u, &_viewPort);
+    _defContexts[4]->RSSetState(_rasterizerState[0].Get());
+    _defContexts[4]->OMSetDepthStencilState(_dsDefault.Get(), 0u);
+    _defContexts[4]->OMSetBlendState(_bsDefault.Get(), nullptr, 0xFFFFFFFFu);
+    _defContexts[4]->OMSetRenderTargets(1u, _renderRTV.GetAddressOf(), _depthStencilView.Get());
+
+    _defContexts[IMGUI_CONTEXT]->RSSetViewports(1u, &_viewPort);
+    _defContexts[IMGUI_CONTEXT]->RSSetState(_rasterizerState[0].Get());
+    _defContexts[IMGUI_CONTEXT]->OMSetDepthStencilState(_dsDefault.Get(), 0u);
+    _defContexts[IMGUI_CONTEXT]->OMSetRenderTargets(1u, _imguiRTV.GetAddressOf(), nullptr);
+}
+
+void Engine::Graphics::D3D11RenderCommand::InitRasterizerState(ID3D11Device& device) {
+    _rasterizerState.resize(3);
+
+    D3D11_RASTERIZER_DESC rd {};
+
+    // Default Solid
+    {
+        rd.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+        rd.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+        rd.FrontCounterClockwise = false;
+        rd.DepthClipEnable = true;
+        rd.MultisampleEnable = true;
+
+        device.CreateRasterizerState(&rd, _rasterizerState[0].ReleaseAndGetAddressOf());
+    }
+
+    // Default Wire
+    {
+        rd.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
+        rd.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+        rd.FrontCounterClockwise = false;
+        rd.DepthClipEnable = true;
+        rd.MultisampleEnable = true;
+
+        device.CreateRasterizerState(&rd, _rasterizerState[1].ReleaseAndGetAddressOf());
+    }
+
+    // CCW Solid
+    {
+        rd.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+        rd.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+        rd.FrontCounterClockwise = true;
+        rd.DepthClipEnable = true;
+        rd.MultisampleEnable = true;
+
+        device.CreateRasterizerState(&rd, _rasterizerState[2].ReleaseAndGetAddressOf());
+    }
+}
+
+void Engine::Graphics::D3D11RenderCommand::InitDepthStencil(ID3D11Device& device, int width, int height, UINT quality_level) {
+    // default
+    {
+        D3D11_DEPTH_STENCIL_DESC desc {CD3D11_DEPTH_STENCIL_DESC{CD3D11_DEFAULT{}}};
+
+        device.CreateDepthStencilState(&desc, _dsDefault.ReleaseAndGetAddressOf());
+    }
+
+    // write stencil
+    {
+        D3D11_DEPTH_STENCIL_DESC desc {CD3D11_DEPTH_STENCIL_DESC{CD3D11_DEFAULT{}}};
+        desc.DepthEnable = TRUE;
+        desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+        desc.DepthFunc = D3D11_COMPARISON_LESS;
+        desc.StencilEnable = TRUE;
+        desc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+        desc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+        desc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;         // depth-stencil both failed
+        desc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP; // stencil: passed, depth: failed
+        desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;      // depth-stencil both passed
+        desc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+        device.CreateDepthStencilState(&desc, _dsWriteMask.ReleaseAndGetAddressOf());
+    }
+    
+    // read stencil
+    {
+        D3D11_DEPTH_STENCIL_DESC desc {CD3D11_DEPTH_STENCIL_DESC{CD3D11_DEFAULT{}}};
+        desc.DepthEnable = TRUE;
+        desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+        desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+        desc.StencilEnable = TRUE;
+        desc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+        desc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+        desc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+        desc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+        desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+        desc.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+
+        device.CreateDepthStencilState(&desc, _dsReadMask.ReleaseAndGetAddressOf());
+    }
+
+    D3D11_TEXTURE2D_DESC descDepth {};
+    descDepth.Usage = D3D11_USAGE_DEFAULT;
+    descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    descDepth.Width = width;
+    descDepth.Height = height;
+    descDepth.MipLevels = 1u;
+    descDepth.ArraySize = 1u;
+    descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    descDepth.SampleDesc.Count = 8;
+    descDepth.SampleDesc.Quality = quality_level - 1;
+
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> _ds;
+    device.CreateTexture2D(&descDepth, nullptr, _ds.ReleaseAndGetAddressOf());
+
+    D3D11_DEPTH_STENCIL_VIEW_DESC desc_dsv {};
+    desc_dsv.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    desc_dsv.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+    desc_dsv.Texture2D.MipSlice = 0u;
+    device.CreateDepthStencilView(_ds.Get(), &desc_dsv, _depthStencilView.ReleaseAndGetAddressOf());
+}
+
+void Engine::Graphics::D3D11RenderCommand::InitSamplers(ID3D11Device& device) {
+    {
+        D3D11_SAMPLER_DESC sd {};
+        sd.Filter = D3D11_FILTER_ANISOTROPIC;
+        sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        sd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+        sd.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
+        sd.MipLODBias = 0.0f;
+        sd.MinLOD = 0.0f;
+        sd.MaxLOD = D3D11_FLOAT32_MAX;
+
+        device.CreateSamplerState(&sd, _samplerWrap.ReleaseAndGetAddressOf());
+    }
+
+    {
+        D3D11_SAMPLER_DESC sd {};
+        sd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        sd.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+        sd.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+        sd.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+        device.CreateSamplerState(&sd, _samplerClamp.ReleaseAndGetAddressOf());
+    }
+}
+
+void Engine::Graphics::D3D11RenderCommand::InitBlendState(ID3D11Device& device) {
+    // Default
+    {
+        D3D11_BLEND_DESC desc {};
+        desc.AlphaToCoverageEnable = true;
+        desc.IndependentBlendEnable = false;
+
+        desc.RenderTarget[0].BlendEnable = true;
+        desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+        desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+        desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+
+        desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+        desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+        desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+
+        desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+        device.CreateBlendState(&desc, _bsMirror.ReleaseAndGetAddressOf());
+    }
+
+    // Mirror
+    {
+        D3D11_BLEND_DESC desc {};
+        desc.AlphaToCoverageEnable = true;
+        desc.IndependentBlendEnable = false;
+
+        desc.RenderTarget[0].BlendEnable = true;
+        desc.RenderTarget[0].SrcBlend = D3D11_BLEND_INV_BLEND_FACTOR;;
+        desc.RenderTarget[0].DestBlend = D3D11_BLEND_BLEND_FACTOR;
+        desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+
+        desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+
+        desc.RenderTarget[0].RenderTargetWriteMask = 0;
+
+        device.CreateBlendState(&desc, _bsMirror.ReleaseAndGetAddressOf());
+    }
 }

@@ -1,18 +1,37 @@
 #pragma once
 
 namespace Engine::Graphics {
+    enum class DefContext {
+            Default,
+            ConcreteLight,
+            Others,
+            Mirror,
+            PostProcess,
+            GUI
+        };
+
     class D3D11RenderCommand {
+    public:
         enum {
-            NUM_DEF_CONTEXTS = 3,
+            NUM_DEF_CONTEXTS = 6,
             IMGUI_CONTEXT = NUM_DEF_CONTEXTS - 1
         };
-    public:
-        static void Init(ID3D11Device& device, ID3D11DeviceContext& imm_context, IDXGISwapChain& swap_chain, int width, int height);
+
+        static void Init(ID3D11Device& device, IDXGISwapChain& swap_chain, int width, int height);
 
         static void BeginForward(struct D3D11RenderData* data);
         static void EndForward(x_array<ID3D11CommandList*, NUM_DEF_CONTEXTS>& cmd_lists);
 
         static void* GetFinalSRV();
+        static int32_t& RasterizerState();
+
+        static ID3D11DeviceContext& GetContext(DefContext context);
+    private:
+        static void SetContextsStates();
+        static void InitRasterizerState(ID3D11Device& device);
+        static void InitDepthStencil(ID3D11Device& device, int width, int height, UINT quality_level);
+        static void InitSamplers(ID3D11Device& device);
+        static void InitBlendState(ID3D11Device& device);
     private:
         inline static x_array<Microsoft::WRL::ComPtr<ID3D11DeviceContext>,   NUM_DEF_CONTEXTS>
                                                                         _defContexts;
@@ -44,6 +63,13 @@ namespace Engine::Graphics {
         inline static int32_t                                                 _selectedRS {};
         inline static x_vector<Microsoft::WRL::ComPtr<ID3D11RasterizerState>> _rasterizerState;
         inline static Microsoft::WRL::ComPtr<ID3D11DepthStencilView>          _depthStencilView;
+
+        inline static Microsoft::WRL::ComPtr<ID3D11DepthStencilState>         _dsDefault;
+        inline static Microsoft::WRL::ComPtr<ID3D11DepthStencilState>         _dsWriteMask;
+        inline static Microsoft::WRL::ComPtr<ID3D11DepthStencilState>         _dsReadMask;
+
+        inline static Microsoft::WRL::ComPtr<ID3D11BlendState>                _bsDefault;
+        inline static Microsoft::WRL::ComPtr<ID3D11BlendState>                _bsMirror;
     private:
         inline static D3D11_VIEWPORT                                          _viewPort {};
 
