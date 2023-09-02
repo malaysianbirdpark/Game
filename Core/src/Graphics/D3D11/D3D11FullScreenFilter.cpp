@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "D3D11FullScreenFilter.h"
 
+#include "D3D11RenderCommand.h"
 #include "PipelineState/D3D11PSOLibrary.h"
 #include "PipelineState/D3D11PipelineStateObject.h"
 
@@ -11,7 +12,7 @@ Engine::Graphics::D3D11FullScreenFilter::D3D11FullScreenFilter(ID3D11Device& dev
     _psoBlur = D3D11PSOLibrary::ResolvePSO("fullscreen_blur");
 
     D3D11_SAMPLER_DESC sd {};
-    sd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+    sd.Filter = D3D11_FILTER_ANISOTROPIC;
     sd.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR;
     sd.AddressV = D3D11_TEXTURE_ADDRESS_MIRROR;
     sd.AddressW = D3D11_TEXTURE_ADDRESS_MIRROR;
@@ -23,7 +24,9 @@ Engine::Graphics::D3D11FullScreenFilter::D3D11FullScreenFilter(ID3D11Device& dev
     device.CreateSamplerState(&sd, _sampler.ReleaseAndGetAddressOf());
 }
 
-void Engine::Graphics::D3D11FullScreenFilter::Render(ID3D11DeviceContext& context, ID3D11ShaderResourceView* const* input, ID3D11RenderTargetView* const* output) {
+void Engine::Graphics::D3D11FullScreenFilter::Render(ID3D11ShaderResourceView* const* input, ID3D11RenderTargetView* const* output) {
+    auto& context {D3D11RenderCommand::GetContext(DefContext::PostProcess)};
+
     context.IASetPrimitiveTopology(_topology);
     _vertex.Bind(context);
     _index.Bind(context);

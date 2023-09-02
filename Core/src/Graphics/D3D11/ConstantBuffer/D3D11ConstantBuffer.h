@@ -14,11 +14,6 @@ namespace Engine::Graphics {
     F(D3D11DirectionalLight)        \
     F(D3D11PointLight)
 
-    // Forward Declarations
-    #define F(x) class x;
-        CONSTANT_BUFFER_TYPES
-    #undef F
-
     // Variant Definition
     #define F(x) x##,
             using D3D11ConstantBuffer = 
@@ -58,8 +53,8 @@ namespace Engine::Graphics {
         float _dt;
     };
 
-    struct UpdateLightPos {
-        UpdateLightPos(DirectX::XMFLOAT3&& pos) : _pos{std::move(pos)} {}
+    struct UpdateObjectPos {
+        UpdateObjectPos(DirectX::XMFLOAT3&& pos) : _pos{std::move(pos)} {}
         void operator() (D3D11GlobalConstants& target) {}
         void operator() (D3D11DirectionalLight& target) {}
         void operator() (D3D11HemisphericAmbientLight& target) {}

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "D3D11UnrealPBRStrategy.h"
 
+#include "Graphics/D3D11/D3D11Cubemap.h"
 #include "Graphics/D3D11/PipelineState/D3D11PSOLibrary.h"
 #include "Graphics/D3D11/PipelineState/D3D11PipelineStateObject.h"
 
@@ -15,6 +16,7 @@ void Engine::Graphics::D3D11UnrealPBRStrategy::Render(ID3D11DeviceContext& conte
     mesh.Bind(context);
     material.BindUnrealPBR(context);
     material.BindVertexShaderConstants(context);
+    D3D11Cubemap::Bind(context);
     _pso->Bind(context);
 
     for (auto const& sr : material.GetShaderResources()) {
@@ -41,9 +43,6 @@ void Engine::Graphics::D3D11UnrealPBRStrategy::Render(ID3D11DeviceContext& conte
         }
         else if (auto const* ao_map {std::get_if<std::shared_ptr<D3D11AmbientOcclusionMap>>(&sr)}) {
             ao_map->get()->Bind(context);  
-        }
-        else if (auto const* brdf_lut {std::get_if<std::shared_ptr<D3D11BRDFLut>>(&sr)}) {
-            brdf_lut->get()->Bind(context);  
         }
     }
 

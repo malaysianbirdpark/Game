@@ -1,5 +1,5 @@
 struct PS_IN {
-    float3 world_pos : POSITION;
+    float4 world_pos : POSITION;
     float3 normal    : NORMAL;
     float2 texcoord  : TEXCOORD;
 };
@@ -24,8 +24,9 @@ PS_OUT main(PS_IN input)
         output.color = diffuse_map.Sample(sampler0, input.texcoord);
     }
     else {
-        output.color = float4(input.world_pos, 1.0f);
+        output.color = input.world_pos;
     }
+    clip(output.color.a < 0.1f ? -1 : 1);
 
     return output;
 }

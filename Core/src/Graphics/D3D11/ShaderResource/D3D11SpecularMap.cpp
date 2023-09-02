@@ -3,7 +3,7 @@
 
 #include <directxtk/DDSTextureLoader.h>
 
-Engine::Graphics::D3D11SpecularMap::D3D11SpecularMap(ID3D11Device& device, char const* path)
+Engine::Graphics::D3D11SpecularMap::D3D11SpecularMap(ID3D11Device& device, ID3D11DeviceContext& context, char const* path)
     : _path{path}
 {
     using namespace DirectX;
@@ -26,10 +26,11 @@ Engine::Graphics::D3D11SpecularMap::D3D11SpecularMap(ID3D11Device& device, char 
         _srv.ReleaseAndGetAddressOf(),
         &alphaMode
     );
+    context.GenerateMips(_srv.Get());
 }
 
-std::shared_ptr<Engine::Graphics::D3D11SpecularMap> Engine::Graphics::D3D11SpecularMap::Create(ID3D11Device& device, char const* path) {
-    return std::move(MakeShared<D3D11SpecularMap>(device, path));
+std::shared_ptr<Engine::Graphics::D3D11SpecularMap> Engine::Graphics::D3D11SpecularMap::Create(ID3D11Device& device, ID3D11DeviceContext& context, char const* path) {
+    return std::move(MakeShared<D3D11SpecularMap>(device, context, path));
 }
 
 void Engine::Graphics::D3D11SpecularMap::Bind(ID3D11DeviceContext& context) const {

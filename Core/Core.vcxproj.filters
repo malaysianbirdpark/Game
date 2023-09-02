@@ -95,19 +95,19 @@
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightSpot.h">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11PhongConstants.h">
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11PhongConstants.h">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11PointLight.h">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11SolidConstant.h">
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11SolidConstant.h">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformMVP.h">
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformCB.h">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11UnrealPBRConstants.h">
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11UnrealPBRConstants.h">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11VertexShaderConstants.h">
@@ -167,11 +167,8 @@
     <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11ConcreteLight.h">
       <Filter>Graphics\D3D11\RenderObject</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11RenderObject.h">
+    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11DefaultObject.h">
       <Filter>Graphics\D3D11\RenderObject</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\RenderPass\D3D11RenderPass.h">
-      <Filter>Graphics\D3D11\RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.h">
       <Filter>Graphics\D3D11\RenderStrategy</Filter>
@@ -300,6 +297,9 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11MaterialConstants.h" />
+    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11MirrorObject.h" />
+    <ClInclude Include="src\Graphics\GUI\D3D11ImGuiSceneBrowser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -323,19 +323,19 @@
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightSpot.cpp">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11PhongConstants.cpp">
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11PhongConstants.cpp">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11PointLight.cpp">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11SolidConstant.cpp">
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11SolidConstant.cpp">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformMVP.cpp">
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformCB.cpp">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11UnrealPBRConstants.cpp">
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11UnrealPBRConstants.cpp">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11VertexShaderConstants.cpp">
@@ -392,11 +392,8 @@
     <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11ConcreteLight.cpp">
       <Filter>Graphics\D3D11\RenderObject</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11RenderObject.cpp">
+    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11DefaultObject.cpp">
       <Filter>Graphics\D3D11\RenderObject</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\RenderPass\D3D11RenderPass.cpp">
-      <Filter>Graphics\D3D11\RenderPass</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.cpp">
       <Filter>Graphics\D3D11\RenderStrategy</Filter>
@@ -516,6 +513,8 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="src\pch.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11MirrorObject.cpp" />
+    <ClCompile Include="src\Graphics\GUI\D3D11ImGuiSceneBrowser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Graphics\HLSL\basic_ibl_PS.hlsl">
@@ -551,12 +550,6 @@
     <FxCompile Include="src\Graphics\HLSL_PS\phong_PS.hlsl">
       <Filter>Graphics\HLSL_PS</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_PS\point_light_PS.hlsl">
-      <Filter>Graphics\HLSL_PS</Filter>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_PS\post_null_PS.hlsl">
-      <Filter>Graphics\HLSL_PS</Filter>
-    </FxCompile>
     <FxCompile Include="src\Graphics\HLSL_PS\solid_PS.hlsl">
       <Filter>Graphics\HLSL_PS</Filter>
     </FxCompile>
@@ -572,29 +565,12 @@
     <FxCompile Include="src\Graphics\HLSL_VS\pos_VS.hlsl">
       <Filter>Graphics\HLSL_VS</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_VS.hlsl">
-      <Filter>Graphics\HLSL_VS</Filter>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tan_VS.hlsl">
-      <Filter>Graphics\HLSL_VS</Filter>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tan_tex_VS.hlsl">
-      <Filter>Graphics\HLSL_VS</Filter>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tex_VS.hlsl">
-      <Filter>Graphics\HLSL_VS</Filter>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_VS\pos_norm_tex_height_VS.hlsl">
-      <Filter>Graphics\HLSL_VS</Filter>
-    </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_VS\pos_tex_VS.hlsl">
-      <Filter>Graphics\HLSL_VS</Filter>
-    </FxCompile>
     <FxCompile Include="src\Graphics\HLSL_VS\solid_VS.hlsl">
       <Filter>Graphics\HLSL_VS</Filter>
     </FxCompile>
     <FxCompile Include="src\Graphics\HLSL_VS\unreal_pbr_VS.hlsl">
       <Filter>Graphics\HLSL_VS</Filter>
     </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_PS\disney_pbr_PS.hlsl" />
   </ItemGroup>
 </Project>

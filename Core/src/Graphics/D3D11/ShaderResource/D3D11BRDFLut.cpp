@@ -20,7 +20,7 @@ Engine::Graphics::D3D11BRDFLut::D3D11BRDFLut(ID3D11Device& device, char const* p
         D3D11_USAGE_DEFAULT,
         D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
         D3D11_CPU_ACCESS_READ,
-        D3D11_RESOURCE_MISC_GENERATE_MIPS,
+        0u,
         DDS_LOADER_DEFAULT,
         nullptr,
         _srv.ReleaseAndGetAddressOf(),

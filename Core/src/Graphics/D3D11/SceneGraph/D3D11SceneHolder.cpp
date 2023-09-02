@@ -7,7 +7,7 @@
 #include <fstream>
 #include <rapidjson/document.h>
 
-void Engine::Graphics::D3D11SceneHolder::Load(ID3D11Device& device) {
+void Engine::Graphics::D3D11SceneHolder::Load(ID3D11Device& device, ID3D11DeviceContext& context) {
     GRAPHICS_INFO("Loading Models..");
 
     static constexpr auto model_list_path {"Assets/model_list.json"};
@@ -38,7 +38,7 @@ void Engine::Graphics::D3D11SceneHolder::Load(ID3D11Device& device) {
         auto const model {it_model->GetObj()};
         auto const name {model["name"].GetString()};
 
-        _scenes[name] = std::make_unique<D3D11SceneGraph>(device, model["path"].GetString());
+        _scenes[name] = std::make_unique<D3D11SceneGraph>(device, context, model["path"].GetString());
     }
 
     GRAPHICS_INFO("Done");
@@ -51,4 +51,12 @@ Engine::Graphics::D3D11SceneGraph Engine::Graphics::D3D11SceneHolder::ResolveSce
     CORE_ASSERT(_scenes.contains(tag), "No scene tagged as " + tag + " has found!")
 
     return std::move(_scenes[tag]->Clone());
+}
+
+bool Engine::Graphics::D3D11SceneHolder::Constains(x_string const& tag) {
+    return _scenes.contains(tag);
+}
+
+Engine::x_unordered_map<std::basic_string<char, std::char_traits<char>, STLAllocator<char>>, std::unique_ptr<Engine::Graphics::D3D11SceneGraph>> const& Engine::Graphics::D3D11SceneHolder::GetSceneMap() {
+    return _scenes;
 }

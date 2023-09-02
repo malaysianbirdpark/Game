@@ -1,6 +1,7 @@
 #pragma once
 
 #include <bitset>
+#include <imgui.h>
 
 #include <assimp/scene.h>
 
@@ -14,10 +15,13 @@ namespace Engine::Graphics {
 
     class D3D11SceneHolder {
     public:
-        static void Load(ID3D11Device& device);
+        static void Load(ID3D11Device& device, ID3D11DeviceContext& context);
         static D3D11SceneGraph ResolveScene(x_string const& tag);
+        static bool Constains(x_string const& tag);
+        static x_unordered_map<x_string, std::unique_ptr<D3D11SceneGraph>> const& GetSceneMap();
     private:
         inline static x_unordered_map<x_string, std::unique_ptr<D3D11SceneGraph>> _scenes;
+        inline static x_vector<ImTextureID> _previewImages;
     };
 }
 

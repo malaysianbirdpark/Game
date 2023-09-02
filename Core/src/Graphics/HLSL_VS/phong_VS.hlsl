@@ -7,10 +7,9 @@ struct VS_IN {
 };
 
 struct VS_OUT {
-    float3 world_pos : POSITION;
+    float4 world_pos : POSITION;
     float3 normal    : NORMAL;
     float3 tangent   : TANGENT;
-    float3 binormal  : BINORMAL;
     float2 texcoord  : TEXCOORD;
     float4 sv_pos    : SV_POSITION;
 };
@@ -34,7 +33,12 @@ cbuffer phong_constants : register(b1) {
     bool use_height_map;
 }
 
-cbuffer vs_constant : register(b2) {
+cbuffer global_constants : register (b2) {
+    float4 cam_pos;
+    int light_type;
+}
+
+cbuffer vs_constant : register(b3) {
     float height_scale;
 }
 
@@ -51,12 +55,11 @@ VS_OUT main(VS_IN input)
         input.pos += input.normal * height * height_scale;
     }
 
-    output.world_pos = mul(m, float4(input.pos, 1.0f)).xyz;
-    output.normal = normalize(mul(mit, float4(input.normal, 1.0f)).xyz);
-    output.tangent = normalize(input.tangent);
-    output.binormal = normalize(input.binormal);
+    output.world_pos = mul(float4(input.pos, 1.0f), m);
+    output.normal = normalize(mul(input.normal,(float3x3) mit));
+    output.tangent = normalize(mul(input.tangent,(float3x3) m));
     output.texcoord = input.texcoord;
-    output.sv_pos = mul(mvp, float4(input.pos, 1.0f));
+    output.sv_pos = mul(float4(input.pos, 1.0f), mvp);
 
 	return output;
 }

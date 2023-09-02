@@ -7,7 +7,7 @@
 #include "Graphics/D3D11/SceneGraph/D3D11SceneGraph.h"
 #include "Graphics/D3D11/SceneGraph/D3D11SceneHolder.h"
 #include "Graphics/D3D11/RenderStrategy/D3D11RenderStrategy.h"
-#include "Graphics/D3D11/RenderObject/D3D11RenderObject.h"
+#include "Graphics/D3D11/RenderObject/D3D11DefaultObject.h"
 
 #include "Graphics/D3DCamera.h"
 #include "PipelineState/D3D11PSOLibrary.h"
@@ -21,8 +21,8 @@
 #include "Graphics/D3D11/ConstantBuffer/D3D11DirectionalLight.h"
 
 #include "ConstantBuffer/D3D11ConstantBuffer.h"
-#include "ConstantBuffer/D3D11PointLight.h"
-#include "RenderObject/D3D11ConcreteLight.h"
+
+#include <chrono>
 
 Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, bool windowed)
     : _windowInfo{width, height, native_wnd, windowed}
@@ -69,14 +69,15 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
         70.0f,
         static_cast<float>(width) / height,
         0.01f,
-        250.0f
+        6000.0f
     ));
 
     auto& device {*_device.Get()};
+    auto& context {*_immContext.Get()};
 
-    D3D11RenderCommand::Init(device, *_immContext.Get(), *_swapChain.Get(), width, height);
+    D3D11RenderCommand::Init(device, *_swapChain.Get(), width, height);
 
-    D3D11SceneHolder::Load(device);
+    D3D11SceneHolder::Load(device, context);
     D3D11PSOLibrary::Init(device);
 
     InitRenderStrategies();
@@ -100,73 +101,31 @@ DirectX::XMMATRIX Engine::Graphics::D3D11Core::GetProj() {
 }
 
 void Engine::Graphics::D3D11Core::InitData() {
-    //_obj.push_back(
-    //    std::move(
-    //        MakeShared<D3D11RenderObject>(
-    //            device,
-    //            D3DCamera::GetView(),
-    //            GetProj(),
-    //            D3D11SceneHolder::ResolveScene("Zelda")
-    //        )
-    //    )
-    //);
-
-    //_obj.push_back(
-    //    std::move(
-    //        MakeShared<D3D11RenderObject>(
-    //            device,
-    //            D3DCamera::GetView(),
-    //            GetProj(),
-    //            D3D11SceneHolder::ResolveScene("Goblin")
-    //        )
-    //    )
-    //);
-
-    //_obj.push_back(
-    //    std::move(
-    //        MakeShared<D3D11RenderObject>(
-    //            device,
-    //            D3DCamera::GetView(),
-    //            GetProj(),
-    //            D3D11SceneHolder::ResolveScene("Cube")
-    //        )
-    //    )
-    //);
-
-    //_obj.push_back(
-    //    std::move(
-    //        MakeShared<D3D11RenderObject>(
-    //            device,
-    //            D3DCamera::GetView(),
-    //            GetProj(),
-    //            D3D11SceneHolder::ResolveScene("IridescenceLamp")
-    //        )
-    //    )
-    //);
-
-
     auto& device {*_device.Get()};
+    auto& context {*_immContext.Get()};
 
-    _data = MakeUnique<D3D11RenderData>(device, GetProj());
+    _data = MakeUnique<D3D11RenderData>(device, context, GetProj());
 
-    _data->_obj.push_back(
-        std::move(
-            MakeShared<D3D11RenderObject>(
-                device,
-                D3DCamera::GetView(),
-                GetProj(),
-                D3D11SceneHolder::ResolveScene("Sphere")
+    for (auto i {0}; i != 1; ++i) {
+        _data->_obj.push_back(
+            std::move(
+                MakeShared<D3D11DefaultObject>(
+                    device,
+                    context,
+                    D3D11SceneHolder::ResolveScene("DamagedHelmet")
+                )
             )
-        )
-    );
+        );
+    }
 
     //_data->_obj.push_back(
     //    std::move(
-    //        MakeShared<D3D11RenderObject>(
+    //        MakeShared<D3D11DefaultObject>(
     //            device,
+    //            context,
     //            D3DCamera::GetView(),
     //            GetProj(),
-    //            D3D11SceneHolder::ResolveScene("DamagedHelmet")
+    //            D3D11SceneHolder::ResolveScene("Sponza")
     //        )
     //    )
     //);
@@ -174,19 +133,22 @@ void Engine::Graphics::D3D11Core::InitData() {
     _data->_concreteLights.push_back(
             MakeShared<D3D11ConcreteLight>(
                 device,
-                D3DCamera::GetView(),
-                GetProj(),
+                context,
                 ConcreteLightType::PointLight
             )
     );
-    _data->_concreteLights.push_back(
-            MakeShared<D3D11ConcreteLight>(
-                device,
-                D3DCamera::GetView(),
-                GetProj(),
-                ConcreteLightType::PointLight
-            )
-    );
+
+    //for (auto i {0}; i != 1; ++i) {
+    //    _data->_mirrors.push_back(
+    //        std::move(
+    //            MakeShared<D3D11MirrorObject>(
+    //                device,
+    //                context,
+    //                D3D11SceneHolder::ResolveScene("Triangle")
+    //            )
+    //        )
+    //    );
+    //}
 
     _data->_ambDirLights.push_back(D3D11HemisphericAmbientLight{device});
     _data->_ambDirLights.push_back(D3D11DirectionalLight{device, {0.0f, -0.5f, 1.0f}, {1.0f, 1.0f, 1.0f}});
@@ -200,13 +162,13 @@ void Engine::Graphics::D3D11Core::BeginFrame() {
 void Engine::Graphics::D3D11Core::EndFrame() {
     D3D11ImGuiRenderer::EndFrame();
 
-    x_array<ID3D11CommandList*, 3> cmd_lists {};
+    static x_array<ID3D11CommandList*, D3D11RenderCommand::NUM_DEF_CONTEXTS> cmd_lists {};
     D3D11RenderCommand::EndForward(cmd_lists);
 
-    for (auto i {0}; i != 3; ++i)
+    for (auto i {0}; i != D3D11RenderCommand::NUM_DEF_CONTEXTS; ++i)
         _immContext->ExecuteCommandList(cmd_lists[i], FALSE);
 
-    for (auto i {0}; i != 3; ++i)
+    for (auto i {0}; i != D3D11RenderCommand::NUM_DEF_CONTEXTS; ++i)
         cmd_lists[i]->Release();
 
     _swapChain->Present(1u, 0u);

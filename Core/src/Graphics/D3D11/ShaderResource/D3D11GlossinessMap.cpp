@@ -3,7 +3,7 @@
 
 #include <directxtk/DDSTextureLoader.h>
 
-Engine::Graphics::D3D11GlossinessMap::D3D11GlossinessMap(ID3D11Device& device, char const* path)
+Engine::Graphics::D3D11GlossinessMap::D3D11GlossinessMap(ID3D11Device& device, ID3D11DeviceContext& context, char const* path)
     : _path{path}
 {
     using namespace DirectX;
@@ -21,15 +21,16 @@ Engine::Graphics::D3D11GlossinessMap::D3D11GlossinessMap(ID3D11Device& device, c
         D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
         D3D11_CPU_ACCESS_READ,
         D3D11_RESOURCE_MISC_GENERATE_MIPS,
-        DDS_LOADER_DEFAULT,
+        DDS_LOADER_FORCE_SRGB,
         nullptr,
         _srv.ReleaseAndGetAddressOf(),
         &alphaMode
     );
+    context.GenerateMips(_srv.Get());
 }
 
-std::shared_ptr<Engine::Graphics::D3D11GlossinessMap> Engine::Graphics::D3D11GlossinessMap::Create(ID3D11Device& device, char const* path) {
-    return std::move(MakeShared<D3D11GlossinessMap>(device, path));
+std::shared_ptr<Engine::Graphics::D3D11GlossinessMap> Engine::Graphics::D3D11GlossinessMap::Create(ID3D11Device& device, ID3D11DeviceContext& context, char const* path) {
+    return std::move(MakeShared<D3D11GlossinessMap>(device, context, path));
 }
 
 void Engine::Graphics::D3D11GlossinessMap::Bind(ID3D11DeviceContext& context) const {

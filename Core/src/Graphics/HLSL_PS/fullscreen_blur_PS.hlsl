@@ -4,9 +4,9 @@ SamplerState sampler1 : register(s1);
 static const int loop = 3;
 static const int divisor = (2 * loop - 1) * (2 * loop + 1);
 
-float4 main(float2 texcoord : TEXCOORD) : SV_TARGET
+float4 main(float2 texcoord : TEXCOORD, float4 sv_pos : SV_POSITION) : SV_TARGET
 {
-    return input_texture.Sample(sampler1, texcoord);
+    return saturate(input_texture.Load(sv_pos));
     static uint w, h;
     input_texture.GetDimensions(w, h);
     const float dw = 1.0f / w;

@@ -17,7 +17,7 @@ namespace Engine::Graphics {
         inline static DirectX::XMFLOAT3 _pos;
         inline static float _pitch {0.0f};
         inline static float _yaw {0.0f};
-        inline static float _travelSpeed {22.5f};
+        inline static float _travelSpeed {42.5f};
         inline static float _rotationSpeed {0.4f};
     };
 }

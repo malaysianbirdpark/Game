@@ -2,9 +2,10 @@
 #include "D3D11GlobalConstants.h"
 
 #include "Graphics/D3DCamera.h"
+#include "Graphics/D3D11/D3D11Core.h"
 
 Engine::Graphics::D3D11GlobalConstants::D3D11GlobalConstants(ID3D11Device& device) {
-    DirectX::XMStoreFloat4(&_data._pos, D3DCamera::GetPos());
+    DirectX::XMStoreFloat4(&_data._camPos, D3DCamera::GetPos());
 
     D3D11_BUFFER_DESC bd {};
     bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -20,12 +21,25 @@ Engine::Graphics::D3D11GlobalConstants::D3D11GlobalConstants(ID3D11Device& devic
     device.CreateBuffer(&bd, &sd, _resource.ReleaseAndGetAddressOf());
 }
 
+void Engine::Graphics::D3D11GlobalConstants::Reflect(DirectX::XMVECTOR plane) {
+    //using namespace DirectX;
+    //XMStoreFloat4x4(
+    //    &_data._vp,
+    //    XMMatrixTranspose(
+    //        XMMatrixMultiply(
+    //            XMLoadFloat4x4(&_data._vp),
+    //            XMMatrixReflect(plane)
+    //        )
+    //    )
+    //);
+}
+
 void Engine::Graphics::D3D11GlobalConstants::SetLightType(LightType type) {
     _data._light_type = static_cast<int32_t>(type);
 }
 
 void Engine::Graphics::D3D11GlobalConstants::Update(float const dt) {
-    DirectX::XMStoreFloat4(&_data._pos, D3DCamera::GetPos());
+    DirectX::XMStoreFloat4(&_data._camPos, D3DCamera::GetPos());
 }
 
 void Engine::Graphics::D3D11GlobalConstants::Upload(ID3D11DeviceContext& context) {

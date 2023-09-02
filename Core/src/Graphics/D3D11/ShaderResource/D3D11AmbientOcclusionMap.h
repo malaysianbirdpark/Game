@@ -3,9 +3,9 @@
 namespace Engine::Graphics {
     class D3D11AmbientOcclusionMap {
     public:
-        D3D11AmbientOcclusionMap(ID3D11Device& device, char const* path);
+        D3D11AmbientOcclusionMap(ID3D11Device& device, ID3D11DeviceContext& context, char const* path);
 
-        static std::shared_ptr<D3D11AmbientOcclusionMap> Create(ID3D11Device& device, char const* path);
+        static std::shared_ptr<D3D11AmbientOcclusionMap> Create(ID3D11Device& device, ID3D11DeviceContext& context, char const* path);
 
         void Bind(ID3D11DeviceContext& context) const;
 

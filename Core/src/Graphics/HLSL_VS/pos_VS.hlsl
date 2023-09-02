@@ -14,12 +14,18 @@ cbuffer mvp : register(b0)
     matrix mvp;
 };
 
+cbuffer global_constants : register (b2) {
+    matrix vp;
+    float4 cam_pos;
+    int light_type;
+}
+
 VS_OUT main(VS_IN input)
 {
     VS_OUT output;
 
-    output.world_pos = mul(m, float4(input.pos, 1.0f)).xyz;
-    output.sv_pos = mul(mvp, float4(input.pos, 1.0f));
+    output.world_pos = mul(input.pos, (float3x3) m);
+    output.sv_pos = mul(float4(input.pos, 1.0f), mvp);
 
 	return output;
 }
