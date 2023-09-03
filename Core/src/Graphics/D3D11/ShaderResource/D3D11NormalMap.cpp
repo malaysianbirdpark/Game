@@ -34,6 +34,7 @@ std::shared_ptr<Engine::Graphics::D3D11NormalMap> Engine::Graphics::D3D11NormalM
 }
 
 void Engine::Graphics::D3D11NormalMap::Bind(ID3D11DeviceContext& context) const {
+    context.VSSetShaderResources(3u, 1u, _srv.GetAddressOf());
     context.PSSetShaderResources(3u, 1u, _srv.GetAddressOf());
 }
 

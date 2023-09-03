@@ -45,6 +45,7 @@ cbuffer vs_constant : register(b3) {
     float height_scale;
 }
 
+Texture2D normal_map : register(t3);
 Texture2D height_map : register(t4);
 SamplerState sampler0 : register(s0);
 
@@ -52,10 +53,14 @@ VS_OUT main(VS_IN input)
 {
     VS_OUT output;
 
-    if (use_height_map) {
-        if ((input.texcoord.x >= 0.01f && input.texcoord.y >= 0.01f) &&
-            (input.texcoord.x <= 0.99f && input.texcoord.y <= 0.99f)) 
-        {
+    if (input.texcoord.x >= 0.01f && input.texcoord.y >= 0.01f && input.texcoord.x <= 0.99f && input.texcoord.y <= 0.99f) {
+        if (use_height_map && use_normal_map) {
+            const float3 normal = normalize(normal_map.SampleLevel(sampler0, input.texcoord, 0.0f).rgb);
+            float height = height_map.SampleLevel(sampler0, input.texcoord, 0.0f).r;
+            height = height * 2.0f - 1.0f;
+            input.pos += normal * height * height_scale;
+        }
+        else if (use_height_map) {
             float height = height_map.SampleLevel(sampler0, input.texcoord, 0.0f).r;
             height = height * 2.0f - 1.0f;
             input.pos += input.normal * height * height_scale;
