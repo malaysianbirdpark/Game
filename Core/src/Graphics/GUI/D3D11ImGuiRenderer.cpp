@@ -657,7 +657,7 @@ void Engine::Graphics::D3D11ImGuiRenderer::ImGuiShowVSConstantEditWindow(int32_t
         int interacted {};
         if (node != -1) {
             auto& params {_selected.first->GetMaterialAt(_selected.first->_nodeId_to_materialId[node]).GetVSConstants()->GetParams()};
-            interacted += ImGui::SliderFloat("Height Map Scale", &params.height_scale, 0.0f, 0.1f, "%.5f");
+            interacted += ImGui::SliderFloat("Height Map Scale", &params.height_scale, 0.0f, 1.5f, "%.5f");
         }
 
         if (interacted > 0) {

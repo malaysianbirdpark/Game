@@ -8,7 +8,7 @@
 namespace Engine::Graphics {
     class D3D11Cubemap {
         enum {
-            side = 3000,
+            side = 1000,
         };
         struct CubeMapVertex {
             DirectX::XMFLOAT3 pos;

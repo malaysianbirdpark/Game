@@ -61,7 +61,7 @@
       <PreprocessorDefinitions>PLATFORM_WINDOWS;DEBUG=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
@@ -108,8 +108,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Graphics\GUI\D3D11ImGuiSceneBrowser.h" />
-    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11MirrorObject.h" />
+    <ClInclude Include="src\Thread\LockQueue.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Core.h" />
     <ClInclude Include="src\Core\Log.h" />
@@ -121,15 +120,15 @@
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11GlobalConstants.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11HemisphericAmbientLight.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightSpot.h" />
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11PointLight.h" />
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformCB.h" />
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11VertexShaderConstants.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11MaterialConstants.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11PhongConstants.h" />
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11PointLight.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11SolidConstant.h" />
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformCB.h" />
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11UnrealPBRConstants.h" />
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11VertexShaderConstants.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11Core.h" />
-    <ClInclude Include="src\Graphics\D3D11\D3D11Cubemap.h" />
+    <ClInclude Include="src\Graphics\D3D11\D3D11CubeMap.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11FullScreenFilter.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11RenderCommand.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11RenderData.h" />
@@ -147,6 +146,7 @@
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11ConcreteLight.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11DefaultObject.h" />
+    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11MirrorObject.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11RenderStrategy.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11SolidStrategy.h" />
@@ -174,6 +174,7 @@
     <ClInclude Include="src\Graphics\D3DCamera.h" />
     <ClInclude Include="src\Graphics\GUI\D3D11ImGuiFileBrowser.h" />
     <ClInclude Include="src\Graphics\GUI\D3D11ImGuiRenderer.h" />
+    <ClInclude Include="src\Graphics\GUI\D3D11ImGuiSceneBrowser.h" />
     <ClInclude Include="src\Graphics\GraphicsCore.h" />
     <ClInclude Include="src\Memory\MemoryAllocator.h" />
     <ClInclude Include="src\Memory\MemoryLib.h" />
@@ -183,10 +184,11 @@
     <ClInclude Include="src\Platform\WindowsInclude.h" />
     <ClInclude Include="src\Utils\Clk.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\Thread\ThreadJoiner.h" />
+    <ClInclude Include="src\Thread\ThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Graphics\GUI\D3D11ImGuiSceneBrowser.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11MirrorObject.cpp" />
+    <ClCompile Include="src\Thread\LockQueue.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11ConstantBuffer.cpp" />
@@ -194,14 +196,14 @@
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11GlobalConstants.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11HemisphericAmbientLight.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightSpot.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11PhongConstants.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11PointLight.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11SolidConstant.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformCB.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11UnrealPBRConstants.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11VertexShaderConstants.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11PhongConstants.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11SolidConstant.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11UnrealPBRConstants.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11Core.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\D3D11Cubemap.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\D3D11CubeMap.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11FullScreenFilter.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11RenderCommand.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11RenderData.cpp" />
@@ -218,6 +220,7 @@
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11ConcreteLight.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11DefaultObject.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11MirrorObject.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11RenderStrategy.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11SolidStrategy.cpp" />
@@ -245,6 +248,7 @@
     <ClCompile Include="src\Graphics\D3DCamera.cpp" />
     <ClCompile Include="src\Graphics\GUI\D3D11ImGuiFileBrowser.cpp" />
     <ClCompile Include="src\Graphics\GUI\D3D11ImGuiRenderer.cpp" />
+    <ClCompile Include="src\Graphics\GUI\D3D11ImGuiSceneBrowser.cpp" />
     <ClCompile Include="src\Graphics\GraphicsCore.cpp" />
     <ClCompile Include="src\Memory\MemoryAllocator.cpp" />
     <ClCompile Include="src\Memory\MemoryLib.cpp" />
@@ -255,6 +259,8 @@
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Thread\ThreadJoiner.cpp" />
+    <ClCompile Include="src\Thread\ThreadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Graphics\HLSL\basic_ibl_PS.hlsl">
@@ -312,8 +318,10 @@
       <ObjectFileOutput>../Game/ShaderLib/cubemap_PS.cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="src\Graphics\HLSL_PS\disney_pbr_PS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
+      <EntryPointName>main</EntryPointName>
+      <ObjectFileOutput>../Game/ShaderLib/disney_pbr_PS.cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="src\Graphics\HLSL_PS\fullscreen_blur_PS.hlsl">
       <ShaderType>Pixel</ShaderType>

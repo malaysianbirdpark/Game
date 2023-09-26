@@ -16,6 +16,9 @@
     <Filter Include="Graphics\D3D11\ConstantBuffer">
       <UniqueIdentifier>{95B306B6-01CC-EDDF-CA78-7D7936508279}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics\D3D11\ConstantBuffer\MaterialConstants">
+      <UniqueIdentifier>{D0E19BDC-3C1D-FC9F-4512-792FB1CC80D0}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Graphics\D3D11\Effect">
       <UniqueIdentifier>{FE43E0E2-6AB0-9BDD-33A4-333B9FCFBD45}</UniqueIdentifier>
     </Filter>
@@ -27,9 +30,6 @@
     </Filter>
     <Filter Include="Graphics\D3D11\RenderObject">
       <UniqueIdentifier>{88E1E509-F4EE-13F0-7DD5-0FDBE9E1DFA6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Graphics\D3D11\RenderPass">
-      <UniqueIdentifier>{681513FB-D4D7-4685-1D88-D51189891F63}</UniqueIdentifier>
     </Filter>
     <Filter Include="Graphics\D3D11\RenderStrategy">
       <UniqueIdentifier>{0400EE47-7018-D571-39C5-640BA59C690B}</UniqueIdentifier>
@@ -57,9 +57,6 @@
     </Filter>
     <Filter Include="Platform">
       <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Thread">
-      <UniqueIdentifier>{BD8B6AD3-A92D-95A9-92E8-A8FD7E291CFA}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utils">
       <UniqueIdentifier>{F68B420E-62A0-6ABF-2B22-0E1F97F566F0}</UniqueIdentifier>
@@ -95,28 +92,31 @@
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightSpot.h">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11PhongConstants.h">
-      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11PointLight.h">
-      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11SolidConstant.h">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformCB.h">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11UnrealPBRConstants.h">
-      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\D3D11VertexShaderConstants.h">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11MaterialConstants.h">
+      <Filter>Graphics\D3D11\ConstantBuffer\MaterialConstants</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11PhongConstants.h">
+      <Filter>Graphics\D3D11\ConstantBuffer\MaterialConstants</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11SolidConstant.h">
+      <Filter>Graphics\D3D11\ConstantBuffer\MaterialConstants</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11UnrealPBRConstants.h">
+      <Filter>Graphics\D3D11\ConstantBuffer\MaterialConstants</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\D3D11Core.h">
       <Filter>Graphics\D3D11</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\D3D11Cubemap.h">
+    <ClInclude Include="src\Graphics\D3D11\D3D11CubeMap.h">
       <Filter>Graphics\D3D11</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\D3D11FullScreenFilter.h">
@@ -168,6 +168,9 @@
       <Filter>Graphics\D3D11\RenderObject</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11DefaultObject.h">
+      <Filter>Graphics\D3D11\RenderObject</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11MirrorObject.h">
       <Filter>Graphics\D3D11\RenderObject</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.h">
@@ -251,6 +254,9 @@
     <ClInclude Include="src\Graphics\GUI\D3D11ImGuiRenderer.h">
       <Filter>Graphics\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="src\Graphics\GUI\D3D11ImGuiSceneBrowser.h">
+      <Filter>Graphics\GUI</Filter>
+    </ClInclude>
     <ClInclude Include="src\Graphics\GraphicsCore.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -276,9 +282,9 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11MaterialConstants.h" />
-    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11MirrorObject.h" />
-    <ClInclude Include="src\Graphics\GUI\D3D11ImGuiSceneBrowser.h" />
+    <ClInclude Include="src\Thread\ThreadJoiner.h" />
+    <ClInclude Include="src\Thread\ThreadPool.h" />
+    <ClInclude Include="src\Thread\LockQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -302,28 +308,28 @@
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11LightSpot.cpp">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11PhongConstants.cpp">
-      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
-    </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11PointLight.cpp">
-      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11SolidConstant.cpp">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11TransformCB.cpp">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11UnrealPBRConstants.cpp">
-      <Filter>Graphics\D3D11\ConstantBuffer</Filter>
-    </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\D3D11VertexShaderConstants.cpp">
       <Filter>Graphics\D3D11\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11PhongConstants.cpp">
+      <Filter>Graphics\D3D11\ConstantBuffer\MaterialConstants</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11SolidConstant.cpp">
+      <Filter>Graphics\D3D11\ConstantBuffer\MaterialConstants</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\ConstantBuffer\MaterialConstants\D3D11UnrealPBRConstants.cpp">
+      <Filter>Graphics\D3D11\ConstantBuffer\MaterialConstants</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\D3D11Core.cpp">
       <Filter>Graphics\D3D11</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\D3D11Cubemap.cpp">
+    <ClCompile Include="src\Graphics\D3D11\D3D11CubeMap.cpp">
       <Filter>Graphics\D3D11</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\D3D11FullScreenFilter.cpp">
@@ -372,6 +378,9 @@
       <Filter>Graphics\D3D11\RenderObject</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11DefaultObject.cpp">
+      <Filter>Graphics\D3D11\RenderObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11MirrorObject.cpp">
       <Filter>Graphics\D3D11\RenderObject</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\RenderStrategy\D3D11PhongStrategy.cpp">
@@ -455,6 +464,9 @@
     <ClCompile Include="src\Graphics\GUI\D3D11ImGuiRenderer.cpp">
       <Filter>Graphics\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="src\Graphics\GUI\D3D11ImGuiSceneBrowser.cpp">
+      <Filter>Graphics\GUI</Filter>
+    </ClCompile>
     <ClCompile Include="src\Graphics\GraphicsCore.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -477,8 +489,9 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="src\pch.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11MirrorObject.cpp" />
-    <ClCompile Include="src\Graphics\GUI\D3D11ImGuiSceneBrowser.cpp" />
+    <ClCompile Include="src\Thread\ThreadJoiner.cpp" />
+    <ClCompile Include="src\Thread\ThreadPool.cpp" />
+    <ClCompile Include="src\Thread\LockQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Graphics\HLSL\basic_ibl_PS.hlsl">
@@ -508,6 +521,9 @@
     <FxCompile Include="src\Graphics\HLSL_PS\cubemap_PS.hlsl">
       <Filter>Graphics\HLSL_PS</Filter>
     </FxCompile>
+    <FxCompile Include="src\Graphics\HLSL_PS\disney_pbr_PS.hlsl">
+      <Filter>Graphics\HLSL_PS</Filter>
+    </FxCompile>
     <FxCompile Include="src\Graphics\HLSL_PS\fullscreen_blur_PS.hlsl">
       <Filter>Graphics\HLSL_PS</Filter>
     </FxCompile>
@@ -535,6 +551,5 @@
     <FxCompile Include="src\Graphics\HLSL_VS\unreal_pbr_VS.hlsl">
       <Filter>Graphics\HLSL_VS</Filter>
     </FxCompile>
-    <FxCompile Include="src\Graphics\HLSL_PS\disney_pbr_PS.hlsl" />
   </ItemGroup>
 </Project>

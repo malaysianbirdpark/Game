@@ -69,7 +69,7 @@ Engine::Graphics::D3D11Core::D3D11Core(int width, int height, HWND native_wnd, b
         70.0f,
         static_cast<float>(width) / height,
         0.01f,
-        6000.0f
+        2000.0f
     ));
 
     auto& device {*_device.Get()};
@@ -105,18 +105,6 @@ void Engine::Graphics::D3D11Core::InitData() {
     auto& context {*_immContext.Get()};
 
     _data = MakeUnique<D3D11RenderData>(device, context, GetProj());
-
-    for (auto i {0}; i != 1; ++i) {
-        _data->_obj.push_back(
-            std::move(
-                MakeShared<D3D11DefaultObject>(
-                    device,
-                    context,
-                    D3D11SceneHolder::ResolveScene("DamagedHelmet")
-                )
-            )
-        );
-    }
 
     _data->_concreteLights.push_back(
             MakeShared<D3D11ConcreteLight>(
