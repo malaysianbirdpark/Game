@@ -137,31 +137,10 @@
     <ClInclude Include="src\Graphics\D3D11\Effect\D3D11Effect.h">
       <Filter>Graphics\D3D11\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\GeometryPipeline\D3D11BillBoard.h">
-      <Filter>Graphics\D3D11\GeometryPipeline</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\GeometryPipeline\D3D11Tessellation.h">
-      <Filter>Graphics\D3D11\GeometryPipeline</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.h">
-      <Filter>Graphics\D3D11\PipelineState</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.h">
       <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateCommon.h">
-      <Filter>Graphics\D3D11\PipelineState</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateHolder.h">
-      <Filter>Graphics\D3D11\PipelineState</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateObject.h">
-      <Filter>Graphics\D3D11\PipelineState</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.h">
-      <Filter>Graphics\D3D11\PipelineState</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.h">
       <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11ConcreteLight.h">
@@ -350,28 +329,10 @@
     <ClCompile Include="src\Graphics\D3D11\Effect\D3D11Effect.cpp">
       <Filter>Graphics\D3D11\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\GeometryPipeline\D3D11BillBoard.cpp">
-      <Filter>Graphics\D3D11\GeometryPipeline</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\GeometryPipeline\D3D11Tessellation.cpp">
-      <Filter>Graphics\D3D11\GeometryPipeline</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11InputLayout.cpp">
-      <Filter>Graphics\D3D11\PipelineState</Filter>
-    </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.cpp">
       <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateHolder.cpp">
-      <Filter>Graphics\D3D11\PipelineState</Filter>
-    </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateObject.cpp">
-      <Filter>Graphics\D3D11\PipelineState</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PixelShader.cpp">
-      <Filter>Graphics\D3D11\PipelineState</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11VertexShader.cpp">
       <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11ConcreteLight.cpp">
