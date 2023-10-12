@@ -12,7 +12,7 @@
 #include "D3D11AmbientOcclusionMap.h"
 
 namespace Engine::Graphics {
-#define SHADER_RESOURCE_TYPES       \
+#define TEXTURE_TYPES       \
     F(D3D11EmissiveMap)             \
     F(D3D11DiffuseMap)              \
     F(D3D11SpecularMap)             \
@@ -37,21 +37,21 @@ namespace Engine::Graphics {
 
     // Bind Declarations
     #define F(x) inline void Bind##x(ID3D11DeviceContext& context, x const& target);
-        SHADER_RESOURCE_TYPES
+        TEXTURE_TYPES
     #undef F
 
     struct BindShaderResource {
         BindShaderResource(ID3D11DeviceContext& context) : _context{context} {}
     #define F(x) void operator() (std::shared_ptr<x> const& target) { target->Bind(_context); } 
-        SHADER_RESOURCE_TYPES
+        TEXTURE_TYPES
     #undef F
     private:
         ID3D11DeviceContext& _context;
     };
 
-    struct GetShaderResourceDescription {
+    struct GetShaderResourceDesc {
     #define F(x) x_string operator() (std::shared_ptr<x> const& target) { return target->GetDescription(); }
-        SHADER_RESOURCE_TYPES
+        TEXTURE_TYPES
     #undef F
     };
 
@@ -68,7 +68,7 @@ namespace Engine::Graphics {
 
     struct GetShaderResourceTypeID {
     #define F(x) int32_t operator() (std::shared_ptr<x> const& target) { return target->GetTypeID(); }
-        SHADER_RESOURCE_TYPES
+        TEXTURE_TYPES
     #undef F
     };
 

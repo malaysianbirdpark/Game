@@ -134,9 +134,6 @@
     <ClInclude Include="src\Graphics\D3D11\D3D11Sampler.h">
       <Filter>Graphics\D3D11</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\Effect\D3D11Effect.h">
-      <Filter>Graphics\D3D11\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.h">
       <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClInclude>
@@ -197,9 +194,6 @@
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11EmissiveMap.h">
       <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11GlossinessMap.h">
-      <Filter>Graphics\D3D11\ShaderResource</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11HeightMap.h">
       <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClInclude>
@@ -207,9 +201,6 @@
       <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11NormalMap.h">
-      <Filter>Graphics\D3D11\ShaderResource</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11OpacityMap.h">
       <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11ReflectionMap.h">
@@ -264,6 +255,9 @@
     <ClInclude Include="src\Thread\ThreadJoiner.h" />
     <ClInclude Include="src\Thread\ThreadPool.h" />
     <ClInclude Include="src\Thread\LockQueue.h" />
+    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11RenderObject.h" />
+    <ClInclude Include="src\Graphics\D3D11\ComputeShader\D3D11ComputeShader.h" />
+    <ClInclude Include="src\Graphics\D3D11\ComputeShader\D3D11UAV.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -326,9 +320,6 @@
     <ClCompile Include="src\Graphics\D3D11\D3D11Sampler.cpp">
       <Filter>Graphics\D3D11</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\Effect\D3D11Effect.cpp">
-      <Filter>Graphics\D3D11\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.cpp">
       <Filter>Graphics\D3D11\PipelineState</Filter>
     </ClCompile>
@@ -389,9 +380,6 @@
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11EmissiveMap.cpp">
       <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11GlossinessMap.cpp">
-      <Filter>Graphics\D3D11\ShaderResource</Filter>
-    </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11HeightMap.cpp">
       <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClCompile>
@@ -399,9 +387,6 @@
       <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11NormalMap.cpp">
-      <Filter>Graphics\D3D11\ShaderResource</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11OpacityMap.cpp">
       <Filter>Graphics\D3D11\ShaderResource</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11ReflectionMap.cpp">
@@ -453,6 +438,9 @@
     <ClCompile Include="src\Thread\ThreadJoiner.cpp" />
     <ClCompile Include="src\Thread\ThreadPool.cpp" />
     <ClCompile Include="src\Thread\LockQueue.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11RenderObject.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ComputeShader\D3D11ComputeShader.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ComputeShader\D3D11UAV.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\Graphics\HLSL\basic_ibl_PS.hlsl">

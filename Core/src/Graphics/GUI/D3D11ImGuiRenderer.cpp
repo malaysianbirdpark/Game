@@ -8,7 +8,6 @@
 #include "Graphics/D3D11/D3D11RenderCommand.h"
 #include "Graphics/D3D11/RenderObject/D3D11DefaultObject.h"
 #include "Graphics/D3D11/SceneGraph/D3D11SceneGraph.h"
-#include "Graphics/D3D11/Effect/D3D11Effect.h"
 #include "Graphics/D3D11/D3D11Cubemap.h"
 #include "Graphics/D3D11/D3D11RenderCommand.h"
 #include "Graphics/D3D11/ConstantBuffer/MaterialConstants/D3D11MaterialConstants.h"

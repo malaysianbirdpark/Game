@@ -108,6 +108,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Graphics\D3D11\ComputeShader\D3D11UAV.h" />
+    <ClInclude Include="src\Graphics\D3D11\ComputeShader\D3D11ComputeShader.h" />
+    <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11RenderObject.h" />
     <ClInclude Include="src\Thread\LockQueue.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Core.h" />
@@ -134,7 +137,6 @@
     <ClInclude Include="src\Graphics\D3D11\D3D11RenderData.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11RenderTarget.h" />
     <ClInclude Include="src\Graphics\D3D11\D3D11Sampler.h" />
-    <ClInclude Include="src\Graphics\D3D11\Effect\D3D11Effect.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.h" />
     <ClInclude Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateObject.h" />
     <ClInclude Include="src\Graphics\D3D11\RenderObject\D3D11ConcreteLight.h" />
@@ -155,11 +157,9 @@
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11CubemapTexture.h" />
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseMap.h" />
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11EmissiveMap.h" />
-    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11GlossinessMap.h" />
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11HeightMap.h" />
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11MetallicMap.h" />
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11NormalMap.h" />
-    <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11OpacityMap.h" />
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11ReflectionMap.h" />
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11RoughnessMap.h" />
     <ClInclude Include="src\Graphics\D3D11\ShaderResource\D3D11ShaderResource.h" />
@@ -181,6 +181,9 @@
     <ClInclude Include="src\Thread\ThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Graphics\D3D11\ComputeShader\D3D11UAV.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\ComputeShader\D3D11ComputeShader.cpp" />
+    <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11RenderObject.cpp" />
     <ClCompile Include="src\Thread\LockQueue.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
@@ -202,7 +205,6 @@
     <ClCompile Include="src\Graphics\D3D11\D3D11RenderData.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11RenderTarget.cpp" />
     <ClCompile Include="src\Graphics\D3D11\D3D11Sampler.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\Effect\D3D11Effect.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PSOLibrary.cpp" />
     <ClCompile Include="src\Graphics\D3D11\PipelineState\D3D11PipelineStateObject.cpp" />
     <ClCompile Include="src\Graphics\D3D11\RenderObject\D3D11ConcreteLight.cpp" />
@@ -223,11 +225,9 @@
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11CubemapTexture.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11DiffuseMap.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11EmissiveMap.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11GlossinessMap.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11HeightMap.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11MetallicMap.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11NormalMap.cpp" />
-    <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11OpacityMap.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11ReflectionMap.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11RoughnessMap.cpp" />
     <ClCompile Include="src\Graphics\D3D11\ShaderResource\D3D11ShaderResource.cpp" />

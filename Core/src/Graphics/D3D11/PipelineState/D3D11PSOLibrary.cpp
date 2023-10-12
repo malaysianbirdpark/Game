@@ -2,9 +2,7 @@
 #include "D3D11PSOLibrary.h"
 
 #include "D3D11PipelineStateObject.h"
-#include "D3D11VertexShader.h"
 #include "Graphics/D3D11/SceneGraph/D3D11VertexAttribute.h"
-#include "Graphics/D3D11/PipelineState/D3D11InputLayout.h"
 
 void Engine::Graphics::D3D11PSOLibrary::Init(ID3D11Device& device) {
     InitSolid(device);

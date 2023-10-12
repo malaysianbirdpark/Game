@@ -4,7 +4,7 @@
 #include "D3D11PhongStrategy.h"
 #include "D3D11SolidStrategy.h"
 
-#include "Graphics/D3D11/ShaderResource/D3D11ShaderResource.h"
+#include "..\ShaderResource\D3D11ShaderResource.h"
 
 namespace Engine::Graphics {
     using RenderStrategy = std::function<void(ID3D11DeviceContext&, class D3D11Mesh const&, class D3D11Material&)>;

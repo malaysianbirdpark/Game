@@ -80,7 +80,7 @@ void Engine::Graphics::D3D11Material::CopyVSConstants(D3D11Material const& sourc
 Engine::x_string Engine::Graphics::D3D11Material::GetTextureInfo() const {
     x_string desc {};
     for (auto& sr : _srs) {
-        desc += std::visit(GetShaderResourceDescription{}, sr);
+        desc += std::visit(GetShaderResourceDesc{}, sr);
         desc += "\n";
     }
     return desc;

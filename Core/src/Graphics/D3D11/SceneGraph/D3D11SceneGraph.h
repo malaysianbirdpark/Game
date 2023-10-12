@@ -7,7 +7,7 @@
 #include <assimp/postprocess.h>
 
 #include "D3D11SceneGraph.h"
-#include "Graphics/D3D11/ShaderResource/D3D11ShaderResource.h"
+#include "..\ShaderResource\D3D11ShaderResource.h"
 
 #include "Graphics/D3D11/ConstantBuffer/MaterialConstants/D3D11MaterialConstants.h"
 #include "Graphics/D3D11/ConstantBuffer/D3D11VertexShaderConstants.h"
